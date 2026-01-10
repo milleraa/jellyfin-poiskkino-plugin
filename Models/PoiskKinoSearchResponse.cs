@@ -1,0 +1,47 @@
+using System.Text.Json.Serialization;
+
+namespace PoiskKinoMetadataPlugin.Models;
+
+/// <summary>
+/// Response model from PoiskKino API v1.4 search endpoint (SearchMovieResponseDtoV1_4).
+/// </summary>
+public class PoiskKinoSearchResponse
+{
+    /// <summary>
+    /// Gets or sets the search results (docs).
+    /// </summary>
+    [JsonPropertyName("docs")]
+    public List<PoiskKinoItem>? Docs { get; set; }
+
+    /// <summary>
+    /// Gets or sets the total number of results.
+    /// </summary>
+    [JsonPropertyName("total")]
+    public int Total { get; set; }
+
+    /// <summary>
+    /// Gets or sets the limit per page.
+    /// </summary>
+    [JsonPropertyName("limit")]
+    public int Limit { get; set; }
+
+    /// <summary>
+    /// Gets or sets the current page number.
+    /// </summary>
+    [JsonPropertyName("page")]
+    public int Page { get; set; }
+
+    /// <summary>
+    /// Gets or sets the total number of pages.
+    /// </summary>
+    [JsonPropertyName("pages")]
+    public int Pages { get; set; }
+
+    /// <summary>
+    /// Compatibility property: returns Docs as Results for backward compatibility.
+    /// </summary>
+    [JsonIgnore]
+    public List<PoiskKinoItem>? Results => Docs;
+}
+
+
