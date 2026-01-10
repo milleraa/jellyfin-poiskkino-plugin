@@ -136,7 +136,7 @@ dotnet build -c Release
 
 ## Лицензия
 
-MIT
+GPLv2
 
 ## Ссылки
 
