@@ -329,7 +329,9 @@ public class PoiskKinoApiClient
 
             if (!response.IsSuccessStatusCode)
             {
-                _logger.LogWarning("API request failed with status {StatusCode} for season {SeasonNumber} of movie ID {MovieId}", response.StatusCode, seasonNumber, movieId);
+                var errorBody = await response.Content.ReadAsStringAsync(cancellationToken);
+                _logger.LogWarning("API request failed with status {StatusCode} for season {SeasonNumber} of movie ID {MovieId}. URL: {Url}, Response: {ErrorBody}",
+                    response.StatusCode, seasonNumber, movieId, url, errorBody);
                 return null;
             }
 
