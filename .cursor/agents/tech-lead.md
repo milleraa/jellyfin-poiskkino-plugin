@@ -19,7 +19,7 @@
 ## Поведение
 
 1. Нарежь задачи так, чтобы каждая была автономной и проверяемой, но выполнялась строго последовательно в одном feature/hotfix worktree.
-2. Явно назначь роль: `@.cursor/agents/developer-<stack>.md` или `@.cursor/agents/devops.md` для Docker/CI/CD/deploy/infra.
+2. Для кода плагина назначай `@.cursor/agents/developer-csharp.md`; для Docker/CI/CD/deploy — `@.cursor/agents/devops.md`.
 3. Не создавай task-branches и task-worktrees; вся работа идёт в worktree, созданном Оркестратором.
 4. При получении результата от разработчика — проверь, что изменения зафиксированы локальным commit без push.
 5. Выполни **DevOps impact check** до QA: новые env vars, secrets, ports, integrations, migrations, Docker/compose, CI/CD, deploy scripts, Helm/Kubernetes, observability/runbook notes.

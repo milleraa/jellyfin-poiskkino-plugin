@@ -1,34 +1,33 @@
 # DevOps
 
-*Источники: поиск Dockerfile, compose, CI configs, deploy scripts — **не найдено**; [`README.md`](../../README.md) (ручная установка).*
-
-## Зона ответственности
-
-- Dockerfile, docker-compose и локальная инфраструктура разработки.
-- CI/CD pipelines, runners, обязательные checks, артефакты.
-- Deploy scripts, Helm charts, Kubernetes manifests, Terraform/infra code при наличии.
-- Диагностика pipeline/deploy проблем и фиксация runbook notes.
+*Источники: README, подтверждение Стейхолдера (2026-05-18).*
 
 ## Docker и локальный запуск
 
-- **Dockerfile / compose:** N/A в репозитории
-- **Локальная проверка:** сборка `dotnet build -c Release`, копирование `PoiskKinoMetadataPlugin.dll` в каталог плагинов Jellyfin, перезапуск сервера ([`README.md`](../../README.md))
+- **Dockerfile / compose:** N/A
+- **Локальная проверка:** `dotnet build -c Release` → `PoiskKinoMetadataPlugin.dll` → каталог плагинов локального Jellyfin → перезапуск ([`README.md`](../../README.md))
 
 ## CI/CD
 
-- **CI config:** отсутствует (см. [`../environments/ci-cd.md`](../environments/ci-cd.md))
-- **Обязательные jobs для PR:** N/A
-- **Артефакты / cache:** N/A
+| Параметр | Значение |
+|----------|----------|
+| **Платформа** | GitHub Actions (запланировано, файл workflow пока отсутствует) |
+| **Сборка** | `dotnet build -c Release` на .NET 9 |
+| **Артефакт** | `PoiskKinoMetadataPlugin.dll` |
+| **Обязательность для PR** | после внедрения Actions — green build |
+| **Релиз** | v1: ручная установка DLL; автоматизация release — отдельная будущая задача |
+
+Подробности: [`../environments/ci-cd.md`](../environments/ci-cd.md).
 
 ## Deployment
 
-- **Способ:** ручная установка DLL администратором Jellyfin; централизованный deploy из репо не описан
-- **dev/stage/prod:** см. [`../environments/deployment-targets.md`](../environments/deployment-targets.md)
-- **Smoke checks:** ручная идентификация метаданных фильма/сериала в Jellyfin после настройки API-ключа
+- **Способ:** ручное копирование DLL в Jellyfin
+- **Окружения:** только local dev (см. [`../environments/deployment-targets.md`](../environments/deployment-targets.md))
+- **Smoke:** идентификация фильма/сериала в Jellyfin, проверка API-ключа в настройках плагина
 
 ## Secrets
 
-Секреты не хранятся в репозитории. API-ключ — в конфигурации плагина Jellyfin. Подробности: [`../environments/secrets-policy.md`](../environments/secrets-policy.md).
+API-ключ ПоискКино — только в конфигурации Jellyfin. См. [`../environments/secrets-policy.md`](../environments/secrets-policy.md).
 
 ## Связанные документы
 
@@ -36,5 +35,3 @@
 - [CI/CD](../environments/ci-cd.md)
 - [Deployment targets](../environments/deployment-targets.md)
 - [Delivery](delivery.md)
-- `.cursor/agents/devops.md`
-- `.cursor/rules/devops.mdc`

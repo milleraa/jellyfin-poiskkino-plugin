@@ -22,4 +22,4 @@
 - Нет секретов в diff (API-ключ только в runtime-конфиге Jellyfin)
 - Документация обновлена при изменении поведения ([`../engineering/testing.md`](../engineering/testing.md))
 
-*После появления CI — дополнить обязательными checks в `docs/environments/ci-cd.md`.*
+**После GitHub Actions:** обязательный green `dotnet build -c Release` в PR; ручная проверка в локальном Jellyfin — по усмотрению Стейхолдера. См. [`../environments/ci-cd.md`](../environments/ci-cd.md).

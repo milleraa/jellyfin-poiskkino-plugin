@@ -56,11 +56,8 @@ disable-model-invocation: true
 |------|-------------------------|
 | [`docs/engineering/stack-notes.md`](../../../docs/engineering/stack-notes.md) | Явный список **активных в v1** стеков репозитория и краткая пометка монорепо vs один стек. |
 | [`docs/engineering/stacks/dotnet.md`](../../../docs/engineering/stacks/dotnet.md) | Если .NET **не** в v1 — сразу после заголовка: `**Статус:** не используется в v1.` Если **в** v1 — заполнить минимум: версия SDK / TFM, команда сборки и тестов (или ссылка на скрипт в репо после появления). |
-| [`docs/engineering/stacks/go.md`](../../../docs/engineering/stacks/go.md) | Аналогично .NET. |
-| [`docs/engineering/stacks/typescript.md`](../../../docs/engineering/stacks/typescript.md) | Аналогично. |
-| [`docs/engineering/stacks/react.md`](../../../docs/engineering/stacks/react.md) | Аналогично. |
-| [`docs/engineering/stacks/postgresql.md`](../../../docs/engineering/stacks/postgresql.md) | Аналогично (версия, миграции, политика локального доступа или `N/A`). |
-| [`docs/engineering/stacks/README.md`](../../../docs/engineering/stacks/README.md) | Проверить согласованность ссылок; при добавлении нового стека — обновить (иначе не трогать). |
+| [`docs/engineering/stacks/README.md`](../../../docs/engineering/stacks/README.md) | Ссылки только на стеки, реально используемые в репозитории (в этом проекте — только `dotnet.md`). |
+| Доп. стеки (`go`, `typescript`, `react`, `postgresql`, …) | Создавать `stacks/<stack>.md` и роль `developer-<stack>` **только** при появлении кода этого стека; иначе не добавлять. |
 | [`docs/engineering/devops.md`](../../../docs/engineering/devops.md) | Снять «немые» TODO: Docker/compose (да/нет/N/A), путь CI config, обязательные jobs, deploy flow, smoke — факт или явное `N/A` с причиной. Согласовать с блоком 2. |
 
 Файлы [`docs/engineering/branching.md`](../../../docs/engineering/branching.md), [`docs/engineering/delivery.md`](../../../docs/engineering/delivery.md), [`docs/engineering/coding-standards.md`](../../../docs/engineering/coding-standards.md), [`docs/engineering/testing.md`](../../../docs/engineering/testing.md), [`docs/engineering/README.md`](../../../docs/engineering/README.md) — **не переписывать** при bootstrap; только при несовпадении имён веток с `git-remotes.md` поправить перекрёстные формулировки.

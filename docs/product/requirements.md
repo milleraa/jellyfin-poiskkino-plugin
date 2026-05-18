@@ -21,10 +21,10 @@
 - **Ошибки API:** обработка 403, 429, 404, таймаутов; кэш 404 на 1 ч
 - **Потокобезопасность:** `ConcurrentDictionary`, `SemaphoreSlim`, `IHttpClientFactory`
 - **Совместимость:** .NET 9 (`net9.0`), Jellyfin plugin API 10.11.x
-- **SLA / uptime:** не применимо (плагин внутри Jellyfin; доступность зависит от Jellyfin и API ПоискКино) — детали SLA у Стейхолдера при необходимости
+- **SLA / uptime:** не применимо (плагин внутри Jellyfin); лимит API **200 запросов/сутки** достаточен (подтверждено Стейхолдером, 2026-05-18)
 
 ## Вне scope (текущий горизонт)
 
 - Провайдер персон (`IPersonMetadataProvider`) — см. «Планируемые возможности» в README
 - Собственный UI вне Jellyfin, отдельный backend, БД
-- CI/CD и автоматические релизы в репозитории (не найдено — см. `docs/environments/ci-cd.md`)
+- Автоматические GitHub Releases / каталог Jellyfin (пока вне scope; CI Actions для сборки DLL — запланировано)

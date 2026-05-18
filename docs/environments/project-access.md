@@ -1,16 +1,16 @@
 # Project access
 
-*Источники: `git remote -v` (GitHub, namespace `milleraa`).*
+*Источники: GitHub `milleraa/jellyfin-poiskkino-plugin`, подтверждение Стейхолдера (2026-05-18).*
 
 ## Учётные записи
 
 - **Git hosting:** GitHub, репозиторий `milleraa/jellyfin-poiskkino-plugin`
-- **Разработчики / Maintainer:** *уточнить у Стейхолдера (список collaborators)*
-- **CI bot:** не настроен (CI config в репозитории не найден)
+- **Write access:** только Стейхолдер (владелец репозитория)
+- **CI bot:** будет использоваться `GITHUB_TOKEN` в GitHub Actions после настройки workflow (планируется)
 
 ## Политика
 
-- **Двухфакторная аутентификация:** рекомендуется на GitHub; факт для организации — *уточнить*
-- **Guest / outside collaborators:** *уточнить*
+- **Collaborators / guest:** нет — единоличный репозиторий
+- **2FA / org policy:** на усмотрение владельца аккаунта GitHub (отдельная org не используется)
 
 Секреты не коммитить — см. [secrets-policy](secrets-policy.md).

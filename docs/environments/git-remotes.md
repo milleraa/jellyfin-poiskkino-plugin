@@ -1,6 +1,6 @@
 # Git remotes
 
-*Источники: `git remote -v`, `git branch -a` (bootstrap 2026-05-18).*
+*Источники: `git remote -v`, подтверждение Стейхолдера (2026-05-18).*
 
 | Поле | Значение |
 |------|----------|
@@ -8,9 +8,10 @@
 | **Repo URL (HTTPS)** | https://github.com/milleraa/jellyfin-poiskkino-plugin |
 | **Repo URL (SSH)** | git@github.com:milleraa/jellyfin-poiskkino-plugin.git |
 | **Default branch** | `main` |
-| **Develop branch** | нет в репозитории (только `main`) |
-| **Protected branches** | *уточнить у Стейхолдера* |
-| **PR/MR target** | по умолчанию `main` (единственная долгоживущая ветка; политика feature/hotfix — см. [branching](../engineering/branching.md)) |
+| **Develop branch** | не используется (только `main`) |
+| **Protected branches** | нет |
+| **PR/MR target** | `main`; feature/hotfix-ветки → PR в `main` (см. [branching](../engineering/branching.md)) |
+| **Приёмка PR/MR** | Стейхолдер (единственный maintainer) |
 
 ## Конвенции имён веток
 

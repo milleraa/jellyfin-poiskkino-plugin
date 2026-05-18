@@ -32,7 +32,7 @@
 | Аналитик | `.cursor/agents/analyst.md` |
 | Архитектор | `.cursor/agents/architect.md` |
 | Техлид | `.cursor/agents/tech-lead.md` |
-| Разработчики (по стеку) | `.cursor/agents/developer-*.md` |
+| Разработчик (.NET) | `.cursor/agents/developer-csharp.md` |
 | DevOps | `.cursor/agents/devops.md` |
 | QA (Playwright) | `.cursor/agents/qa-playwright.md` |
 | Финализатор | `.cursor/agents/finalizer.md` |
