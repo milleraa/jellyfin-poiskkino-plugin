@@ -1,0 +1,11 @@
+---
+description: Соглашения для разработки на C# в этом репозитории.
+globs: "**/*.cs, **/*.csproj, **/*.sln"
+alwaysApply: false
+---
+
+# C# developer hints
+
+- Следуй `@docs/engineering/coding-standards.md`, `@docs/engineering/stack-notes.md` и `@docs/engineering/stacks/dotnet.md`.
+- Именование: PascalCase для типов/public API; приватные поля — согласованный стиль проекта после bootstrap.
+- DI, явные интерфейсы для инфраструктуры; async с `CancellationToken` где уместно.

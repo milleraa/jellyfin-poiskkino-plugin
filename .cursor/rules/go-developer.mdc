@@ -1,0 +1,11 @@
+---
+description: Соглашения для разработки на Go в этом репозитории.
+globs: "**/*.go, go.mod, go.sum"
+alwaysApply: false
+---
+
+# Go developer hints
+
+- Следуй `@docs/engineering/coding-standards.md`, `@docs/engineering/stack-notes.md` и `@docs/engineering/stacks/go.md`.
+- Обработка `ctx`, явные ошибки; избегай паник в библиотечном коде.
+- `gofmt` / принятый линтер команды — после появления `Makefile` или CI зафиксируй в `@docs/engineering/stacks/go.md`.

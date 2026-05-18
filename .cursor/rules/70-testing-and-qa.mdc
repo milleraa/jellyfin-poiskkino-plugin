@@ -1,0 +1,11 @@
+---
+description: Тестирование и QA — уровни тестов, Playwright, evidence в docs.
+alwaysApply: false
+---
+
+# Тестирование и QA
+
+- Уровни: unit → integration → e2e по необходимости; для UI и web-потоков используй **Playwright** где применимо.
+- Evidence прогонов и заметки QA: `@docs/qa/test-runs.md`, детали фичи — `qa.md` в папке фичи/hotfix.
+- QA не принимает работу без прохождения приёмки **Техлидом** и закрытого DevOps impact check (см. процесс).
+- Стратегия: `@docs/qa/test-strategy.md`, `@docs/qa/playwright.md`.

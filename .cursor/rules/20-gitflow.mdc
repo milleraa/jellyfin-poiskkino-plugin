@@ -1,0 +1,16 @@
+---
+description: GitFlow — ветки, PR/MR, коммиты; безопасность git-команд.
+alwaysApply: false
+---
+
+# GitFlow
+
+- Ветки: `main` (прод), `develop` (интеграция), `feature/*`, `fix/*`, `release/*`, `hotfix/*`. Имена `main`/`develop` могут отличаться — сверяйся с `@docs/environments/git-remotes.md` и `@docs/engineering/branching.md`.
+- Работа ведётся в **feature/fix/hotfix** ветках и ровно одном `git worktree` на feature/hotfix; в защищённые ветки только через **PR/MR**.
+- Задачи выполняются строго последовательно в одном worktree; task-branches и task-worktrees не используй.
+- После своего шага каждая роль делает локальный commit без push, если меняла файлы.
+- Push, создание PR/MR, commit ссылки на PR/MR и повторный push выполняет только **Финализатор**.
+- Сообщения коммитов: краткий императив; при необходимости префикс `feat:`, `fix:`, `docs:` и т.д.
+- Финализатор удаляет локальный worktree только после повторного push со ссылкой на PR/MR; branch/remote branch не удаляй до merge/close PR/MR.
+- Не выполняй деструктивные git-команды (`push --force` на общие ветки, `reset --hard` чужой истории) без явного подтверждения Стейхолдера.
+- Подробности и исключения: `@docs/engineering/branching.md`.

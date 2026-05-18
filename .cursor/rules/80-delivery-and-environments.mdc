@@ -1,0 +1,13 @@
+---
+description: PR/MR как приёмка, CI, окружения GitLab/Gitea — сверка с docs/environments.
+alwaysApply: false
+---
+
+# Доставка и окружения
+
+- Работа для Стейхолдера считается готовой при **готовом PR/MR**: summary, test plan, ссылки на задачу/фичу/ADR, риски, статус CI.
+- `pr-mr-ready` — это review-состояние, не финальный `accepted`; rejected PR/MR возвращай Оркестратору через `.cursor/skills/pr-mr-rework/SKILL.md`.
+- Сведения о **GitLab/Gitea**, remote, ветках, CI/CD, деплое и секретах (без значений): `@docs/environments/`.
+- Для Docker/CI/CD/deploy/infra изменений привлекай **DevOps** и обновляй `@docs/engineering/devops.md`.
+- Если данных нет — спроси Стейхолдера или пометь blocker в `status.md`; не выдумывай URL и токены.
+- Подробности: `@docs/engineering/delivery.md`, `@docs/environments/git-remotes.md`, `@docs/environments/ci-cd.md`.

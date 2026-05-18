@@ -1,0 +1,12 @@
+---
+description: DevOps и инфраструктура: Docker, compose, Helm/Kubernetes, CI/CD, deploy scripts.
+globs: "Dockerfile, **/Dockerfile, **/Dockerfile.*, docker-compose*.yml, docker-compose*.yaml, **/docker-compose*.yml, **/docker-compose*.yaml, .gitlab-ci.yml, **/.gitlab-ci.yml, .github/workflows/**/*.yml, .github/workflows/**/*.yaml, .gitea/workflows/**/*.yml, .gitea/workflows/**/*.yaml, charts/**, helm/**, k8s/**, kubernetes/**, deploy/**, infra/**, ops/**, scripts/deploy/**, **/Chart.yaml, **/values*.yaml, **/*.tf"
+alwaysApply: false
+---
+
+# DevOps
+
+- Следуй `@docs/engineering/devops.md`, `@docs/environments/README.md` и `@docs/engineering/delivery.md`.
+- Не коммить секреты, токены и приватные kubeconfig; документируй только имена переменных и ссылки на secret storage.
+- Для CI/CD изменений указывай обязательные checks, артефакты, условия запуска jobs и способ диагностики.
+- Для Docker/Helm/deploy изменений фиксируй команды локальной проверки, rollback/deploy notes и влияние на окружения.

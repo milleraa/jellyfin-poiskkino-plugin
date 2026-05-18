@@ -1,0 +1,15 @@
+---
+description: Формат backlog, feature-sliced папки, status.md, шаблоны задач.
+globs: "docs/backlog/**/*.md, docs/tasks/**/*.md"
+alwaysApply: false
+---
+
+# Backlog и задачи
+
+- Каждая фича: `docs/backlog/features/<feature-name>/` с **`status.md`** как единственной «дошкой» стадии для Оркестратора.
+- Каждый hotfix: `docs/backlog/hotfixes/<hotfix-name>/` — то же.
+- Техлид создаёт файлы задач в `tasks/` внутри папки фичи/hotfix; в `status.md` — ссылки и статусы.
+- Агрегаторы: `docs/tasks/active`, `blocked`, `done` — индексы, не замена папки фичи.
+- Шаблоны: `@docs/backlog/task-template.md`, `@docs/backlog/features/feature-template/`.
+- После принятия Стейхолдером или merge PR/MR Финализатор переносит папку в `docs/archive/features/` или `docs/archive/hotfixes/`.
+- Если PR/MR не принят, Оркестратор возвращает работу в `rework` через `.cursor/skills/pr-mr-rework/SKILL.md`; папка остаётся в `docs/backlog/...`.

@@ -1,0 +1,11 @@
+---
+description: Соглашения для TypeScript (не React) в этом репозитории.
+globs: "**/*.ts, **/*.mts, **/*.cts"
+alwaysApply: false
+---
+
+# TypeScript developer hints
+
+- Исключи `**/*.tsx` — для компонентов см. правило react-developer.
+- Строгий тип там, где включён `strict`; избегай `any` без причины.
+- Следуй `@docs/engineering/coding-standards.md`, `@docs/engineering/stack-notes.md` и `@docs/engineering/stacks/typescript.md`.
