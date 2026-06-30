@@ -254,6 +254,24 @@ public class PoiskKinoMovieDtoV1_4
     public PoiskKinoImage? Logo { get; set; }
 
     /// <summary>
+    /// Gets or sets the audience data.
+    /// </summary>
+    [JsonPropertyName("audience")]
+    public List<PoiskKinoAudience>? Audience { get; set; }
+
+    /// <summary>
+    /// Gets or sets the lists/collections the title belongs to.
+    /// </summary>
+    [JsonPropertyName("lists")]
+    public List<string>? Lists { get; set; }
+
+    /// <summary>
+    /// Gets or sets the networks/production companies.
+    /// </summary>
+    [JsonPropertyName("networks")]
+    public PoiskKinoNetworks? Networks { get; set; }
+
+    /// <summary>
     /// Gets or sets the updated at timestamp.
     /// </summary>
     [JsonPropertyName("updatedAt")]

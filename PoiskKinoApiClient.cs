@@ -317,8 +317,7 @@ public class PoiskKinoApiClient
         {
             await _requestSemaphore.WaitAsync(cancellationToken);
             
-            // Согласно документации, параметр называется "number", а не "seasonNumber"
-            var url = $"/v1.4/season?movieId={movieId}&number={seasonNumber}";
+            var url = $"/v1.5/season?movieId={movieId}&number={seasonNumber}";
             var request = new HttpRequestMessage(HttpMethod.Get, url);
             request.Headers.Add("X-API-KEY", apiKey);
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
@@ -357,7 +356,7 @@ public class PoiskKinoApiClient
             }
 
             var content = await response.Content.ReadAsStringAsync(cancellationToken);
-            var seasonResponse = JsonSerializer.Deserialize<PoiskKinoSeasonResponse>(content, new JsonSerializerOptions
+            var seasonResponse = JsonSerializer.Deserialize<PoiskKinoSeasonCursorResponse>(content, new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
             });
