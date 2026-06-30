@@ -90,11 +90,18 @@ public class PoiskKinoApiClient
 
             var response = await _httpClient.SendAsync(request, cancellationToken);
 
+            if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            {
+                var errorMessage = await GetErrorMessageAsync(response, cancellationToken);
+                _logger.LogError("API key invalid or missing for {Title}: {Message}", title, errorMessage);
+                return null;
+            }
+
             if (response.StatusCode == System.Net.HttpStatusCode.TooManyRequests ||
                 response.StatusCode == System.Net.HttpStatusCode.Forbidden)
             {
                 var errorMessage = await GetErrorMessageAsync(response, cancellationToken);
-                _logger.LogWarning("API limit exceeded ({StatusCode}) for {Title}: {Message}", (int)response.StatusCode, title, errorMessage);
+                _logger.LogWarning("API rate limit exceeded ({StatusCode}) for {Title}: {Message}", (int)response.StatusCode, title, errorMessage);
                 return null;
             }
 
@@ -199,11 +206,18 @@ public class PoiskKinoApiClient
 
             var response = await _httpClient.SendAsync(request, cancellationToken);
 
+            if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            {
+                var errorMessage = await GetErrorMessageAsync(response, cancellationToken);
+                _logger.LogError("API key invalid or missing for movie ID {Id}: {Message}", id, errorMessage);
+                return null;
+            }
+
             if (response.StatusCode == System.Net.HttpStatusCode.TooManyRequests ||
                 response.StatusCode == System.Net.HttpStatusCode.Forbidden)
             {
                 var errorMessage = await GetErrorMessageAsync(response, cancellationToken);
-                _logger.LogWarning("API limit exceeded ({StatusCode}) for movie ID {Id}: {Message}", (int)response.StatusCode, id, errorMessage);
+                _logger.LogWarning("API rate limit exceeded ({StatusCode}) for movie ID {Id}: {Message}", (int)response.StatusCode, id, errorMessage);
                 return null;
             }
 
@@ -311,11 +325,18 @@ public class PoiskKinoApiClient
 
             var response = await _httpClient.SendAsync(request, cancellationToken);
 
+            if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            {
+                var errorMessage = await GetErrorMessageAsync(response, cancellationToken);
+                _logger.LogError("API key invalid or missing for season {SeasonNumber} of movie ID {MovieId}: {Message}", seasonNumber, movieId, errorMessage);
+                return null;
+            }
+
             if (response.StatusCode == System.Net.HttpStatusCode.TooManyRequests ||
                 response.StatusCode == System.Net.HttpStatusCode.Forbidden)
             {
                 var errorMessage = await GetErrorMessageAsync(response, cancellationToken);
-                _logger.LogWarning("API limit exceeded ({StatusCode}) for season {SeasonNumber} of movie ID {MovieId}: {Message}", (int)response.StatusCode, seasonNumber, movieId, errorMessage);
+                _logger.LogWarning("API rate limit exceeded ({StatusCode}) for season {SeasonNumber} of movie ID {MovieId}: {Message}", (int)response.StatusCode, seasonNumber, movieId, errorMessage);
                 return null;
             }
 

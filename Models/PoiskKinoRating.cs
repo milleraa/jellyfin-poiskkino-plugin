@@ -10,8 +10,8 @@ public class PoiskKinoRating
     /// <summary>
     /// Gets or sets the Kinopoisk rating (0-10 scale).
     /// </summary>
-    [JsonPropertyName("kinopoisk")]
-    public double? Kinopoisk { get; set; }
+    [JsonPropertyName("kp")]
+    public double? Kp { get; set; }
 
     /// <summary>
     /// Gets or sets the IMDb rating (0-10 scale).

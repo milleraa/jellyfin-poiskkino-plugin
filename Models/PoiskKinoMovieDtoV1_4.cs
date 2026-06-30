@@ -128,6 +128,12 @@ public class PoiskKinoMovieDtoV1_4
     public int? MovieLength { get; set; }
 
     /// <summary>
+    /// Gets or sets whether this is a series.
+    /// </summary>
+    [JsonPropertyName("isSeries")]
+    public bool? IsSeries { get; set; }
+
+    /// <summary>
     /// Gets or sets the series length in minutes.
     /// </summary>
     [JsonPropertyName("seriesLength")]
@@ -138,6 +144,126 @@ public class PoiskKinoMovieDtoV1_4
     /// </summary>
     [JsonPropertyName("totalSeriesLength")]
     public int? TotalSeriesLength { get; set; }
+
+    /// <summary>
+    /// Gets or sets the alternative names.
+    /// </summary>
+    [JsonPropertyName("names")]
+    public List<PoiskKinoName>? Names { get; set; }
+
+    /// <summary>
+    /// Gets or sets the numeric type.
+    /// </summary>
+    [JsonPropertyName("typeNumber")]
+    public int? TypeNumber { get; set; }
+
+    /// <summary>
+    /// Gets or sets the status.
+    /// </summary>
+    [JsonPropertyName("status")]
+    public string? Status { get; set; }
+
+    /// <summary>
+    /// Gets or sets the facts.
+    /// </summary>
+    [JsonPropertyName("facts")]
+    public List<PoiskKinoFactInMovie>? Facts { get; set; }
+
+    /// <summary>
+    /// Gets or sets the MPAA rating.
+    /// </summary>
+    [JsonPropertyName("ratingMpaa")]
+    public string? RatingMpaa { get; set; }
+
+    /// <summary>
+    /// Gets or sets the age rating.
+    /// </summary>
+    [JsonPropertyName("ageRating")]
+    public int? AgeRating { get; set; }
+
+    /// <summary>
+    /// Gets or sets the review info.
+    /// </summary>
+    [JsonPropertyName("reviewInfo")]
+    public PoiskKinoReviewInfo? ReviewInfo { get; set; }
+
+    /// <summary>
+    /// Gets or sets the budget.
+    /// </summary>
+    [JsonPropertyName("budget")]
+    public PoiskKinoCurrencyValue? Budget { get; set; }
+
+    /// <summary>
+    /// Gets or sets the fees.
+    /// </summary>
+    [JsonPropertyName("fees")]
+    public PoiskKinoFees? Fees { get; set; }
+
+    /// <summary>
+    /// Gets or sets the premiere dates.
+    /// </summary>
+    [JsonPropertyName("premiere")]
+    public PoiskKinoPremiere? Premiere { get; set; }
+
+    /// <summary>
+    /// Gets or sets the similar movies.
+    /// </summary>
+    [JsonPropertyName("similarMovies")]
+    public List<PoiskKinoLinkedMovie>? SimilarMovies { get; set; }
+
+    /// <summary>
+    /// Gets or sets the sequels and prequels.
+    /// </summary>
+    [JsonPropertyName("sequelsAndPrequels")]
+    public List<PoiskKinoLinkedMovie>? SequelsAndPrequels { get; set; }
+
+    /// <summary>
+    /// Gets or sets the watchability info.
+    /// </summary>
+    [JsonPropertyName("watchability")]
+    public PoiskKinoWatchability? Watchability { get; set; }
+
+    /// <summary>
+    /// Gets or sets the release years (for TV series).
+    /// </summary>
+    [JsonPropertyName("releaseYears")]
+    public List<PoiskKinoYearRange>? ReleaseYears { get; set; }
+
+    /// <summary>
+    /// Gets or sets the top 10 position.
+    /// </summary>
+    [JsonPropertyName("top10")]
+    public int? Top10 { get; set; }
+
+    /// <summary>
+    /// Gets or sets the top 250 position.
+    /// </summary>
+    [JsonPropertyName("top250")]
+    public int? Top250 { get; set; }
+
+    /// <summary>
+    /// Gets or sets whether tickets are on sale.
+    /// </summary>
+    [JsonPropertyName("ticketsOnSale")]
+    public bool? TicketsOnSale { get; set; }
+
+    /// <summary>
+    /// Gets or sets the logo image.
+    /// </summary>
+    [JsonPropertyName("logo")]
+    public PoiskKinoImage? Logo { get; set; }
+
+    /// <summary>
+    /// Gets or sets the updated at timestamp.
+    /// </summary>
+    [JsonPropertyName("updatedAt")]
+    public DateTime? UpdatedAt { get; set; }
+
+    /// <summary>
+    /// Gets or sets the created at timestamp.
+    /// </summary>
+    [JsonPropertyName("createdAt")]
+    public DateTime? CreatedAt { get; set; }
 }
 
 

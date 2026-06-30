@@ -50,10 +50,20 @@ public class PoiskKinoEpisode
     public PoiskKinoImage? Still { get; set; }
 
     /// <summary>
-    /// Compatibility property: returns AirDate parsed as DateTime (deprecated, use AirDate instead).
+    /// Gets or sets the episode date (deprecated field from API, use AirDate instead).
+    /// </summary>
+    [JsonPropertyName("date")]
+    public string? ApiDate { get; set; }
+
+    /// <summary>
+    /// Gets or sets the episode date parsed as DateTime (prefer AirDate over this).
     /// </summary>
     [JsonIgnore]
-    public DateTime? Date => !string.IsNullOrEmpty(AirDate) && DateTime.TryParse(AirDate, out var date) ? date : null;
+    public DateTime? Date => !string.IsNullOrEmpty(AirDate) && DateTime.TryParse(AirDate, out var date) 
+        ? date 
+        : !string.IsNullOrEmpty(ApiDate) && DateTime.TryParse(ApiDate, out var apiDate) 
+            ? apiDate 
+            : null;
 }
 
 

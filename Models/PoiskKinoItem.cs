@@ -121,6 +121,65 @@ public class PoiskKinoItem
     [JsonPropertyName("totalSeriesLength")]
     public int? TotalSeriesLength { get; set; }
 
+    /// <summary>
+    /// Gets or sets the alternative names.
+    /// </summary>
+    [JsonPropertyName("names")]
+    public List<PoiskKinoName>? Names { get; set; }
+
+    /// <summary>
+    /// Gets or sets the logo image.
+    /// </summary>
+    [JsonPropertyName("logo")]
+    public PoiskKinoImage? Logo { get; set; }
+
+    /// <summary>
+    /// Gets or sets the release years (for TV series).
+    /// </summary>
+    [JsonPropertyName("releaseYears")]
+    public List<PoiskKinoYearRange>? ReleaseYears { get; set; }
+
+    /// <summary>
+    /// Gets or sets the MPAA rating.
+    /// </summary>
+    [JsonPropertyName("ratingMpaa")]
+    public string? RatingMpaa { get; set; }
+
+    /// <summary>
+    /// Gets or sets the age rating.
+    /// </summary>
+    [JsonPropertyName("ageRating")]
+    public int? AgeRating { get; set; }
+
+    /// <summary>
+    /// Gets or sets the top 10 position.
+    /// </summary>
+    [JsonPropertyName("top10")]
+    public int? Top10 { get; set; }
+
+    /// <summary>
+    /// Gets or sets the top 250 position.
+    /// </summary>
+    [JsonPropertyName("top250")]
+    public int? Top250 { get; set; }
+
+    /// <summary>
+    /// Gets or sets the numeric type.
+    /// </summary>
+    [JsonPropertyName("typeNumber")]
+    public int? TypeNumber { get; set; }
+
+    /// <summary>
+    /// Gets or sets the status.
+    /// </summary>
+    [JsonPropertyName("status")]
+    public string? Status { get; set; }
+
+    /// <summary>
+    /// Gets or sets whether tickets are on sale.
+    /// </summary>
+    [JsonPropertyName("ticketsOnSale")]
+    public bool? TicketsOnSale { get; set; }
 }
 
 

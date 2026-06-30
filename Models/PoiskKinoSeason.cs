@@ -72,6 +72,18 @@ public class PoiskKinoSeason
     /// </summary>
     [JsonPropertyName("airDate")]
     public string? AirDate { get; set; }
+
+    /// <summary>
+    /// Gets or sets the updated at timestamp.
+    /// </summary>
+    [JsonPropertyName("updatedAt")]
+    public DateTime? UpdatedAt { get; set; }
+
+    /// <summary>
+    /// Gets or sets the created at timestamp.
+    /// </summary>
+    [JsonPropertyName("createdAt")]
+    public DateTime? CreatedAt { get; set; }
 }
 
 

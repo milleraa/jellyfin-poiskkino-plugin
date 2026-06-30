@@ -245,9 +245,9 @@ public class PoiskKinoMovieProvider(
                 {
                     result.Item.CommunityRating = (float)movieData.Rating.Imdb.Value;
                 }
-                if (movieData.Rating.Kinopoisk.HasValue)
+                if (movieData.Rating.Kp.HasValue)
                 {
-                    result.Item.CriticRating = (float)movieData.Rating.Kinopoisk.Value;
+                    result.Item.CriticRating = (float)movieData.Rating.Kp.Value;
                 }
             }
 
