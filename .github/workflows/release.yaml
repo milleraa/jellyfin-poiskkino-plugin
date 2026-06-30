@@ -1,0 +1,74 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
+
+      - name: Extract version from tag
+        id: version
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Using version: $VERSION"
+
+      - name: Publish
+        run: |
+          dotnet publish PoiskKinoMetadataPlugin/PoiskKinoMetadataPlugin.csproj \
+            -c Release \
+            -o ./publish \
+            -p:Version=${{ steps.version.outputs.version }}
+
+      - name: Prepare archive
+        run: |
+          mkdir -p ./artifact
+          cp ./publish/PoiskKinoMetadataPlugin.dll ./artifact/
+          cp ./publish/PoiskKinoMetadataPlugin.pdb ./artifact/
+          cp ./publish/PoiskKinoMetadataPlugin.xml ./artifact/
+          cd ./artifact
+          ARCHIVE="PoiskKinoMetadataPlugin-${{ steps.version.outputs.version }}.zip"
+          zip -r "$ARCHIVE" ./*
+          md5sum "$ARCHIVE" > "$ARCHIVE.md5"
+          sha256sum "$ARCHIVE" > "$ARCHIVE.sha256"
+          echo "archive=$ARCHIVE" >> "$GITHUB_OUTPUT"
+          cd ..
+        id: archive
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: PoiskKino Metadata Plugin ${{ steps.version.outputs.version }}
+          tag_name: ${{ github.ref_name }}
+          body: |
+            ## PoiskKino Metadata Plugin ${{ steps.version.outputs.version }}
+
+            ### Установка
+            1. Скачайте архив `PoiskKinoMetadataPlugin-${{ steps.version.outputs.version }}.zip`
+            2. Распакуйте в директорию плагинов Jellyfin:
+               - Linux: `/var/lib/jellyfin/plugins/PoiskKinoMetadataPlugin/`
+               - Windows: `%ProgramData%\Jellyfin\Server\plugins\PoiskKinoMetadataPlugin\`
+               - Docker: `/config/plugins/PoiskKinoMetadataPlugin/`
+            3. Перезапустите Jellyfin
+
+            ### Содержимое архива
+            - `PoiskKinoMetadataPlugin.dll` — плагин
+            - `PoiskKinoMetadataPlugin.pdb` — отладочные символы
+            - `PoiskKinoMetadataPlugin.xml` — документация API
+          files: |
+            ./artifact/*
+          draft: false
+          prerelease: false
