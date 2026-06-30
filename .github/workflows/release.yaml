@@ -36,12 +36,11 @@ jobs:
       - name: Prepare archive
         run: |
           mkdir -p ./artifact
-          cp ./publish/PoiskKinoMetadataPlugin.dll ./artifact/
-          cp ./publish/PoiskKinoMetadataPlugin.pdb ./artifact/
-          cp ./publish/PoiskKinoMetadataPlugin.xml ./artifact/
-          cd ./artifact
           ARCHIVE="PoiskKinoMetadataPlugin-${{ steps.version.outputs.version }}.zip"
-          zip -r "$ARCHIVE" ./*
+          cd ./publish
+          zip -r "../artifact/$ARCHIVE" ./*
+          cd ..
+          cd ./artifact
           md5sum "$ARCHIVE" > "$ARCHIVE.md5"
           sha256sum "$ARCHIVE" > "$ARCHIVE.sha256"
           echo "archive=$ARCHIVE" >> "$GITHUB_OUTPUT"
