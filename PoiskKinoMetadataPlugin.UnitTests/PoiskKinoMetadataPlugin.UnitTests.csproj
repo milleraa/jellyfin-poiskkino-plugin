@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\PoiskKinoMetadataPlugin.csproj" />
+    <ProjectReference Include="..\PoiskKinoMetadataPlugin\PoiskKinoMetadataPlugin.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,0 +1,6 @@
+<Solution>
+  <Folder Name="/PoiskKinoMetadataPlugin.UnitTests/">
+    <Project Path="PoiskKinoMetadataPlugin.UnitTests/PoiskKinoMetadataPlugin.UnitTests.csproj" />
+  </Folder>
+  <Project Path="PoiskKinoMetadataPlugin/PoiskKinoMetadataPlugin.csproj" />
+</Solution>
