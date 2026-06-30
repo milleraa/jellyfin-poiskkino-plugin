@@ -1,0 +1,1 @@
+Read https://api.poiskkino.dev/llms.txt first
