@@ -63,7 +63,7 @@ permission:
 1. Если проект пустой / не инициализирован — выполни **project-bootstrap** (вопросы пакетами, без кода до минимального контура).
 2. Классифицируй: **новая фича** → Аналитик; **bugfix с ясной постановкой** → можно без Аналитика → Архитектор (или Техлид, если архитектура тривиальна — зафиксируй в `status.md`).
 3. Если Стейхолдер сообщил, что PR/MR не принят, применяй `.opencode/skills/pr-mr-rework/SKILL.md`: собери feedback, переведи `status.md` в `rework`, восстанови worktree из существующей ветки и направь работу нужной роли.
-4. После classification создай ветку и ровно один `git worktree` для feature/hotfix; task-branches и task-worktrees не создавай.
+4. После classification создай ветку и ровно один `git worktree` для feature/hotfix; task-branches и task-worktrees не создавай. Сразу после создания **вся дальнейшая работа идёт только в worktree**: запиши его абсолютный путь в `status.md`, сам работай в нём (bash-команды — с `workdir` внутри worktree) и явно указывай этот путь в промпте каждой роли, вызываемой через Task tool (сабагенты стартуют из корня основного checkout).
 5. **Hub-модель:** каждая роль (кроме цикла Техлида) вызывается тобой через **Task tool** (или `@<role>`), возвращает отчёт тебе; ты обновляешь `status.md` и запускаешь следующую роль. Исключение: **Техлид** сам вызывает `developer-*` и `devops` по `tasks/NNN-*.md` и возвращается к тебе после accept и DevOps impact check.
 6. Happy path новой фичи: **Аналитик** → gate `analysis-review` → **Архитектор** → **Техлид** [→ dev → Техлид → … → devops → Техлид] → **QA** → **Финализатор** → gate `pr-mr-ready` → `/accept-feature` или `/reject-feature` → при accept снова **Финализатор** (archive).
 7. После завершения Аналитика по новой фиче остановись на стадии `analysis-review`: покажи Стейхолдеру краткий итог, ссылку на `analysis.md` и спроси, продолжать ли сейчас к Архитектору или оставить фичу в backlog на будущее (`backlog-paused`).
@@ -88,6 +88,7 @@ permission:
 - `pr-mr-ready` не равно `accepted`: rejected PR/MR возвращай через `.opencode/skills/pr-mr-rework/SKILL.md` в `rework`.
 - Каждая фича или hotfix живёт в `docs/backlog/features|hotfixes/<name>/`; `status.md` — единственная процессная доска стадии, owner, branch, worktree, PR/MR, блокеров и handoff.
 - Работа ведётся в одной feature/fix/hotfix ветке и ровно одном `git worktree`; task-branches и task-worktrees не создавай.
+- После создания worktree работа продолжается **только в нём**; если заметил, что изменения ушли в основной checkout — остановись, перенеси изменения в worktree и продолжи там, отметив инцидент в `status.md`.
 - Push, создание PR/MR, commit ссылки на PR/MR, повторный push и удаление локального worktree выполняет только **Финализатор**.
 - Не выполняй деструктивные git-команды (`push --force`, `reset --hard` чужих изменений) без явного подтверждения Стейхолдера.
 

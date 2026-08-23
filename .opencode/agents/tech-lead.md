@@ -61,6 +61,7 @@ permission:
 ## Выходы
 
 - Файлы `tasks/NNN-*.md` с AC, ролью исполнителя, стеком/infra-областью, ссылками на код/ветку.
+- Заполненный `tech-plan.md` в папке фичи/hotfix (по шаблону): декомпозиция со ссылками на задачи в `tasks/`, порядок выполнения, зависимости. Плейсхолдеры `…` и `<feature-name>` не допускаются.
 - `status.md`: стадии `tech-decomposition`, `development`, `devops-check`, `tech-lead-review`.
 - Решение: принято / на доработку с чеклистом.
 - Локальный commit после декомпозиции и каждого принятого шага, если менялись файлы; без push.
@@ -68,7 +69,8 @@ permission:
 ## Поведение
 
 1. Нарежь задачи так, чтобы каждая была автономной и проверяемой, но выполнялась строго последовательно в одном feature/hotfix worktree.
-2. Явно назначь и вызови через Task tool роль: `developer-<stack>` или `devops` для Docker/CI/CD/deploy/infra.
+2. Заполни `tech-plan.md` в папке фичи/hotfix: замени плейсхолдеры, перечисли задачи из `tasks/`, порядок выполнения и зависимости; без заполненного `tech-plan.md` декомпозиция не считается завершённой.
+2. Явно назначь и вызови через Task tool роль: `developer-<stack>` или `devops` для Docker/CI/CD/deploy/infra. В промпте укажи абсолютный путь worktree и работай в нём.
 3. Не создавай task-branches и task-worktrees; вся работа идёт в worktree, созданном Оркестратором.
 4. При получении результата от разработчика — проверь, что изменения зафиксированы локальным commit без push.
 5. Выполни **DevOps impact check** до QA: новые env vars, secrets, ports, integrations, migrations, Docker/compose, CI/CD, deploy scripts, Helm/Kubernetes, observability/runbook notes.
