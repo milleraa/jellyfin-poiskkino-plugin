@@ -6,12 +6,12 @@
 
 | Поле | Значение |
 |------|----------|
-| **Стадия** | `qa` → pass; готово к `finalization` |
-| **Owner** | `Orchestrator` |
+| **Стадия** | `pr-mr-ready` (gate: решение Стейхолдера) |
+| **Owner** | `Stakeholder` |
 | **Worktree** | `/home/alex/src/my/jellyfin-metadata-plugin-api-v15` |
-| **Ветка** | `feature/api-v1-5-upgrade` |
-| **PR/MR** | _нет_ |
-| **Commit со ссылкой на PR/MR** | _нет_ |
+| **Ветка** | `feature/api-v1-5-upgrade` (pushed в origin) |
+| **PR/MR** | https://github.com/milleraa/jellyfin-poiskkino-plugin/pull/2 |
+| **Commit со ссылкой на PR/MR** | см. [finalization.md](finalization.md) |
 | **Блокеры** | _нет_ |
 
 ### Классификация (intake)
@@ -74,6 +74,15 @@
 | **Rework tasks** | _ссылки на tasks/_ |
 
 ## Changelog (handoff)
+
+### 2026-08-23 — Финализатор: PR открыт, стадия pr-mr-ready
+
+- Локально перепроверено перед push: `dotnet test` — 160 passed / 0 failed; рабочее дерево чистое, все ролевые шаги в коммитах.
+- Push ветки `feature/api-v1-5-upgrade` в origin (10 коммитов поверх origin/main).
+- Создан **PR #2** (base `main`): https://github.com/milleraa/jellyfin-poiskkino-plugin/pull/2 — summary миграции v1.4 → v1.5, test plan, ссылки на фичу/ADR-0001/QA pass, риски (нет smoke с реальным API-ключом; риск strict-валидации `&year=`, план изоляции в ADR-0001), статус CI.
+- Заполнен [finalization.md](finalization.md). Отдельный commit со ссылкой на PR/MR и повторный push выполнены.
+- Папка фичи остаётся в `docs/backlog/features/` до acceptance; worktree сохранён до решения Стейхолдера.
+- Handoff → **Стейхолдер**: gate `pr-mr-ready`, ожидается решение по PR #2.
 
 ### 2026-08-23 — QA: валидация пройдена (pass) → готово к finalization
 
