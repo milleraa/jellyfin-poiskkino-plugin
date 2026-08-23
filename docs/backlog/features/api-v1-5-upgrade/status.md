@@ -6,8 +6,8 @@
 
 | Поле | Значение |
 |------|----------|
-| **Стадия** | `analysis-review` |
-| **Owner** | `Orchestrator` / Stakeholder decision |
+| **Стадия** | `architecture` |
+| **Owner** | `Architect` |
 | **Worktree** | `/home/alex/src/my/jellyfin-metadata-plugin-api-v15` |
 | **Ветка** | `feature/api-v1-5-upgrade` |
 | **PR/MR** | _нет_ |
@@ -64,6 +64,14 @@
 | **Rework tasks** | _ссылки на tasks/_ |
 
 ## Changelog (handoff)
+
+### 2026-08-23 — Стейхолдер: gate `analysis-review` пройден, продолжаем
+
+- Решения по открытым вопросам analysis.md §8:
+  1. Переименование моделей `*V1_4` → **да**.
+  2. Параметр `year` в search → **передан Архитектору на проверку по спеке v1.5**: Стейхолдер сообщает, что параметра больше нет; уточнить — это фильтр поиска или поле ответа. Контекст: в Jellyfin при «Распознать» пользователь указывает год, и он должен продолжать участвовать в поиске метаданных.
+  3. Удаление мёртвого `PoiskKinoSeasonResponse.cs` → **да**.
+- Handoff → **Архитектор** (`.opencode/agents/architect.md`).
 
 ### 2026-08-23 — Аналитик: анализ завершён (`analysis.md`)
 
