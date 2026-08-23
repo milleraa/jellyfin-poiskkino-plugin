@@ -51,6 +51,18 @@
 | **Worktree restored from branch** | _нет / да_ |
 | **Rework tasks** | _ссылки на tasks/_ |
 
+## Process learning (неблокирующий triage)
+
+| Поле | Значение |
+|------|----------|
+| **Learning triage** | _not-triggered / suppressed / candidate_ |
+| **Class key** | _affected role + violated contract/gate + classification_ |
+| **Learning evidence** | _ссылки на PR/MR feedback / CI / сообщение Стейкхолдера_ |
+| **Suppression reason** | _нет / причина и evidence_ |
+| **Process review** | _нет / ссылка на process-review.md_ |
+
+Один unique reject получает `not-triggered` и не блокирует rework. `candidate` возможен только при двух или более unique comparable evidence-linked cases; изменения процесса выполняются только отдельным reviewed PR/MR. Правила: [process learning](../../../process/learning/README.md).
+
 ## Changelog (handoff)
 
 ### YYYY-MM-DD — создан шаблон

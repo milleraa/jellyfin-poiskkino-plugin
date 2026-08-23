@@ -52,6 +52,16 @@
 
 Цикл: `pr-mr-ready` → `rework` → нужная роль → `finalization` → `pr-mr-ready`. В архив переносится только принятая или merged работа.
 
+### Неблокирующее обучение по reject
+
+После полного `pr-mr-rework` Оркестратор может выполнить evidence-linked triage по [process learning](learning/README.md). Он фиксируется в case-level `status.md` и агрегированном [reject log](learning/reject-log.md), но не является новой стадией исходной feature/hotfix и не блокирует обычный rework.
+
+- Один unique reject: `not-triggered`; только обычный rework.
+- `candidate`: минимум два unique comparable evidence-linked cases из разных cases/independent attempts с идентичным `affected role + violated contract/gate + classification` и без suppression.
+- `suppressed`: insufficient/duplicate/noisy/external evidence, другой class key, opt-out Стейкхолдера или unsafe hypothesis; причина и evidence обязательны.
+- Candidate создаёт reviewable `process-review.md`, а не автоматическое изменение workflow.
+- Только regression verdict `quality improvement demonstrated` без safety regression может рекомендовать отдельную process-change feature/branch/worktree/PR. Исходный rework от этого PR не зависит.
+
 ## Где смотреть статус
 
 В папке фичи/hotfix: **`status.md`** — текущая стадия и owner.
