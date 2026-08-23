@@ -34,7 +34,7 @@
 | Система | Направление | Примечание |
 |---------|-------------|------------|
 | Jellyfin 10.9+ | host | plugin API `Jellyfin.Controller` / `Model` 10.11.5 |
-| api.poiskkino.dev | исходящий REST | поиск, метаданные; лимит 200 req/day |
+| api.poiskkino.dev | исходящий REST | эндпоинты v1.5: `movie/search`, `movie/{id}`, `season`; лимит 200 req/day |
 | TMDB (изображения) | опционально | `IgnoreTmdbImages` в конфиге |
 
 ## Данные

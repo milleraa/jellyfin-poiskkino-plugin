@@ -6,8 +6,8 @@
 
 | Поле | Значение |
 |------|----------|
-| **Стадия** | `development` |
-| **Owner** | `TechLead` → исполнение через developer-dotnet |
+| **Стадия** | `tech-lead-review` → accept; готово к `qa` |
+| **Owner** | `Orchestrator` |
 | **Worktree** | `/home/alex/src/my/jellyfin-metadata-plugin-api-v15` |
 | **Ветка** | `feature/api-v1-5-upgrade` |
 | **PR/MR** | _нет_ |
@@ -36,20 +36,26 @@
 
 | ID | Файл | Роль / стек | Статус |
 |----|------|-------------|--------|
-| 001 | [001-migrate-api-client-v15.md](tasks/001-migrate-api-client-v15.md) | developer-dotnet / ApiClient URL + тесты пути | in-progress |
-| 002 | [002-rename-models-cleanup.md](tasks/002-rename-models-cleanup.md) | developer-dotnet / переименование моделей, чистка, мёртвый код | pending |
-| 003 | [003-provider-year-filter.md](tasks/003-provider-year-filter.md) | developer-dotnet / локальный фильтр года по ADR-0001 + тесты | pending |
+| 001 | [001-migrate-api-client-v15.md](tasks/001-migrate-api-client-v15.md) | developer-dotnet / ApiClient URL + тесты пути | **done** (commit `73ea86f`) |
+| 002 | [002-rename-models-cleanup.md](tasks/002-rename-models-cleanup.md) | developer-dotnet / переименование моделей, чистка, мёртвый код | **done** (commit `8f724dd`) |
+| 003 | [003-provider-year-filter.md](tasks/003-provider-year-filter.md) | developer-dotnet / локальный фильтр года по ADR-0001 + тесты | **done** (commit `1abee81`) |
 
 Порядок выполнения строго последовательный: 001 → 002 → 003, один worktree, без task-branches.
 
+**Примечание по исполнению:** вызов субагента `developer-csharp` через Task tool заблокирован окружением (`subagent depth limit reached`). По fallback-правилу постановки задачи выполнены самим Техлидом в роли разработчика C#/.NET с соблюдением AC каждой задачи; каждый шаг принят Техлидом после прогона `dotnet test`. Для будущих фич рекомендуется поднять `subagent_depth`.
+
 ## DevOps impact check
+
+Проверено Техлидом 2026-08-23 после accept задач 001–003 (файлы: `.github/workflows/ci.yaml`, `release.yaml`, код плагина):
 
 | Вопрос | Результат |
 |--------|-----------|
-| Новые env vars / secrets | _нет / да_ |
-| Новые интеграции / порты / очереди / storage / jobs | _нет / да_ |
-| Docker / compose / CI/CD / deploy / Helm / K8s / observability | _нет / да_ |
-| DevOps-задача | _не нужна / ссылка_ |
+| Новые env vars / secrets | **нет** (API-ключ хранится в конфиге плагина как раньше; URL — не секрет) |
+| Новые интеграции / порты / очереди / storage / jobs | **нет** (те же 3 эндпоинта api.poiskkino.dev, только версии путей v1.4→v1.5) |
+| Docker / compose / CI/CD / deploy / Helm / K8s / observability | **нет** (`ci.yaml`/`release.yaml` не менялись: dotnet restore/build/test покрывают изменения; workflow-триггеры и шаги актуальны) |
+| DevOps-задача | **не нужна** |
+
+Вывод: DevOps-check закрыт без назначения задачи.
 
 ## QA
 
@@ -68,6 +74,23 @@
 | **Rework tasks** | _ссылки на tasks/_ |
 
 ## Changelog (handoff)
+
+### 2026-08-23 — Техлид: реализация принята, DevOps-check закрыт → готово к QA
+
+- Декомпозиция на 3 последовательные задачи ([tasks/](tasks/)); исполнение — fallback в роли developer-dotnet (см. примечание в таблице задач: субагенты заблокированы окружением).
+- **001** (`73ea86f`): `/v1.4/movie/search` и `/v1.4/movie/{id}` → `/v1.5/...`; `/v1.5/season` не тронут; в тестах клиента добавлены assertion фактических путей запросов (регрессия на v1.4 теперь падает).
+- **002** (`8f724dd`): `PoiskKinoMovieDtoV1_4` → `PoiskKinoMovieDto` (модель, клиент, 3 провайдера, тесты); XML-doc моделей больше не называют v1.4 целевой версией (допустимы ссылки на имена схем спеки); удалён мёртвый `Models/PoiskKinoSeasonResponse.cs`; комментарии фикстур `TestJsonData.cs` обновлены, JSON не менялся.
+- **003** (`1abee81`): локальная фильтрация по году по [ADR-0001](../../../architecture/decisions/ADR-0001-search-year-filter.md) через `SearchYearFilter`: фильмы — точное совпадение `Year`; сериалы — попадание в `releaseYears` (null-границы открыты) или совпадение с `Year`; пустой результат после фильтра → fallback на неотфильтрованный список с debug-log; год не указан → без фильтрации. Фильтрация в провайдерах, `ApiClient` без бизнес-правил; кэш хранит сырой ответ.
+- Обновлён [overview.md «Интеграции»](../../../architecture/overview.md) (обязательство architecture.md §5).
+- Тесты: `dotnet test` — **160 passed / 0 failed** (+15 новых: пути запросов, фильтр года). Сборка без новых предупреждений.
+- Tech-lead review: **accept**. AC analysis.md §5 проверены grep'ом (`/v1.4` в коде нет, кроме пояснения в doc-comment ADR-контекста).
+- DevOps impact check: влияния нет, задача не назначалась (таблица выше).
+- Handoff → **Оркестратор**: стадия `qa`, owner `Orchestrator`. PR/MR не открывался, push не выполнялся.
+
+Замечания для QA:
+1. Smoke-тест с реальным API-ключом: `GET /v1.5/movie/search?query=...&year=...` обязан вернуть 200 (риск strict-валидации неизвестных параметров v1.5, ADR-0001 §Последствия); при отказе — план изоляции: убрать `&year=` из URL (одна строка + один тест).
+2. Identify с указанным годом: фильм находится по точному году; сериал — по диапазону лет выхода; при расхождении годов источников должен срабатывать fallback (в логе debug-запись).
+3. Регрессия маппинга метаданных: название/год/описание/рейтинги/постеры/персоны/жанры не должны измениться (логика маппинга не трогалась).
 
 ### 2026-08-23 — Архитектор: дизайн готов (`architecture.md` + ADR-0001)
 
