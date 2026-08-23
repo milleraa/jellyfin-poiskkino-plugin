@@ -3,9 +3,9 @@ using System.Text.Json.Serialization;
 namespace PoiskKinoMetadataPlugin.Models;
 
 /// <summary>
-/// Full movie/series data from PoiskKino API v1.4 movie/{id} endpoint.
+/// Full movie/series data from the PoiskKino API movie/{id} endpoint (schema MovieDtoV1_4).
 /// </summary>
-public class PoiskKinoMovieDtoV1_4
+public class PoiskKinoMovieDto
 {
     /// <summary>
     /// Gets or sets the movie ID.

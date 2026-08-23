@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 namespace PoiskKinoMetadataPlugin.Models;
 
 /// <summary>
-/// Episode information from PoiskKino API v1.4 (EpisodeV1_4).
+/// Episode information from the PoiskKino season episodes (schema EpisodeV1_4).
 /// </summary>
 public class PoiskKinoEpisode
 {

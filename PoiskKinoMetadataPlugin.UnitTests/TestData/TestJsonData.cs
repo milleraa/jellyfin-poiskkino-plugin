@@ -3,7 +3,7 @@ namespace PoiskKinoMetadataPlugin.UnitTests.TestData;
 public static class TestJsonData
 {
     /// <summary>
-    /// Full PoiskKinoMovieDtoV1_4 JSON matching GET /v1.4/movie/{id} response from API docs.
+    /// Full PoiskKinoMovieDto JSON matching GET /v1.5/movie/{id} response from API docs.
     /// </summary>
     public const string FullMovieDtoJson = """
     {
@@ -169,7 +169,7 @@ public static class TestJsonData
     """;
 
     /// <summary>
-    /// PoiskKinoSearchResponse JSON matching v1.4 movie/search endpoint response.
+    /// PoiskKinoSearchResponse JSON matching the /v1.5/movie/search endpoint response.
     /// </summary>
     public const string SearchResponseJson = """
     {

@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 namespace PoiskKinoMetadataPlugin.Models;
 
 /// <summary>
-/// Single item from PoiskKino API v1.4 search (SearchMovieDtoV1_4).
+/// Single item from the PoiskKino search response (schema SearchMovieDtoV1_4).
 /// </summary>
 public class PoiskKinoItem
 {

@@ -143,7 +143,7 @@ public class PoiskKinoMovieProvider(
                 return result;
             }
 
-            Models.PoiskKinoMovieDtoV1_4? movieData = null;
+            Models.PoiskKinoMovieDto? movieData = null;
 
             // Сначала проверяем, есть ли PoiskKino ID в ProviderIds
             var poiskKinoIdStr = info.GetProviderId(ProviderNames.PoiskKino);

@@ -70,7 +70,7 @@ public class PoiskKinoImageProvider(
                 itemId = poiskKinoIdInt;
             }
 
-            Models.PoiskKinoMovieDtoV1_4? movieData = null;
+            Models.PoiskKinoMovieDto? movieData = null;
 
             // Если есть ID, используем GetMovieByIdAsync для получения полных данных
             if (itemId.HasValue)

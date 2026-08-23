@@ -168,7 +168,7 @@ public class PoiskKinoApiClient
     /// <param name="apiKey">API-ключ для аутентификации.</param>
     /// <param name="cancellationToken">Токен отмены.</param>
     /// <returns>Данные фильма или null, если не найдено или произошла ошибка.</returns>
-    public async Task<PoiskKinoMovieDtoV1_4?> GetMovieByIdAsync(
+    public async Task<PoiskKinoMovieDto?> GetMovieByIdAsync(
         int id,
         string apiKey,
         CancellationToken cancellationToken = default)
@@ -187,7 +187,7 @@ public class PoiskKinoApiClient
             if (cachedEntry.ExpiresAt > DateTime.UtcNow)
             {
                 _logger.LogDebug("Cache hit for movie ID {Id}", id);
-                return cachedEntry.Data as PoiskKinoMovieDtoV1_4;
+                return cachedEntry.Data as PoiskKinoMovieDto;
             }
             
             // Удаляем устаревшую запись
@@ -236,7 +236,7 @@ public class PoiskKinoApiClient
             }
 
             var content = await response.Content.ReadAsStringAsync(cancellationToken);
-            var movieData = JsonSerializer.Deserialize<PoiskKinoMovieDtoV1_4>(content, new JsonSerializerOptions
+            var movieData = JsonSerializer.Deserialize<PoiskKinoMovieDto>(content, new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
             });
