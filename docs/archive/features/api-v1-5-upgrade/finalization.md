@@ -24,5 +24,7 @@
 ## Acceptance/archive
 
 - **Accepted / merged:** **accepted** — явный accept Стейхолдера в чате 2026-08-23; PR [#2](https://github.com/milleraa/jellyfin-poiskkino-plugin/pull/2) остаётся open / not merged (допустимо по [definition-of-done.md:24](../../../process/definition-of-done.md): «Стейхолдер принял PR/MR ИЛИ merged»).
+- ~~PR остаётся open / not merged~~ → **Обновление 2026-08-23:** PR [#2](https://github.com/milleraa/jellyfin-poiskkino-plugin/pull/2) **merged** в `main` (merge commit `fc606fc`). Связанный issue [#1](https://github.com/milleraa/jellyfin-poiskkino-plugin/issues/1) закрыт как **completed** с комментарием-ссылкой на PR ([комментарий](https://github.com/milleraa/jellyfin-poiskkino-plugin/issues/1#issuecomment-5384657605)).
+- Архивный docs-коммит `aac4134` из ветки фичи доставлен в `main` cherry-pick'ом (`befd74b`, docs-only, прямой push).
 - Выполнено: папка перенесена в `docs/archive/features/api-v1-5-upgrade/`, запись добавлена в `docs/history/completed-work.md`, архивный `status.md` → стадия `accepted`, owner `Stakeholder`.
 - Чеклист Accepted/Done: п.1 ✅ (accept), п.2 N/A (rework не потребовался), п.3 ✅ (архив + completed-work).

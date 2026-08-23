@@ -10,7 +10,7 @@
 | **Owner** | `Stakeholder` |
 | **Worktree** | `/home/alex/src/my/jellyfin-metadata-plugin-api-v15` |
 | **Ветка** | `feature/api-v1-5-upgrade` (pushed в origin) |
-| **PR/MR** | https://github.com/milleraa/jellyfin-poiskkino-plugin/pull/2 |
+| **PR/MR** | https://github.com/milleraa/jellyfin-poiskkino-plugin/pull/2 — **merged** (`fc606fc`, 2026-08-23); issue [#1](https://github.com/milleraa/jellyfin-poiskkino-plugin/issues/1) закрыт как completed |
 | **Commit со ссылкой на PR/MR** | см. [finalization.md](finalization.md) |
 | **Блокеры** | _нет_ |
 
@@ -74,6 +74,13 @@
 | **Rework tasks** | _ссылки на tasks/_ |
 
 ## Changelog (handoff)
+
+### 2026-08-23 — Финализатор: PR #2 **merged**, issue #1 закрыт
+
+- PR [#2](https://github.com/milleraa/jellyfin-poiskkino-plugin/pull/2) **merged** в `main` (merge commit `fc606fc`, 2026-08-23).
+- Архивный коммит `aac4134` (сделанный после merge в ветке фичи) доставлен в `main` cherry-pick'ом — коммит `befd74b`.
+- Issue [#1](https://github.com/milleraa/jellyfin-poiskkino-plugin/issues/1) («Поддержать v1.5 API вместо deprecated GET /v1.4/movie/{id}») связан с PR #2 комментарием ([ссылка](https://github.com/milleraa/jellyfin-poiskkino-plugin/issues/1#issuecomment-5384657605)) и закрыт как **completed**.
+- [finalization.md](finalization.md) обновлён: факт merge, ссылка на закрытый issue.
 
 ### 2026-08-23 — Финализатор: acceptance/archive finalization, стадия accepted
 
