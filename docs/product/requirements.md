@@ -26,5 +26,4 @@
 ## Вне scope (текущий горизонт)
 
 - Провайдер персон (`IPersonMetadataProvider`) — см. «Планируемые возможности» в README
-- Собственный UI вне Jellyfin, отдельный backend, БД
 - Публикация в официальный каталог плагинов Jellyfin (GitHub Releases реализованы: `.github/workflows/release.yaml`)
