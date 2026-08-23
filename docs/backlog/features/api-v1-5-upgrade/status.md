@@ -6,8 +6,8 @@
 
 | Поле | Значение |
 |------|----------|
-| **Стадия** | `tech-decomposition` |
-| **Owner** | `Orchestrator` → handoff Техлиду |
+| **Стадия** | `development` |
+| **Owner** | `TechLead` → исполнение через developer-dotnet |
 | **Worktree** | `/home/alex/src/my/jellyfin-metadata-plugin-api-v15` |
 | **Ветка** | `feature/api-v1-5-upgrade` |
 | **PR/MR** | _нет_ |
@@ -36,7 +36,11 @@
 
 | ID | Файл | Роль / стек | Статус |
 |----|------|-------------|--------|
-| — | — | — | — |
+| 001 | [001-migrate-api-client-v15.md](tasks/001-migrate-api-client-v15.md) | developer-dotnet / ApiClient URL + тесты пути | in-progress |
+| 002 | [002-rename-models-cleanup.md](tasks/002-rename-models-cleanup.md) | developer-dotnet / переименование моделей, чистка, мёртвый код | pending |
+| 003 | [003-provider-year-filter.md](tasks/003-provider-year-filter.md) | developer-dotnet / локальный фильтр года по ADR-0001 + тесты | pending |
+
+Порядок выполнения строго последовательный: 001 → 002 → 003, один worktree, без task-branches.
 
 ## DevOps impact check
 
