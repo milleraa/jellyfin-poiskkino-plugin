@@ -38,7 +38,10 @@ jobs:
           mkdir -p ./artifact
           ARCHIVE="PoiskKinoMetadataPlugin-${{ steps.version.outputs.version }}.zip"
           cd ./publish
-          zip -r "../artifact/$ARCHIVE" ./*
+          zip "../artifact/$ARCHIVE" \
+            PoiskKinoMetadataPlugin.dll \
+            PoiskKinoMetadataPlugin.pdb \
+            PoiskKinoMetadataPlugin.xml
           cd ..
           cd ./artifact
           md5sum "$ARCHIVE" > "$ARCHIVE.md5"
