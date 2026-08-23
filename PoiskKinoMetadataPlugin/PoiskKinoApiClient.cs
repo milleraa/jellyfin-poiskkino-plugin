@@ -78,7 +78,7 @@ public class PoiskKinoApiClient
         {
             await _requestSemaphore.WaitAsync(cancellationToken);
             
-            var url = $"/v1.4/movie/search?query={Uri.EscapeDataString(title)}&limit=3";
+            var url = $"/v1.5/movie/search?query={Uri.EscapeDataString(title)}&limit=3";
             if (year.HasValue)
             {
                 url += $"&year={year.Value}";
@@ -199,7 +199,7 @@ public class PoiskKinoApiClient
         {
             await _requestSemaphore.WaitAsync(cancellationToken);
             
-            var url = $"/v1.4/movie/{id}";
+            var url = $"/v1.5/movie/{id}";
             var request = new HttpRequestMessage(HttpMethod.Get, url);
             request.Headers.Add("X-API-KEY", apiKey);
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));

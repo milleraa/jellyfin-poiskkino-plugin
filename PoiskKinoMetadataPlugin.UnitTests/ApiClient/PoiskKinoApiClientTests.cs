@@ -29,6 +29,27 @@ public class PoiskKinoApiClientTests
         return handlerMock;
     }
 
+    private static Mock<HttpMessageHandler> CreateCapturingHandlerMock(
+        HttpStatusCode statusCode,
+        HttpContent? content,
+        List<HttpRequestMessage> capturedRequests)
+    {
+        var handlerMock = new Mock<HttpMessageHandler>(MockBehavior.Strict);
+        handlerMock
+            .Protected()
+            .Setup<Task<HttpResponseMessage>>(
+                "SendAsync",
+                ItExpr.IsAny<HttpRequestMessage>(),
+                ItExpr.IsAny<CancellationToken>())
+            .Callback<HttpRequestMessage, CancellationToken>((req, _) => capturedRequests.Add(req))
+            .ReturnsAsync(new HttpResponseMessage
+            {
+                StatusCode = statusCode,
+                Content = content ?? new StringContent(string.Empty),
+            });
+        return handlerMock;
+    }
+
     private static Mock<IHttpClientFactory> CreateHttpClientFactoryMock(HttpMessageHandler handler)
     {
         var httpClient = new HttpClient(handler)
@@ -85,27 +106,36 @@ public class PoiskKinoApiClientTests
     [Fact]
     public async Task SearchAsync_WithYear_IncludesYearInUrl()
     {
-        HttpRequestMessage? capturedRequest = null;
-        var handlerMock = new Mock<HttpMessageHandler>(MockBehavior.Strict);
-        handlerMock
-            .Protected()
-            .Setup<Task<HttpResponseMessage>>(
-                "SendAsync",
-                ItExpr.IsAny<HttpRequestMessage>(),
-                ItExpr.IsAny<CancellationToken>())
-            .Callback<HttpRequestMessage, CancellationToken>((req, _) => capturedRequest = req)
-            .ReturnsAsync(new HttpResponseMessage
-            {
-                StatusCode = HttpStatusCode.OK,
-                Content = new StringContent(TestJsonData.SearchResponseJson, new MediaTypeHeaderValue("application/json")),
-            });
+        var capturedRequests = new List<HttpRequestMessage>();
+        var handlerMock = CreateCapturingHandlerMock(
+            HttpStatusCode.OK,
+            new StringContent(TestJsonData.SearchResponseJson, new MediaTypeHeaderValue("application/json")),
+            capturedRequests);
 
         var client = CreateClient(handlerMock);
 
         await client.SearchAsync("Test", 2023, TestApiKey, CancellationToken.None);
 
-        Assert.NotNull(capturedRequest);
-        Assert.Contains("year=2023", capturedRequest!.RequestUri!.ToString());
+        var request = Assert.Single(capturedRequests);
+        Assert.EndsWith("/v1.5/movie/search", request.RequestUri!.AbsolutePath);
+        Assert.Contains("query=Test", request.RequestUri.Query);
+        Assert.Contains("year=2023", request.RequestUri.Query);
+    }
+
+    [Fact]
+    public async Task SearchAsync_Success_RequestsV15SearchPath()
+    {
+        var capturedRequests = new List<HttpRequestMessage>();
+        var handlerMock = CreateCapturingHandlerMock(
+            HttpStatusCode.OK,
+            new StringContent(TestJsonData.SearchResponseJson, new MediaTypeHeaderValue("application/json")),
+            capturedRequests);
+        var client = CreateClient(handlerMock);
+
+        await client.SearchAsync("Test", null, TestApiKey, CancellationToken.None);
+
+        var request = Assert.Single(capturedRequests);
+        Assert.EndsWith("/v1.5/movie/search", request.RequestUri!.AbsolutePath);
     }
 
     [Fact]
@@ -229,12 +259,17 @@ public class PoiskKinoApiClientTests
     [Fact]
     public async Task GetMovieByIdAsync_Success_ReturnsDeserializedData()
     {
-        var handlerMock = CreateHandlerMock(
+        var capturedRequests = new List<HttpRequestMessage>();
+        var handlerMock = CreateCapturingHandlerMock(
             HttpStatusCode.OK,
-            new StringContent(TestJsonData.FullMovieDtoJson, new MediaTypeHeaderValue("application/json")));
+            new StringContent(TestJsonData.FullMovieDtoJson, new MediaTypeHeaderValue("application/json")),
+            capturedRequests);
         var client = CreateClient(handlerMock);
 
         var result = await client.GetMovieByIdAsync(535341, TestApiKey, CancellationToken.None);
+
+        var request = Assert.Single(capturedRequests);
+        Assert.EndsWith("/v1.5/movie/535341", request.RequestUri!.AbsolutePath);
 
         Assert.NotNull(result);
         Assert.Equal(535341, result.Id);
