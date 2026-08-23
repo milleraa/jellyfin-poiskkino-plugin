@@ -86,6 +86,34 @@ public class PoiskKinoSeriesProviderTests : PluginTestBase
     }
 
     [Fact]
+    public async Task GetSearchResults_YearWithinReleaseYears_ReturnsResult()
+    {
+        PluginTestFixture.SetUpPlugin(TestApiKey);
+        SetupSearchResponse(TestJsonData.SeriesSearchResponseJson);
+        var provider = CreateProvider();
+        var info = new SeriesInfo { Name = "Игра престолов", Year = 2015 };
+
+        var results = (await provider.GetSearchResults(info, CancellationToken.None)).ToList();
+
+        Assert.Single(results);
+        Assert.Equal("404900", results[0].GetProviderId(ProviderNames.PoiskKino));
+    }
+
+    [Fact]
+    public async Task GetSearchResults_YearOutsideReleaseYears_FallsBackToUnfiltered()
+    {
+        PluginTestFixture.SetUpPlugin(TestApiKey);
+        SetupSearchResponse(TestJsonData.SeriesSearchResponseJson);
+        var provider = CreateProvider();
+        var info = new SeriesInfo { Name = "Игра престолов", Year = 2020 };
+
+        var results = (await provider.GetSearchResults(info, CancellationToken.None)).ToList();
+
+        Assert.Single(results);
+        Assert.Equal("404900", results[0].GetProviderId(ProviderNames.PoiskKino));
+    }
+
+    [Fact]
     public async Task GetMetadata_EmptyApiKey_ReturnsEmptyResult()
     {
         PluginTestFixture.SetUpPlugin(null);
