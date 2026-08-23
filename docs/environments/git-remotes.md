@@ -5,6 +5,7 @@
 | Поле | Значение |
 |------|----------|
 | **Hosting** | GitHub |
+| **Видимость** | публичный репозиторий (подтверждено Стейхолдером, 2026-08-23) |
 | **Repo URL (HTTPS)** | https://github.com/milleraa/jellyfin-poiskkino-plugin |
 | **Repo URL (SSH)** | git@github.com:milleraa/jellyfin-poiskkino-plugin.git |
 | **Default branch** | `main` |
