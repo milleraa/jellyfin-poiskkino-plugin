@@ -6,7 +6,7 @@
 
 | Поле | Значение |
 |------|----------|
-| **Стадия** | `pr-mr-ready` (gate: решение Стейхолдера) |
+| **Стадия** | `accepted` (2026-08-23, явный accept Стейхолдера в чате) |
 | **Owner** | `Stakeholder` |
 | **Worktree** | `/home/alex/src/my/jellyfin-metadata-plugin-api-v15` |
 | **Ветка** | `feature/api-v1-5-upgrade` (pushed в origin) |
@@ -74,6 +74,14 @@
 | **Rework tasks** | _ссылки на tasks/_ |
 
 ## Changelog (handoff)
+
+### 2026-08-23 — Финализатор: acceptance/archive finalization, стадия accepted
+
+- Стейхолдер явно принял работу в чате (2026-08-23). PR [#2](https://github.com/milleraa/jellyfin-poiskkino-plugin/pull/2) остаётся **open / not merged** — допустимо по политике проекта ([definition-of-done.md:24](../../../process/definition-of-done.md): «Стейхолдер принял PR/MR ИЛИ merged»). Решение о merge — вне финализации.
+- Чеклист **Accepted / Done** ([definition-of-done.md](../../../process/definition-of-done.md)): п.1 — выполнено (accept Стейхолдера); п.2 (rework) — N/A; п.3 — выполнено (архив + completed-work).
+- Папка фичи перенесена `git mv`: `docs/backlog/features/api-v1-5-upgrade/` → `docs/archive/features/api-v1-5-upgrade/`; индекс архива и [completed-work](../../../history/completed-work.md) обновлены.
+- Worktree `/home/alex/src/my/jellyfin-metadata-plugin-api-v15` удалён после push архивного коммита (`git worktree remove`, ветка `feature/api-v1-5-upgrade` и remote branch сохранены до merge/close PR #2).
+- Архивная папка видна в PR #2 как часть истории ветки.
 
 ### 2026-08-23 — Финализатор: PR открыт, стадия pr-mr-ready
 
