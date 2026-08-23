@@ -21,12 +21,15 @@ description: Проверяет delivery finalization и acceptance/archive fina
 
 ## Acceptance/archive checklist
 
-Выполняй только после явного acceptance от Стейхолдера или merge PR/MR.
+Выполняй только после явного acceptance от Стейхолдера и **до merge PR/MR** (штатный флоу: решение Стейхолдера сначала сообщается агенту).
 
-1. `git mv` (или эквивалент) папки фичи/hotfix из `docs/backlog/...` в `docs/archive/features/...` или `docs/archive/hotfixes/...`.
-2. В архивном `status.md` выставь стадию `accepted`, owner `Stakeholder`.
-3. Добавь строку в `docs/history/completed-work.md`: название, дата, ссылка на PR/MR, путь в архиве.
-4. Если PR/MR не принят, не архивируй; верни Оркестратору для `.opencode/skills/pr-mr-rework/SKILL.md`.
+1. Если локальный worktree удалён после delivery — восстанови его из существующей feature/hotfix ветки; новую ветку не создавай.
+2. `git mv` (или эквивалент) папки фичи/hotfix из `docs/backlog/...` в `docs/archive/features/...` или `docs/archive/hotfixes/...`.
+3. В архивном `status.md` выставь стадию `accepted`, owner `Stakeholder`.
+4. Добавь строку в `docs/history/completed-work.md`: название, дата, ссылка на PR/MR, путь в архиве.
+5. Сделай commit и push в ту же feature/hotfix ветку. Merge PR/MR — только после этого шага: тогда все изменения попадут в main одним мержем.
+6. Если PR/MR уже merged к моменту acceptance — archive-коммиты выполняются в main, инцидент фиксируется в архивном `status.md`.
+7. Если PR/MR не принят, не архивируй; верни Оркестратору для `.opencode/skills/pr-mr-rework/SKILL.md`.
 
 ## После
 

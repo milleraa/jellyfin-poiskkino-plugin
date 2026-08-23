@@ -86,6 +86,7 @@ permission:
 - **Hotfix** идёт через ту же цепочку, но с минимально достаточными артефактами и явной записью срочности/рисков.
 - Если Стейхолдер откладывает фичу после анализа, выставь `backlog-paused` и оставь фичу в `docs/backlog/features/<name>/`.
 - `pr-mr-ready` не равно `accepted`: rejected PR/MR возвращай через `.opencode/skills/pr-mr-rework/SKILL.md` в `rework`.
+- На гейте `pr-mr-ready` явно проси Стейхолдера **не принимать PR/MR в системе управления кодом сразу**: сначала сообщи решение агенту (`/accept-feature` или `/reject-feature`). При accept Финализатор выполнит архивацию в feature/hotfix ветке и push, и только затем PR/MR merge — так все изменения попадут в main одним мержем без мусорных коммитов поверх.
 - Каждая фича или hotfix живёт в `docs/backlog/features|hotfixes/<name>/`; `status.md` — единственная процессная доска стадии, owner, branch, worktree, PR/MR, блокеров и handoff.
 - Работа ведётся в одной feature/fix/hotfix ветке и ровно одном `git worktree`; task-branches и task-worktrees не создавай.
 - После создания worktree работа продолжается **только в нём**; если заметил, что изменения ушли в основной checkout — остановись, перенеси изменения в worktree и продолжи там, отметив инцидент в `status.md`.
