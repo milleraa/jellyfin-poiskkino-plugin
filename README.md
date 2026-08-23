@@ -50,41 +50,6 @@
 
 API-ключ можно получить на [poiskkino.dev](https://poiskkino.dev). Демо-ключ ограничен 200 запросами в сутки.
 
-## Структура проекта
-
-```
-PoiskKinoMetadataPlugin/
-├── PoiskKinoMetadataPlugin.cs      # Основной класс плагина (BasePlugin)
-├── Configuration.cs                # Настройки плагина (API-ключ)
-├── ProviderNames.cs                # Константы имен провайдеров
-├── PoiskKinoApiClient.cs           # HTTP-клиент с кэшированием
-├── PoiskKinoMovieProvider.cs       # Провайдер метаданных для фильмов
-├── PoiskKinoSeriesProvider.cs      # Провайдер метаданных для сериалов
-├── PoiskKinoSeasonProvider.cs      # Провайдер метаданных для сезонов
-├── PoiskKinoEpisodeProvider.cs     # Провайдер метаданных для эпизодов
-├── PoiskKinoImageProvider.cs       # Провайдер изображений (постеры, фоны)
-├── PoiskKinoExternalId.cs          # Провайдер внешних идентификаторов
-├── Configuration/
-│   └── configPage.html             # HTML-страница настроек плагина
-└── Models/
-    ├── PoiskKinoCountry.cs
-    ├── PoiskKinoEpisode.cs
-    ├── PoiskKinoExternalId.cs
-    ├── PoiskKinoGenre.cs
-    ├── PoiskKinoImage.cs
-    ├── PoiskKinoItem.cs
-    ├── PoiskKinoMovieDtoV1_4.cs
-    ├── PoiskKinoPerson.cs
-    ├── PoiskKinoRating.cs
-    ├── PoiskKinoSearchResponse.cs
-    ├── PoiskKinoSeason.cs
-    ├── PoiskKinoSeasonInfo.cs
-    ├── PoiskKinoSeasonResponse.cs
-    ├── PoiskKinoVideo.cs
-    ├── PoiskKinoVideos.cs
-    └── PoiskKinoVotes.cs
-```
-
 ## API ПоискКино
 
 Документация API: https://api.poiskkino.dev/documentation-json
