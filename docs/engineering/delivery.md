@@ -4,7 +4,7 @@
 
 ## Шаблон описания
 
-См. `.cursor/skills/pr-mr-delivery/SKILL.md`.
+См. `.opencode/skills/pr-mr-delivery/SKILL.md`.
 
 ## Обязательные элементы
 
@@ -16,7 +16,7 @@
 - После создания PR/MR ссылка фиксируется отдельным commit и повторным push.
 - Локальный worktree удаляется только после повторного push со ссылкой на PR/MR.
 - `pr-mr-ready` не означает `accepted`: папка остаётся в `docs/backlog/…` до принятия Стейхолдером или merge.
-- Если PR/MR не принят, Оркестратор возвращает работу через `.cursor/skills/pr-mr-rework/SKILL.md`.
+- Если PR/MR не принят, Оркестратор возвращает работу через `.opencode/skills/pr-mr-rework/SKILL.md`.
 
 ## Соседнее
 

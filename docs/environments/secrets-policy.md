@@ -8,8 +8,8 @@
 
 `DATABASE_URL` — задаётся в GitLab CI variables, scope: protected, environment: production.
 
-## Bootstrap (2026-05-18)
+## Bootstrap (2026-05-18), обновлено 2026-08-23
 
 - **Подтверждено при bootstrap:** секреты (API-ключ ПоискКино) **не хранятся в репозитории**; задаются в конфигурации плагина Jellyfin ([`Configuration.cs`](../../Configuration.cs), Dashboard → Plugins).
 - **Ответственный за выдачу API-ключа ПоискКино:** владелец аккаунта на [poiskkino.dev](https://poiskkino.dev) (Стейхолдер / администратор Jellyfin).
-- **CI secrets:** N/A (CI не настроен).
+- **CI secrets:** N/A — GitHub Actions использует встроенный `GITHUB_TOKEN` (permissions `contents: write` для Release); дополнительные секреты не требуются.

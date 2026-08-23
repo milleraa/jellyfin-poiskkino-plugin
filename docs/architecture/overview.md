@@ -1,6 +1,6 @@
 # Architecture overview
 
-*Источники: [`PoiskKinoMetadataPlugin.cs`](../../PoiskKinoMetadataPlugin.cs), `PoiskKino*Provider.cs`, [`PoiskKinoApiClient.cs`](../../PoiskKinoApiClient.cs), [`Api-docs/documentation.yaml`](../../Api-docs/documentation.yaml).*
+*Источники: [`PoiskKinoMetadataPlugin.cs`](../../PoiskKinoMetadataPlugin.cs), `PoiskKino*Provider.cs`, [`PoiskKinoApiClient.cs`](../../PoiskKinoApiClient.cs), [`api-docs/documentation.yaml`](../../api-docs/documentation.yaml).*
 
 ## Контекст
 
@@ -50,4 +50,4 @@
 
 - [Principles](principles.md)
 - [ADR index](decisions/README.md)
-- [OpenAPI / docs snapshot](../../Api-docs/documentation.yaml)
+- [OpenAPI / docs snapshot](../../api-docs/documentation.yaml)

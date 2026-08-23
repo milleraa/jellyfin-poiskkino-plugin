@@ -1,6 +1,6 @@
 # Status — `<feature-name>`
 
-Единая точка правды по стадии для Оркестратора. Обновляйте при каждом handoff (см. `.cursor/skills/role-handoff/SKILL.md`).
+Единая точка правды по стадии для Оркестратора. Обновляйте при каждом handoff (см. `.opencode/skills/role-handoff/SKILL.md`).
 
 ## Текущее состояние
 

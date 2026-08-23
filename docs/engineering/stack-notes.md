@@ -8,4 +8,4 @@
 |------|--------|
 | [C# / .NET](stacks/dotnet.md) | активен |
 
-**Роль разработчика:** `.cursor/agents/developer-csharp.md`, правило `.cursor/rules/csharp-developer.mdc`.
+**Роль разработчика:** [`.opencode/agents/developer-csharp.md`](../../.opencode/agents/developer-csharp.md).

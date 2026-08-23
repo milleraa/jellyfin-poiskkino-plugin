@@ -12,4 +12,4 @@
 
 ## AI-команда
 
-Стейхолдер взаимодействует с **Оркестратором** в чате Cursor; остальные роли — агенты по [roles](../process/roles-and-responsibilities.md).
+Стейхолдер взаимодействует с **Оркестратором** в OpenCode; остальные роли — агенты по [roles](../process/roles-and-responsibilities.md).

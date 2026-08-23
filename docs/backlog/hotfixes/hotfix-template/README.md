@@ -13,4 +13,4 @@
 | [qa.md](qa.md) | QA |
 | [finalization.md](finalization.md) | PR/MR delivery, acceptance/archive |
 
-Архив после принятия Стейхолдером или merge PR/MR: [archive/hotfixes](../../archive/hotfixes/README.md). Если PR/MR не принят, работа остаётся в backlog и возвращается через `.cursor/skills/pr-mr-rework/SKILL.md`.
+Архив после принятия Стейхолдером или merge PR/MR: [archive/hotfixes](../../archive/hotfixes/README.md). Если PR/MR не принят, работа остаётся в backlog и возвращается через `.opencode/skills/pr-mr-rework/SKILL.md`.

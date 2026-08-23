@@ -4,6 +4,6 @@
 - Малые PR с одной целью.
 - Явные ошибки и логирование; не скрывать сбои без причины.
 - Тесты для регрессий и новой логики.
-- Стековые нюансы — в [stack-specific standards](stacks/README.md), индексе [stack-notes](stack-notes.md) и `.cursor/rules/*-developer.mdc`.
+- Стековые нюансы — в [stack-specific standards](stacks/README.md), индексе [stack-notes](stack-notes.md) и ролевых промптах `.opencode/agents/developer-*.md`.
 
 Язык комментариев в коде: **русский** (рекомендация для OSS); документация в `docs/` — **русский** по умолчанию для этого шаблона.

@@ -25,4 +25,4 @@
 - После создания PR/MR Финализатор записывает ссылку в `status.md` / `finalization.md`, делает отдельный commit с этой ссылкой, выполняет повторный push и только затем удаляет локальный worktree.
 - Финализатор удаляет только локальный worktree. Рабочая ветка и remote branch остаются до merge/close PR/MR.
 
-Подробнее: `.cursor/rules/20-gitflow.mdc`.
+Подробнее: GitFlow-правила встроены в `.opencode/agents/orchestrator.md` и `.opencode/agents/finalizer.md`.

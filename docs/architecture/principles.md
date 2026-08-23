@@ -7,4 +7,4 @@
 - **ADR** для значимых решений.
 - **Явное** лучше неявного.
 
-Правила агента: `.cursor/rules/50-architecture.mdc`.
+Правила Архитектора встроены в `.opencode/agents/architect.md`.

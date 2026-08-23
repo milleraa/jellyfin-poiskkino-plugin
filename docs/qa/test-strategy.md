@@ -1,25 +1,24 @@
 # Test strategy
 
-*Источники: поиск `*Test*.csproj`, `tests/`, CI test jobs — **не найдено**; [`README.md`](../../README.md) (ручное тестирование).*
+*Источники: [`PoiskKinoMetadataPlugin.UnitTests/`](../../PoiskKinoMetadataPlugin.UnitTests/) (xUnit + Moq), [`.github/workflows/ci.yaml`](../../.github/workflows/ci.yaml), [`README.md`](../../README.md) (ручное тестирование).*
 
 ## Уровни
 
-| Уровень | Статус в v1 | Примечание |
-|---------|-------------|------------|
-| **Unit** | не реализован | нет test project |
-| **Integration** | не реализован | проверка через Jellyfin + реальный/демо API-ключ |
+| Уровень | Статус | Примечание |
+|---------|--------|------------|
+| **Unit** | реализован | `PoiskKinoMetadataPlugin.UnitTests` (xUnit 2.9.3 + Moq 4.20.72); гоняются в CI (`dotnet test`) |
+| **Integration** | вручную | проверка через Jellyfin + реальный/демо API-ключ |
 | **E2E (Playwright)** | не планируется | нет отдельного UI продукта — см. [`playwright.md`](playwright.md) |
 
-## Обязательно перед PR/MR (текущая практика)
+## Обязательно перед PR/MR
 
-1. `dotnet build -c Release` без ошибок
-2. Ручная проверка в Jellyfin: идентификация фильма/сериала, постеры, настройка API-ключа
-3. При изменении API-клиента — учёт лимита 200 req/day и поведения кэша (см. README)
+1. Green CI: `dotnet build -c Release` + `dotnet test` (`.github/workflows/ci.yaml`)
+2. Локально: `dotnet test` без падений
+3. Ручная проверка в Jellyfin при изменении поведения провайдеров: идентификация фильма/сериала, постеры, настройка API-ключа
+4. При изменении API-клиента — учёт лимита 200 req/day и поведения кэша (см. README)
 
 ## Критерии для PR
 
-- Сборка успешна
+- Сборка успешна, тесты зелёные
 - Нет секретов в diff (API-ключ только в runtime-конфиге Jellyfin)
 - Документация обновлена при изменении поведения ([`../engineering/testing.md`](../engineering/testing.md))
-
-**После GitHub Actions:** обязательный green `dotnet build -c Release` в PR; ручная проверка в локальном Jellyfin — по усмотрению Стейхолдера. См. [`../environments/ci-cd.md`](../environments/ci-cd.md).

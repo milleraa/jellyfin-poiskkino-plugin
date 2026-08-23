@@ -43,10 +43,12 @@ dotnet build -c Release
 
 ## Тестирование
 
-- Отдельного test project в репозитории **нет**
-- Ручная проверка: сборка DLL и установка в каталог плагинов Jellyfin ([`README.md`](../../../README.md))
+*Источники: [`PoiskKinoMetadataPlugin.slnx`](../../../PoiskKinoMetadataPlugin.slnx), [`PoiskKinoMetadataPlugin.UnitTests/PoiskKinoMetadataPlugin.UnitTests.csproj`](../../../PoiskKinoMetadataPlugin.UnitTests/PoiskKinoMetadataPlugin.UnitTests.csproj), [`.github/workflows/ci.yaml`](../../../.github/workflows/ci.yaml).*
 
-## Связанные правила Cursor
+- Test project: `PoiskKinoMetadataPlugin.UnitTests` (в solution `.slnx`)
+- Фреймворк: xUnit 2.9.3 + Moq 4.20.72, `Microsoft.NET.Test.Sdk` 17.12.0
+- Команды: `dotnet test`; в CI — `dotnet test --no-restore` после Release-сборки
 
-- `.cursor/rules/csharp-developer.mdc`
-- `.cursor/agents/developer-csharp.md`
+## Связанные правила
+
+- Роль разработчика C#: [`.opencode/agents/developer-csharp.md`](../../../.opencode/agents/developer-csharp.md)

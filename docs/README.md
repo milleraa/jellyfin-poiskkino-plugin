@@ -17,13 +17,15 @@
 | [history](history/) | Лог решений, завершённые работы (ссылки) |
 | [archive](archive/) | Завершённые фичи и hotfix (перенос из backlog) |
 
-## Связь с Cursor
+## Связь с OpenCode
 
-- Правила: [`.cursor/rules/`](../.cursor/rules/)
-- Роли: [`.cursor/agents/`](../.cursor/agents/)
-- Навыки: [`.cursor/skills/`](../.cursor/skills/)
-- Slash-команды чата: [`.cursor/commands/`](../.cursor/commands/) (`/accept-feature`, `/reject-feature`, `/init-empty-repo`, `/init-existing-repo`)
-- Корневые инструкции: [`AGENTS.md`](../AGENTS.md)
+- Глобальный конфиг: [`opencode.json`](../opencode.json) (instructions, default_agent; роли — не здесь)
+- Ролевые агенты OpenCode: [`.opencode/agents/*.md`](../.opencode/agents/) (промпт, mode, permission)
+- Навыки: [`.opencode/skills/`](../.opencode/skills/)
+- Команды TUI: [`.opencode/commands/`](../.opencode/commands/) (`/accept-feature`, `/reject-feature`, `/init-empty-repo`, `/init-existing-repo`)
+- Глобальные instructions (коротко, для всех агентов): [`AGENTS.md`](../AGENTS.md); agile-процесс — в [`.opencode/agents/orchestrator.md`](../.opencode/agents/orchestrator.md)
+- MCP (DeepWiki и др.): конфигурация в [`opencode.json`](../opencode.json) (секция `mcp`)
+- Внешняя документация по стекам: [engineering/stacks/](engineering/stacks/), [testing.md](engineering/testing.md), [devops.md](engineering/devops.md)
 
 ## Кто поддерживает разделы
 

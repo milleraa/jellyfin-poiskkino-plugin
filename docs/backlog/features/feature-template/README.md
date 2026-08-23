@@ -16,4 +16,4 @@
 | [qa.md](qa.md) | Результаты QA |
 | [finalization.md](finalization.md) | PR/MR delivery, acceptance/archive |
 
-После принятия Стейхолдером или merge PR/MR Финализатор переносит папку в [archive](../../archive/features/README.md). Если PR/MR не принят, работа остаётся в backlog и возвращается через `.cursor/skills/pr-mr-rework/SKILL.md`.
+После принятия Стейхолдером или merge PR/MR Финализатор переносит папку в [archive](../../archive/features/README.md). Если PR/MR не принят, работа остаётся в backlog и возвращается через `.opencode/skills/pr-mr-rework/SKILL.md`.

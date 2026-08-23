@@ -6,6 +6,8 @@
 |------|-----|--------|
 | 2026-05-18 | — | existing-repo-bootstrap: docs заполнены по evidence из README, csproj, git remote |
 | 2026-05-18 | — | Gaps закрыты: единственный maintainer/Стейхолдер; нет protected branches; dev только локально; CI — план GitHub Actions (DLL); фичи в backlog не заводим |
+| 2026-08-23 | — | Миграция шаблона агентов Cursor → OpenCode (`.opencode/`); восстановлены случайно затёртые README.md и заполненные docs по evidence |
+| 2026-08-23 | — | Docs актуализированы под репо: unit-тесты (xUnit+Moq), CI/Release workflows, переименование `Api-docs` → `api-docs`, solution `.slnx` |
 
 ## Как добавлять
 

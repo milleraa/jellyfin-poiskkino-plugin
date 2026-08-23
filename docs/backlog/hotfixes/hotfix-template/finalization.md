@@ -6,4 +6,4 @@
 - **Worktree cleanup:** _TBD_
 - **Accepted / merged:** _TBD_
 - После приёмки: перенос в `docs/archive/hotfixes/<hotfix-name>/`.
-- Если PR/MR не принят: работа возвращается через `.cursor/skills/pr-mr-rework/SKILL.md`, без переноса в архив.
+- Если PR/MR не принят: работа возвращается через `.opencode/skills/pr-mr-rework/SKILL.md`, без переноса в архив.

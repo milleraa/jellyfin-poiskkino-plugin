@@ -22,7 +22,7 @@
 Работа считается завершённой для команды агентов, если:
 
 - [ ] Стейхолдер принял PR/MR или PR/MR merged по политике проекта.
-- [ ] Если PR/MR не принят, Оркестратор вернул работу в `rework` через `.cursor/skills/pr-mr-rework/SKILL.md`.
+- [ ] Если PR/MR не принят, Оркестратор вернул работу в `rework` через `.opencode/skills/pr-mr-rework/SKILL.md`.
 - [ ] Финализатор перенёс принятую папку в [archive](../archive/README.md) и добавил запись в [completed-work](../history/completed-work.md).
 
 Приёмка **слиянием** PR/MR остаётся за Стейхолдером или его политикой.

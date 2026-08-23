@@ -1,6 +1,6 @@
 # DevOps
 
-*Источники: README, подтверждение Стейхолдера (2026-05-18).*
+*Источники: [`.github/workflows/ci.yaml`](../../.github/workflows/ci.yaml), [`.github/workflows/release.yaml`](../../.github/workflows/release.yaml), [`README.md`](../../README.md), подтверждение Стейхолдера (2026-05-18).*
 
 ## Docker и локальный запуск
 
@@ -11,11 +11,11 @@
 
 | Параметр | Значение |
 |----------|----------|
-| **Платформа** | GitHub Actions (запланировано, файл workflow пока отсутствует) |
-| **Сборка** | `dotnet build -c Release` на .NET 9 |
-| **Артефакт** | `PoiskKinoMetadataPlugin.dll` |
-| **Обязательность для PR** | после внедрения Actions — green build |
-| **Релиз** | v1: ручная установка DLL; автоматизация release — отдельная будущая задача |
+| **Платформа** | GitHub Actions (реализовано 2026-06-30) |
+| **Сборка** | `dotnet build -c Release` + `dotnet test` на push/PR в `main` (`.github/workflows/ci.yaml`) |
+| **Артефакт** | zip: DLL + PDB + XML + контрольные суммы (md5/sha256) |
+| **Обязательность для PR** | green build + тесты на PR в `main` |
+| **Релиз** | автоматический по тегу `v*`: `dotnet publish` → zip → GitHub Release (`release.yaml`) |
 
 Подробности: [`../environments/ci-cd.md`](../environments/ci-cd.md).
 

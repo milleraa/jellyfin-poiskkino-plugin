@@ -27,4 +27,4 @@
 
 - Провайдер персон (`IPersonMetadataProvider`) — см. «Планируемые возможности» в README
 - Собственный UI вне Jellyfin, отдельный backend, БД
-- Автоматические GitHub Releases / каталог Jellyfin (пока вне scope; CI Actions для сборки DLL — запланировано)
+- Публикация в официальный каталог плагинов Jellyfin (GitHub Releases реализованы: `.github/workflows/release.yaml`)

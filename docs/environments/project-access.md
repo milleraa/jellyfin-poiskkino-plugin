@@ -6,7 +6,7 @@
 
 - **Git hosting:** GitHub, репозиторий `milleraa/jellyfin-poiskkino-plugin`
 - **Write access:** только Стейхолдер (владелец репозитория)
-- **CI bot:** будет использоваться `GITHUB_TOKEN` в GitHub Actions после настройки workflow (планируется)
+- **CI bot:** GitHub Actions использует встроенный `GITHUB_TOKEN` (`contents: write` для Release); отдельных bot-аккаунтов нет
 
 ## Политика
 
