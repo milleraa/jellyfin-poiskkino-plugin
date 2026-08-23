@@ -118,6 +118,34 @@ public class PoiskKinoMovieProviderTests : PluginTestBase
     }
 
     [Fact]
+    public async Task GetSearchResults_YearFilter_MatchesExactYear()
+    {
+        PluginTestFixture.SetUpPlugin(TestApiKey);
+        SetupSearchResponse(HttpStatusCode.OK, TestJsonData.MixedSearchResponseJson);
+        var provider = CreateProvider();
+        var info = new MovieInfo { Name = "Test", Year = 2023 };
+
+        var results = (await provider.GetSearchResults(info, CancellationToken.None)).ToList();
+
+        Assert.Single(results);
+        Assert.Equal("535341", results[0].GetProviderId(ProviderNames.PoiskKino));
+    }
+
+    [Fact]
+    public async Task GetSearchResults_YearFilter_NoMatch_FallsBackToUnfiltered()
+    {
+        PluginTestFixture.SetUpPlugin(TestApiKey);
+        SetupSearchResponse(HttpStatusCode.OK, TestJsonData.SearchResponseJson);
+        var provider = CreateProvider();
+        var info = new MovieInfo { Name = "Оппенгеймер", Year = 1999 };
+
+        var results = (await provider.GetSearchResults(info, CancellationToken.None)).ToList();
+
+        Assert.Single(results);
+        Assert.Equal("535341", results[0].GetProviderId(ProviderNames.PoiskKino));
+    }
+
+    [Fact]
     public async Task GetMetadata_EmptyApiKey_ReturnsEmptyResult()
     {
         PluginTestFixture.SetUpPlugin(null);

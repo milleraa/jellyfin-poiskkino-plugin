@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 namespace PoiskKinoMetadataPlugin.Models;
 
 /// <summary>
-/// Response model from PoiskKino API v1.4 search endpoint (SearchMovieResponseDtoV1_4).
+/// Response model from the PoiskKino movie/search endpoint (schema SearchMovieResponseDtoV1_4).
 /// </summary>
 public class PoiskKinoSearchResponse
 {

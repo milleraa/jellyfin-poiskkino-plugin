@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 namespace PoiskKinoMetadataPlugin.Models;
 
 /// <summary>
-/// Season data from PoiskKino API v1.4 (SeasonV1_4).
+/// Season data from the PoiskKino season endpoint (schema SeasonV1_4).
 /// </summary>
 public class PoiskKinoSeason
 {

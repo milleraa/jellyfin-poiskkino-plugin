@@ -4,7 +4,7 @@ using PoiskKinoMetadataPlugin.UnitTests.TestData;
 
 namespace PoiskKinoMetadataPlugin.UnitTests.Models;
 
-public class PoiskKinoMovieDtoV1_4Tests
+public class PoiskKinoMovieDtoTests
 {
     private static JsonSerializerOptions Options => new()
     {
@@ -14,7 +14,7 @@ public class PoiskKinoMovieDtoV1_4Tests
     [Fact]
     public void Deserialize_FullMovieJson_ReturnsAllFields()
     {
-        var result = JsonSerializer.Deserialize<PoiskKinoMovieDtoV1_4>(
+        var result = JsonSerializer.Deserialize<PoiskKinoMovieDto>(
             TestJsonData.FullMovieDtoJson, Options);
 
         Assert.NotNull(result);
@@ -41,7 +41,7 @@ public class PoiskKinoMovieDtoV1_4Tests
     [Fact]
     public void Deserialize_FullMovieJson_RatingIsCorrect()
     {
-        var result = JsonSerializer.Deserialize<PoiskKinoMovieDtoV1_4>(
+        var result = JsonSerializer.Deserialize<PoiskKinoMovieDto>(
             TestJsonData.FullMovieDtoJson, Options);
 
         Assert.NotNull(result!.Rating);
@@ -56,7 +56,7 @@ public class PoiskKinoMovieDtoV1_4Tests
     [Fact]
     public void Deserialize_FullMovieJson_VotesAreCorrect()
     {
-        var result = JsonSerializer.Deserialize<PoiskKinoMovieDtoV1_4>(
+        var result = JsonSerializer.Deserialize<PoiskKinoMovieDto>(
             TestJsonData.FullMovieDtoJson, Options);
 
         Assert.NotNull(result!.Votes);
@@ -71,7 +71,7 @@ public class PoiskKinoMovieDtoV1_4Tests
     [Fact]
     public void Deserialize_FullMovieJson_ExternalIdIsCorrect()
     {
-        var result = JsonSerializer.Deserialize<PoiskKinoMovieDtoV1_4>(
+        var result = JsonSerializer.Deserialize<PoiskKinoMovieDto>(
             TestJsonData.FullMovieDtoJson, Options);
 
         Assert.NotNull(result!.ExternalId);
@@ -83,7 +83,7 @@ public class PoiskKinoMovieDtoV1_4Tests
     [Fact]
     public void Deserialize_FullMovieJson_PosterAndBackdropAreCorrect()
     {
-        var result = JsonSerializer.Deserialize<PoiskKinoMovieDtoV1_4>(
+        var result = JsonSerializer.Deserialize<PoiskKinoMovieDto>(
             TestJsonData.FullMovieDtoJson, Options);
 
         Assert.NotNull(result!.Poster);
@@ -97,7 +97,7 @@ public class PoiskKinoMovieDtoV1_4Tests
     [Fact]
     public void Deserialize_FullMovieJson_LogoIsCorrect()
     {
-        var result = JsonSerializer.Deserialize<PoiskKinoMovieDtoV1_4>(
+        var result = JsonSerializer.Deserialize<PoiskKinoMovieDto>(
             TestJsonData.FullMovieDtoJson, Options);
 
         Assert.NotNull(result!.Logo);
@@ -107,7 +107,7 @@ public class PoiskKinoMovieDtoV1_4Tests
     [Fact]
     public void Deserialize_FullMovieJson_GenresAreCorrect()
     {
-        var result = JsonSerializer.Deserialize<PoiskKinoMovieDtoV1_4>(
+        var result = JsonSerializer.Deserialize<PoiskKinoMovieDto>(
             TestJsonData.FullMovieDtoJson, Options);
 
         Assert.NotNull(result!.Genres);
@@ -120,7 +120,7 @@ public class PoiskKinoMovieDtoV1_4Tests
     [Fact]
     public void Deserialize_FullMovieJson_CountriesAreCorrect()
     {
-        var result = JsonSerializer.Deserialize<PoiskKinoMovieDtoV1_4>(
+        var result = JsonSerializer.Deserialize<PoiskKinoMovieDto>(
             TestJsonData.FullMovieDtoJson, Options);
 
         Assert.NotNull(result!.Countries);
@@ -132,7 +132,7 @@ public class PoiskKinoMovieDtoV1_4Tests
     [Fact]
     public void Deserialize_FullMovieJson_PersonsAreCorrect()
     {
-        var result = JsonSerializer.Deserialize<PoiskKinoMovieDtoV1_4>(
+        var result = JsonSerializer.Deserialize<PoiskKinoMovieDto>(
             TestJsonData.FullMovieDtoJson, Options);
 
         Assert.NotNull(result!.Persons);
@@ -147,7 +147,7 @@ public class PoiskKinoMovieDtoV1_4Tests
     [Fact]
     public void Deserialize_FullMovieJson_VideosTrailersAreCorrect()
     {
-        var result = JsonSerializer.Deserialize<PoiskKinoMovieDtoV1_4>(
+        var result = JsonSerializer.Deserialize<PoiskKinoMovieDto>(
             TestJsonData.FullMovieDtoJson, Options);
 
         Assert.NotNull(result!.Videos);
@@ -161,7 +161,7 @@ public class PoiskKinoMovieDtoV1_4Tests
     [Fact]
     public void Deserialize_FullMovieJson_SeasonsInfoIsEmptyArray()
     {
-        var result = JsonSerializer.Deserialize<PoiskKinoMovieDtoV1_4>(
+        var result = JsonSerializer.Deserialize<PoiskKinoMovieDto>(
             TestJsonData.FullMovieDtoJson, Options);
 
         Assert.NotNull(result!.SeasonsInfo);
@@ -171,7 +171,7 @@ public class PoiskKinoMovieDtoV1_4Tests
     [Fact]
     public void Deserialize_FullMovieJson_BudgetAndFeesAreCorrect()
     {
-        var result = JsonSerializer.Deserialize<PoiskKinoMovieDtoV1_4>(
+        var result = JsonSerializer.Deserialize<PoiskKinoMovieDto>(
             TestJsonData.FullMovieDtoJson, Options);
 
         Assert.NotNull(result!.Budget);
@@ -190,7 +190,7 @@ public class PoiskKinoMovieDtoV1_4Tests
     [Fact]
     public void Deserialize_FullMovieJson_PremiereIsCorrect()
     {
-        var result = JsonSerializer.Deserialize<PoiskKinoMovieDtoV1_4>(
+        var result = JsonSerializer.Deserialize<PoiskKinoMovieDto>(
             TestJsonData.FullMovieDtoJson, Options);
 
         Assert.NotNull(result!.Premiere);
@@ -201,7 +201,7 @@ public class PoiskKinoMovieDtoV1_4Tests
     [Fact]
     public void Deserialize_FullMovieJson_SimilarMoviesAreCorrect()
     {
-        var result = JsonSerializer.Deserialize<PoiskKinoMovieDtoV1_4>(
+        var result = JsonSerializer.Deserialize<PoiskKinoMovieDto>(
             TestJsonData.FullMovieDtoJson, Options);
 
         Assert.NotNull(result!.SimilarMovies);
@@ -215,7 +215,7 @@ public class PoiskKinoMovieDtoV1_4Tests
     [Fact]
     public void Deserialize_FullMovieJson_SequelsAndPrequelsIsEmptyArray()
     {
-        var result = JsonSerializer.Deserialize<PoiskKinoMovieDtoV1_4>(
+        var result = JsonSerializer.Deserialize<PoiskKinoMovieDto>(
             TestJsonData.FullMovieDtoJson, Options);
 
         Assert.NotNull(result!.SequelsAndPrequels);
@@ -225,7 +225,7 @@ public class PoiskKinoMovieDtoV1_4Tests
     [Fact]
     public void Deserialize_FullMovieJson_WatchabilityIsCorrect()
     {
-        var result = JsonSerializer.Deserialize<PoiskKinoMovieDtoV1_4>(
+        var result = JsonSerializer.Deserialize<PoiskKinoMovieDto>(
             TestJsonData.FullMovieDtoJson, Options);
 
         Assert.NotNull(result!.Watchability);
@@ -238,7 +238,7 @@ public class PoiskKinoMovieDtoV1_4Tests
     [Fact]
     public void Deserialize_FullMovieJson_ReleaseYearsAreCorrect()
     {
-        var result = JsonSerializer.Deserialize<PoiskKinoMovieDtoV1_4>(
+        var result = JsonSerializer.Deserialize<PoiskKinoMovieDto>(
             TestJsonData.FullMovieDtoJson, Options);
 
         Assert.NotNull(result!.ReleaseYears);
@@ -250,7 +250,7 @@ public class PoiskKinoMovieDtoV1_4Tests
     [Fact]
     public void Deserialize_FullMovieJson_AudienceIsCorrect()
     {
-        var result = JsonSerializer.Deserialize<PoiskKinoMovieDtoV1_4>(
+        var result = JsonSerializer.Deserialize<PoiskKinoMovieDto>(
             TestJsonData.FullMovieDtoJson, Options);
 
         Assert.NotNull(result!.Audience);
@@ -263,7 +263,7 @@ public class PoiskKinoMovieDtoV1_4Tests
     [Fact]
     public void Deserialize_FullMovieJson_ListsAreCorrect()
     {
-        var result = JsonSerializer.Deserialize<PoiskKinoMovieDtoV1_4>(
+        var result = JsonSerializer.Deserialize<PoiskKinoMovieDto>(
             TestJsonData.FullMovieDtoJson, Options);
 
         Assert.NotNull(result!.Lists);
@@ -275,7 +275,7 @@ public class PoiskKinoMovieDtoV1_4Tests
     [Fact]
     public void Deserialize_FullMovieJson_NetworksIsCorrect()
     {
-        var result = JsonSerializer.Deserialize<PoiskKinoMovieDtoV1_4>(
+        var result = JsonSerializer.Deserialize<PoiskKinoMovieDto>(
             TestJsonData.FullMovieDtoJson, Options);
 
         Assert.NotNull(result!.Networks);
@@ -287,7 +287,7 @@ public class PoiskKinoMovieDtoV1_4Tests
     [Fact]
     public void Deserialize_FullMovieJson_TimestampsAreCorrect()
     {
-        var result = JsonSerializer.Deserialize<PoiskKinoMovieDtoV1_4>(
+        var result = JsonSerializer.Deserialize<PoiskKinoMovieDto>(
             TestJsonData.FullMovieDtoJson, Options);
 
         Assert.NotNull(result!.UpdatedAt);
@@ -299,7 +299,7 @@ public class PoiskKinoMovieDtoV1_4Tests
     [Fact]
     public void Deserialize_MinimalMovieJson_ReturnsNullForMissingFields()
     {
-        var result = JsonSerializer.Deserialize<PoiskKinoMovieDtoV1_4>(
+        var result = JsonSerializer.Deserialize<PoiskKinoMovieDto>(
             TestJsonData.MinimalMovieDtoJson, Options);
 
         Assert.NotNull(result);

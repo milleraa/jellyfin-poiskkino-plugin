@@ -87,6 +87,9 @@ public class PoiskKinoSeriesProvider(
                 .Where(r => r.IsSeries == true)
                 .ToList();
 
+            // Локальная фильтрация по году (ADR-0001): попадание в releaseYears или совпадение с Year
+            series = SearchYearFilter.Apply(series, searchInfo.Year, SearchYearFilter.MatchesSeries, _logger);
+
             foreach (var item in series)
             {
                 var searchResult = new RemoteSearchResult
@@ -143,7 +146,7 @@ public class PoiskKinoSeriesProvider(
                 return result;
             }
 
-            Models.PoiskKinoMovieDtoV1_4? seriesData = null;
+            Models.PoiskKinoMovieDto? seriesData = null;
 
             // Сначала проверяем, есть ли PoiskKino ID в ProviderIds
             var poiskKinoIdStr = info.GetProviderId(ProviderNames.PoiskKino);
