@@ -6,7 +6,7 @@
 - **Feature / Hotfix:** [docs/backlog/features/logo-images/](../)
 - **Назначено:** `developer-csharp`
 - **Стек / infra-область:** C# / xUnit тестовая инфраструктура; продакшн-код не меняется
-- **Статус:** pending
+- **Статус:** done (принят Техлидом 2026-08-24; commit `f3beb9a`)
 - **Ветка:** `feature/logo-images` (тот же worktree `/home/alex/src/my/jellyfin-metadata-plugin-wt-logo-images`)
 
 ## Описание
@@ -54,3 +54,13 @@ for i in 1 2 3 4 5; do dotnet test PoiskKinoMetadataPlugin.slnx --no-build || br
 ## Handoff
 
 - После выполнения: локальный commit без push (`test(infra): isolate ImageUrlHelperTests from Plugin.Instance static state`), статус задачи → `in review`, сообщить Техлиду.
+
+## Приёмка Техлида (2026-08-24)
+
+- **Решение:** принято (статус → done).
+- Незакоммиченный дифф: принят за основу и доработан developer-csharp — тихий `GetProperty(...)?.SetValue(...)` заменён на явную `PropertyInfo` + `Assert.NotNull` (иначе при поломке рефлексии тест проходил бы вакуумно, нарушая AC-1).
+- Commit: `f3beb9a` `test(infra): isolate ImageUrlHelperTests from Plugin.Instance static state` — изменён только `PoiskKinoMetadataPlugin.UnitTests/Helpers/ImageUrlHelperTests.cs`; продакшн-код не тронут (AC-2), тест «not initialized» сохранён.
+- AC-1/AC-4: класс в `[Collection("PluginInstanceCollection")]` (последовательный прогон с плагин-тестами), save/restore `Plugin.Instance` в try/finally; подтверждено чтением кода и конфигурации xUnit (`xunit.runner.json` не требуется).
+- AC-3/AC-5: независимо от отчёта разработчика выполнены Техлидом `dotnet build PoiskKinoMetadataPlugin.slnx` (0 ошибок) и 5 полных прогонов `dotnet test --no-build` подряд — все зелёные, 163 passed / 0 failed каждый.
+- DevOps impact check по диффу: impact нет, DevOps-задача не нужна.
+- Push не выполнялся; merge PR #3 не выполняется. Handoff → Оркестратор: стадия `qa`, owner `QA`.

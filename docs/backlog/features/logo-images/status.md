@@ -6,13 +6,13 @@
 
 | Поле | Значение |
 |------|----------|
-| **Стадия** | `rework` |
-| **Owner** | `Orchestrator` → handoff `Tech Lead` |
+| **Стадия** | `qa` (rework-фикс принят Техлидом) |
+| **Owner** | `Orchestrator` (QA запускает Оркестратор; повторная валидация фикса 003) |
 | **Worktree** | `/home/alex/src/my/jellyfin-metadata-plugin-wt-logo-images` (сохранён Финализатором для возможного rework/archive; ранее ошибочно помечен как удалён — исправлено Оркестратором) |
 | **Ветка** | `feature/logo-images` (push в `origin`; ветку и remote branch не удалять до merge/close) |
 | **PR/MR** | [jellyfin-poiskkino-plugin#3](https://github.com/milleraa/jellyfin-poiskkino-plugin/pull/3) |
 | **Commit со ссылкой на PR/MR** | `6b8ef58` (`docs(logo-images): open PR #3 …`) |
-| **Блокеры** | 🔧 в rework — flaky CI (изоляция тестов), фикс назначен Техлиду |
+| **Блокеры** | нет — flaky-гонка устранена (commit `f3beb9a`, приёмка Техлида 2026-08-24: build 0 err, 5×163/163) |
 
 > ⚠️ **ВАЖНО для Стейхолдера:** merge PR #3 пока **НЕ делать**. Ждём явного решения: `/accept-feature` или `/reject-feature`. При accept Финализатор выполнит archive finalization в ветке `feature/logo-images` (перенос папки в `docs/archive/features/logo-images/`, запись в `docs/history/completed-work.md`, стадия `accepted`) и финальный push — только после этого merge одним мержем. При reject — возврат в rework через `.opencode/skills/pr-mr-rework/SKILL.md`.
 
@@ -28,7 +28,7 @@
 |----|------|-------------|--------|
 | 001 | [tasks/001-image-provider-logo-support.md](tasks/001-image-provider-logo-support.md) | developer-csharp (C# / Jellyfin adapter + unit-тесты) | done |
 | 002 | [tasks/002-logo-tmdb-filter-tests.md](tasks/002-logo-tmdb-filter-tests.md) | developer-csharp (C# / xUnit) | done |
-| 003 | [tasks/003-fix-imageurlhelper-test-isolation.md](tasks/003-fix-imageurlhelper-test-isolation.md) | developer-csharp (rework: xUnit изоляция, flaky CI) | pending |
+| 003 | [tasks/003-fix-imageurlhelper-test-isolation.md](tasks/003-fix-imageurlhelper-test-isolation.md) | developer-csharp (rework: xUnit изоляция, flaky CI) | done |
 
 Порядок и зависимости: [tech-plan.md](tech-plan.md). Выполнение строго последовательное в единственном worktree.
 
@@ -42,6 +42,8 @@
 | DevOps-задача | _не нужна_ |
 
 Повторная проверка Техлидом после реализации (2026-08-24, диффы `08db124`, `641b5df`): изменений инфраструктуры нет — только `PoiskKinoImageProvider.cs` + unit-тесты; новых env vars/secrets/интеграций/портов/миграций/Docker/CI-CD не появилось. Impact check закрыт.
+
+Повторная проверка Техлидом после rework-фикса (2026-08-24, дифф `f3beb9a`): изменён только тестовый файл `PoiskKinoMetadataPlugin.UnitTests/Helpers/ImageUrlHelperTests.cs` (атрибут коллекции + save/restore `Plugin.Instance`). Новых env vars/secrets/портов/интеграций/миграций/Docker/compose/CI-CD/deploy/Helm/K8s/observability нет. Impact: **нет**, DevOps-задача не нужна.
 
 ## QA
 
@@ -72,6 +74,15 @@
 Один unique evidence-linked reject → `not-triggered`: обычный rework продолжается без создания process-review.
 
 ## Changelog (handoff)
+
+### 2026-08-24 — rework-фикс принят Техлидом, → qa
+
+- Задача [003](tasks/003-fix-imageurlhelper-test-isolation.md) **done** (commit `f3beb9a` `test(infra): isolate ImageUrlHelperTests from Plugin.Instance static state`, только `ImageUrlHelperTests.cs`): класс включён в `[Collection("PluginInstanceCollection")]` (внутри коллекции xUnit v2 последовательно — пересечения с параллельным прогоном больше нет, AC-1/AC-4); в тесте «not initialized» — save/restore `Plugin.Instance` через reflection с громкой проверкой `Assert.NotNull(propInfo)` вместо молчаливого `?.` (AC-1). Продакшн-код не изменён (AC-2), тест «not initialized» сохранён.
+- Решение по незакоммиченному диффу: **принят за основу и доработан** — подход соответствовал ТЗ, дефект качества (тихий пропуск reflection при отсутствии свойства → возможный вакуумный pass) устранён developer-csharp.
+- Приёмка Техлида: `dotnet build PoiskKinoMetadataPlugin.slnx` — 0 ошибок; 5 полных прогонов `dotnet test --no-build` подряд — все зелёные, 163/163 каждый (AC-3/AC-5). AC-4 подтверждён чтением кода/конфигурации: изоляция через общую коллекцию, `xunit.runner.json` не требуется.
+- DevOps impact check по диффу `f3beb9a`: impact нет, DevOps-задача не нужна.
+- Push не выполнялся; ветка `feature/logo-images` локально опережает origin на 4 коммита (2 docs rework + фикс + этот docs). Merge PR #3 по-прежнему НЕ выполнять.
+- Handoff → Оркестратор: стадия `qa`, owner `QA` — повторная QA-валидация фикса (регресс: полный прогон + целевой тест `ImageUrlHelperTests`), затем Финализатор для повторной доставки PR #3.
 
 ### 2026-08-24 — pr-mr-ready → rework (решение Стейхолдера)
 
