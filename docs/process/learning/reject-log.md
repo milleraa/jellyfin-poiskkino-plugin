@@ -4,7 +4,7 @@
 
 | Date | Case | PR/MR / evidence | Class key | Triage | Process review |
 |---|---|---|---|---|---|
-| — | — | — | — | — | — |
+| 2026-08-24 | [logo-images/status.md](../../backlog/features/logo-images/status.md) | [PR #3](https://github.com/milleraa/jellyfin-poiskkino-plugin/pull/3) CI fail/pass/fail/pass; `ImageUrlHelperTests.ShouldIgnoreTmdbImages_WhenPluginNotInitialized_ReturnsFalse` гонка за `Plugin.Instance` | `tech-lead+pr-mr-ready-green-ci+implementation` | not-triggered | нет |
 
 ## Правила записи
 

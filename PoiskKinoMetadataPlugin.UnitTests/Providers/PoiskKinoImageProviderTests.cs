@@ -73,15 +73,16 @@ public class PoiskKinoImageProviderTests : PluginTestBase
     }
 
     [Fact]
-    public void GetSupportedImages_ReturnsPrimaryAndBackdrop()
+    public void GetSupportedImages_ReturnsPrimaryBackdropAndLogo()
     {
         var provider = CreateProvider();
 
         var types = provider.GetSupportedImages(new Movie()).ToList();
 
-        Assert.Equal(2, types.Count);
+        Assert.Equal(3, types.Count);
         Assert.Contains(ImageType.Primary, types);
         Assert.Contains(ImageType.Backdrop, types);
+        Assert.Contains(ImageType.Logo, types);
     }
 
     [Fact]
@@ -98,7 +99,7 @@ public class PoiskKinoImageProviderTests : PluginTestBase
     }
 
     [Fact]
-    public async Task GetImages_ByProviderId_ReturnsPosterAndBackdrop()
+    public async Task GetImages_ByProviderId_ReturnsPosterBackdropAndLogo()
     {
         PluginTestFixture.SetUpPlugin(TestApiKey);
         SetupMovieByIdResponse(TestJsonData.FullMovieDtoJson);
@@ -108,9 +109,10 @@ public class PoiskKinoImageProviderTests : PluginTestBase
 
         var images = (await provider.GetImages(item, CancellationToken.None)).ToList();
 
-        Assert.Equal(2, images.Count);
+        Assert.Equal(3, images.Count);
         Assert.Contains(images, i => i.Type == ImageType.Primary);
         Assert.Contains(images, i => i.Type == ImageType.Backdrop);
+        Assert.Contains(images, i => i.Type == ImageType.Logo && i.Url!.Contains("oppenheimer-logo.png"));
     }
 
     [Fact]
@@ -124,8 +126,14 @@ public class PoiskKinoImageProviderTests : PluginTestBase
 
         var images = (await provider.GetImages(item, CancellationToken.None)).ToList();
 
-        Assert.NotEmpty(images);
-        Assert.All(images, i => Assert.Contains("movie-poster.jpg", i.Url!));
+        Assert.Equal(3, images.Count);
+        // Порядок типов детерминированный: Primary → Backdrop → Logo
+        Assert.Equal(ImageType.Primary, images[0].Type);
+        Assert.Equal(ImageType.Backdrop, images[1].Type);
+        Assert.Equal(ImageType.Logo, images[2].Type);
+        Assert.Contains("movie-poster.jpg", images[0].Url!);
+        Assert.Contains("movie-backdrop.jpg", images[1].Url!);
+        Assert.Contains("movie-logo.png", images[2].Url!);
     }
 
     [Theory]
@@ -152,6 +160,84 @@ public class PoiskKinoImageProviderTests : PluginTestBase
 
         var primaryCount = images.Count(i => i.Type == ImageType.Primary);
         Assert.Equal(shouldBeFiltered ? 0 : 1, primaryCount);
+    }
+
+    // AC-6, AC-7: постер и фон вне TMDB, логотип на tmdb.org
+    private const string TmdbLogoMovieJson = """
+    {
+        "id": 300,
+        "name": "TMDB Logo Movie",
+        "poster": { "url": "https://example.com/poster.jpg" },
+        "backdrop": { "url": "https://example.com/backdrop.jpg" },
+        "logo": { "url": "https://image.tmdb.org/t/p/original/logo.png" }
+    }
+    """;
+
+    [Fact]
+    public async Task GetImages_TmdbLogo_FilteredWhenIgnoreTmdbEnabled()
+    {
+        // AC-6, AC-11: логотип с TMDB-URL отфильтрован при IgnoreTmdbImages = true
+        PluginTestFixture.SetUpPlugin(TestApiKey);
+        Plugin.Instance!.Configuration.IgnoreTmdbImages = true;
+        SetupMovieByIdResponse(TmdbLogoMovieJson);
+        var provider = CreateProvider();
+        var item = new Movie();
+        item.SetProviderId(ProviderNames.PoiskKino, "300");
+
+        var images = (await provider.GetImages(item, CancellationToken.None)).ToList();
+
+        Assert.DoesNotContain(images, i => i.Type == ImageType.Logo);
+        Assert.Contains(images, i => i.Type == ImageType.Primary);
+        Assert.Contains(images, i => i.Type == ImageType.Backdrop);
+    }
+
+    [Fact]
+    public async Task GetImages_TmdbLogo_ReturnedWhenIgnoreTmdbDisabled()
+    {
+        // AC-7: логотип возвращается как есть при IgnoreTmdbImages = false
+        PluginTestFixture.SetUpPlugin(TestApiKey);
+        Plugin.Instance!.Configuration.IgnoreTmdbImages = false;
+        SetupMovieByIdResponse(TmdbLogoMovieJson);
+        var provider = CreateProvider();
+        var item = new Movie();
+        item.SetProviderId(ProviderNames.PoiskKino, "300");
+
+        var images = (await provider.GetImages(item, CancellationToken.None)).ToList();
+
+        Assert.Equal(3, images.Count);
+        Assert.Contains(images, i => i.Type == ImageType.Logo && i.Url == "https://image.tmdb.org/t/p/original/logo.png");
+        Assert.Contains(images, i => i.Type == ImageType.Primary);
+        Assert.Contains(images, i => i.Type == ImageType.Backdrop);
+
+        // Восстанавливаем дефолт, чтобы флаг не протёк в другие тесты общей коллекции
+        Plugin.Instance!.Configuration.IgnoreTmdbImages = true;
+    }
+
+    [Fact]
+    public async Task GetImages_LogoMissing_ReturnsPosterAndBackdropWithoutLogo()
+    {
+        var movieJson = """
+        {
+            "id": 200,
+            "name": "Movie Without Logo",
+            "poster": { "url": "https://example.com/poster.jpg" },
+            "backdrop": { "url": "https://example.com/backdrop.jpg" },
+            "logo": null
+        }
+        """;
+
+        PluginTestFixture.SetUpPlugin(TestApiKey);
+        SetupMovieByIdResponse(movieJson);
+        var provider = CreateProvider();
+        var item = new Movie();
+        item.SetProviderId(ProviderNames.PoiskKino, "200");
+
+        var images = (await provider.GetImages(item, CancellationToken.None)).ToList();
+
+        Assert.Equal(2, images.Count);
+        Assert.Contains(images, i => i.Type == ImageType.Primary);
+        Assert.Contains(images, i => i.Type == ImageType.Backdrop);
+        Assert.DoesNotContain(images, i => i.Type == ImageType.Logo);
     }
 
     [Fact]
