@@ -6,16 +6,16 @@
 
 | Поле | Значение |
 |------|----------|
-| **Стадия** | `pr-mr-ready` (повторная доставка после rework; CI зелёный) |
-| **Owner** | `Orchestrator` / Стейхолдер (gate: `/accept-feature` или `/reject-feature`) |
+| **Стадия** | `accepted` (архивирована; финальное состояние) |
+| **Owner** | `Stakeholder` (accept `/accept-feature` 2026-08-24 до merge PR #3) |
 | **Worktree** | `/home/alex/src/my/jellyfin-metadata-plugin-wt-logo-images` (сохранён Финализатором для archive при accept; НЕ удалять) |
 | **Ветка** | `feature/logo-images` (push в `origin`; ветку и remote branch не удалять до merge/close) |
 | **PR/MR** | [jellyfin-poiskkino-plugin#3](https://github.com/milleraa/jellyfin-poiskkino-plugin/pull/3) · [rework-комментарий](https://github.com/milleraa/jellyfin-poiskkino-plugin/pull/3#issuecomment-5398172719) |
 | **Commit со ссылкой на PR/MR** | см. changelog ниже (повторная доставка) + `6b8ef58` (`docs(logo-images): open PR #3 …`, первая доставка) |
 | **CI PR #3** | pass — первый прогон после rework-push ([run](https://github.com/milleraa/jellyfin-poiskkino-plugin/actions/runs/32750717011), 2026-08-24) |
-| **Блокеры** | нет — flaky-гонка устранена (`f3beb9a`); merge PR #3 не выполнять до решения Стейхолдера |
+| **Блокеры** | нет — flaky-гонка устранена (`f3beb9a`); решение Стейхолдера получено (`/accept-feature`), merge PR #3 разрешён после архивации (выполняет Стейхолдер) |
 
-> ⚠️ **ВАЖНО для Стейхолдера:** merge PR #3 пока **НЕ делать**. Ждём явного решения: `/accept-feature` или `/reject-feature`. При accept Финализатор выполнит archive finalization в ветке `feature/logo-images` (перенос папки в `docs/archive/features/logo-images/`, запись в `docs/history/completed-work.md`, стадия `accepted`) и финальный push — только после этого merge одним мержем. При reject — возврат в rework через `.opencode/skills/pr-mr-rework/SKILL.md`.
+> ✅ **Решение Стейхолдера (2026-08-24):** `/accept-feature` — фича принята **до merge PR #3** (штатный флоу DoD). Финализатор выполнил archive finalization в ветке `feature/logo-images` до merge: папка перенесена в `docs/archive/features/logo-images/`, запись добавлена в `docs/history/completed-work.md`. Merge PR #3 выполняется Стейхолдером **после** архивации — все изменения попадают в main одним мержем.
 
 ### Стадии (справочно)
 
@@ -76,6 +76,14 @@
 Один unique evidence-linked reject → `not-triggered`: обычный rework продолжается без создания process-review.
 
 ## Changelog (handoff)
+
+### 2026-08-24 — ✅ accepted: Стейхолдер принял фичу, archive finalization до merge
+
+- Стейхолдер сообщил решение агенту (`/accept-feature`, 2026-08-24) **до merge PR #3** — штатный триггер DoD «Accepted / Done».
+- Финализатор выполнил archive finalization в существующей ветке `feature/logo-images` (новая ветка не создавалась, merge не выполнялся): `git mv docs/backlog/features/logo-images → docs/archive/features/logo-images`; запись добавлена в [completed-work](../../../history/completed-work.md); стадия `accepted`, owner `Stakeholder`.
+- Acceptance/archive checklist (`finalization-check`) и чеклист «Accepted / Done» ([definition-of-done](../../../process/definition-of-done.md)) пройдены полностью; правок процессных файлов (docs/process, .opencode и т.п.) архивация не потребовала — процессный коммит не создавался.
+- Push архивного коммита выполнен в `origin/feature/logo-images`; CI на PR #3 перезапустился на архивном коммите. Merge PR #3 — следующий шаг Стейхолдера, одним мержем вместе с архивацией.
+- Ветка и remote branch сохранены; worktree `/home/alex/src/my/jellyfin-metadata-plugin-wt-logo-images` сохранён до merge/close.
 
 ### 2026-08-24 — повторная доставка PR #3 после rework, → pr-mr-ready
 

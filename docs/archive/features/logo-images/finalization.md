@@ -21,7 +21,9 @@
 - [x] Документация: ADR не требуется (зафиксировано Архитектором); DevOps docs не менялись (impact нет). Устаревание `docs/product/requirements.md:12` передано Аналитику/Стейхолдеру на этапе архитектуры.
 - [x] Папка фичи остаётся в `docs/backlog/features/logo-images/` до принятия Стейхолдером.
 
-## ⚠️ Статус: BLOCKER — flaky CI, ожидание решения Стейхолдера/Оркестратора
+## ⚠️ Историческая заметка: BLOCKER flaky CI (устранён в rework)
+
+> ✅ **Разрешено (2026-08-24):** фикс изоляции доставлен (`f3beb9a`, задача 003), повторная доставка PR #3 — CI зелёный ([run](https://github.com/milleraa/jellyfin-poiskkino-plugin/actions/runs/32750717011)); далее фича принята Стейхолдером `/accept-feature`. Текст ниже сохранён как история инцидента.
 
 **Merge PR #3 НЕ выполнять.** Стадия формально `pr-mr-ready`, но поставка заблокирована нестабильным CI:
 
@@ -35,6 +37,4 @@
 
 ## Acceptance/archive
 
-- **Accepted / merged:** _TBD — ожидается решение Стейхолдера_
-- После accept (до merge): папка переносится в `docs/archive/features/logo-images/` коммитами в `feature/logo-images` и пушится; merge PR выполняется после архивации — все изменения попадают в main одним мержем.
-- Если PR не принят: работа возвращается через `.opencode/skills/pr-mr-rework/SKILL.md`, без переноса в архив.
+- **Accepted:** да — Стейхолдер `/accept-feature` 2026-08-24 **до merge** PR #3 (штатный флоу DoD «Accepted / Done»). Merge Финализатором не выполнялся. Архивация выполнена в ветке `feature/logo-images` до merge: папка перенесена в `docs/archive/features/logo-images/`, запись добавлена в [completed-work](../../../history/completed-work.md), стадия `accepted` в [status.md](status.md). Merge PR #3 — следующий шаг Стейхолдера: все изменения попадут в main одним мержем вместе с архивацией.
