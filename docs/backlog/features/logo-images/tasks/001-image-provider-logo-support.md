@@ -6,7 +6,7 @@
 - **Feature / Hotfix:** [docs/backlog/features/logo-images/](../)
 - **Назначено:** `developer-csharp`
 - **Стек / infra-область:** C# / .NET 8, Jellyfin 10.11.x (`Jellyfin.Controller` / `Jellyfin.Model`); код + unit-тесты, infra не затрагивается
-- **Статус:** draft
+- **Статус:** done
 - **Ветка:** `feature/logo-images` (worktree `/home/alex/src/my/jellyfin-metadata-plugin-wt-logo-images`, task-branch/worktree не создавать)
 
 ## Описание
