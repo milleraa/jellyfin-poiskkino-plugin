@@ -11,7 +11,7 @@
 ## Цепочка
 
 1. **Оркестратор** — intake, классификация, bootstrap пустого проекта.
-2. **Оркестратор** — создаёт ветку и единственный `git worktree` для feature/hotfix, фиксирует их в `status.md`.
+2. **Оркестратор** — создаёт рабочую ветку для feature/hotfix и фиксирует её в `status.md`.
 3. **Аналитик** (фичи) — `analysis.md`, вопросы Стейхолдеру.
 4. **Оркестратор → Стейхолдер** — обязательная остановка `analysis-review`: продолжать сейчас или оставить фичу в backlog (`backlog-paused`).
 5. **Архитектор** — только после подтверждения продолжения; `architecture.md`, ADR при необходимости; может вернуть к Аналитику.
@@ -41,6 +41,7 @@
 4. Оркестратор принимает результат, обновляет handoff в `status.md` и только затем запускает следующую роль или эскалирует блокер Стейхолдеру.
 5. Исключение hub: **Техлид** вызывает разработчиков и DevOps без возврата к Оркестратору между задачами; все остальные переходы — через Оркестратора.
 6. После Аналитика по новой фиче Оркестратор всегда останавливается на `analysis-review` и ждёт решения Стейхолдера перед Архитектором.
+7. Если разработчику или DevOps недостаёт разрешённой команды, он возвращает Техлиду точную команду, цель и текст отказа. Техлид фиксирует это в разделе «Недостаточность разрешений» текущего `status.md` и эскалирует Оркестратору; обход permission checks запрещён. Оркестратор периодически агрегирует evidence и меняет allow-list только отдельным reviewed изменением процесса.
 
 ## Happy path (новая фича)
 
@@ -48,7 +49,7 @@
 
 ## Возврат PR/MR в работу
 
-`pr-mr-ready` не означает `accepted`. Если Стейхолдер не принимает PR/MR, Оркестратор применяет `.opencode/skills/pr-mr-rework/SKILL.md`, сохраняет feedback в `status.md`, восстанавливает worktree из существующей feature/hotfix ветки и возвращает работу на нужную роль.
+`pr-mr-ready` не означает `accepted`. Если Стейхолдер не принимает PR/MR, Оркестратор применяет `.opencode/skills/pr-mr-rework/SKILL.md`, сохраняет feedback в `status.md`, переключается на существующую feature/hotfix ветку и возвращает работу на нужную роль.
 
 Цикл: `pr-mr-ready` → `rework` → нужная роль → `finalization` → `pr-mr-ready`. В архив переносится только принятая или merged работа.
 
@@ -60,7 +61,7 @@
 - `candidate`: минимум два unique comparable evidence-linked cases из разных cases/independent attempts с идентичным `affected role + violated contract/gate + classification` и без suppression.
 - `suppressed`: insufficient/duplicate/noisy/external evidence, другой class key, opt-out Стейкхолдера или unsafe hypothesis; причина и evidence обязательны.
 - Candidate создаёт reviewable `process-review.md`, а не автоматическое изменение workflow.
-- Только regression verdict `quality improvement demonstrated` без safety regression может рекомендовать отдельную process-change feature/branch/worktree/PR. Исходный rework от этого PR не зависит.
+- Только regression verdict `quality improvement demonstrated` без safety regression может рекомендовать отдельную process-change feature branch и reviewed PR/MR. Исходный rework от этого PR не зависит.
 
 ## Где смотреть статус
 

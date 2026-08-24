@@ -14,7 +14,6 @@
 - Для Docker/CI/CD/deploy/infra изменений: deployment notes, rollback/troubleshooting notes и ссылка на обновлённые [DevOps](devops.md) / [CI/CD](../environments/ci-cd.md) документы
 - PR/MR создаёт и пушит только **Финализатор**.
 - После создания PR/MR ссылка фиксируется отдельным commit и повторным push.
-- Локальный worktree удаляется только после повторного push со ссылкой на PR/MR.
 - `pr-mr-ready` не означает `accepted`: папка остаётся в `docs/backlog/…` до принятия Стейхолдером или merge.
 - Если PR/MR не принят, Оркестратор возвращает работу через `.opencode/skills/pr-mr-rework/SKILL.md`.
 

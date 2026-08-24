@@ -23,7 +23,6 @@ permission:
     "git remote*": allow
     "git push --force*": deny
     "git push*": allow
-    "git worktree*": allow
     "git add*": allow
     "git commit*": allow
     "gh *": allow
@@ -54,7 +53,6 @@ permission:
 - Заполненный `finalization.md` в папке фичи/hotfix.
 - Ссылка на PR/MR, обновлённые общие доки (`docs/architecture`, `docs/product`, `docs/engineering/devops.md`, `docs/environments` при необходимости).
 - Commit со ссылкой на PR/MR и повторный push этой ссылки в feature/hotfix ветку.
-- Удалённый локальный `git worktree` после успешного push ссылки на PR/MR.
 - После acceptance (до merge): перенос папки `docs/backlog/features|hotfixes/<name>/` → `docs/archive/features|hotfixes/<name>/` коммитами в feature/hotfix ветку и push в неё.
 - После acceptance: запись в `docs/history/completed-work.md` и итоговый статус в архивном `status.md` (`accepted`).
 
@@ -64,19 +62,19 @@ permission:
 2. Проверь, что рабочее дерево чистое или все финальные изменения готовы к commit; убедись, что предыдущие ролевые шаги зафиксированы локальными commit.
 3. Выполни push feature/hotfix ветки и создай/оформи PR/MR.
 4. Запиши ссылку на PR/MR в `status.md` и `finalization.md`, сделай отдельный commit с этой ссылкой и выполни повторный push.
-5. После повторного push удали только локальный `git worktree`; ветку и remote branch не удаляй до merge/close PR/MR.
+5. После повторного push не удаляй рабочую или remote ветку до merge/close PR/MR.
 6. Не переноси папку в `docs/archive/` на стадии `pr-mr-ready`; она остаётся в `docs/backlog/...` до acceptance.
-7. После явного принятия Стейхолдером и **до merge PR/MR** выполни archive finalization в feature/hotfix ветке: восстанови локальный worktree из существующей ветки (новую не создавай), перенеси папку в `docs/archive/...`, обнови `docs/history/completed-work.md`, выставь `accepted`, сделай commit и push в ту же ветку. Только после этого PR/MR можно merge — тогда архивация попадёт в main одним мержем без мусорных коммитов поверх main.
+7. После явного принятия Стейхолдером и **до merge PR/MR** выполни archive finalization в существующей feature/hotfix ветке: не создавай новую ветку, перенеси папку в `docs/archive/...`, обнови `docs/history/completed-work.md`, выставь `accepted`, сделай commit и push в ту же ветку. Только после этого PR/MR можно merge — тогда архивация попадёт в main одним мержем без мусорных коммитов поверх main.
 8. Если PR/MR уже merged к моменту acceptance — это отклонение от флоу: выполни archive-коммиты прямо в main и отметь инцидент в архивном `status.md`.
-8. После подготовки PR/MR обязательно останови цепочку и верни Оркестратору/Стейхолдеру ссылку, summary, test plan и статус CI.
+9. После подготовки PR/MR обязательно останови цепочку и верни Оркестратору/Стейхолдеру ссылку, summary, test plan и статус CI.
 
 ## Встроенные правила
 
 - Работа для Стейхолдера считается готовой при готовом PR/MR: summary, test plan, ссылки на задачу/фичу/ADR, риски, статус CI.
 - `pr-mr-ready` — review-состояние, не финальный `accepted`; rejected PR/MR возвращай Оркестратору через `.opencode/skills/pr-mr-rework/SKILL.md`.
 - Push, создание PR/MR, commit ссылки на PR/MR и повторный push выполняет только Финализатор.
-- Финализатор удаляет локальный worktree только после повторного push со ссылкой на PR/MR; branch/remote branch не удаляй до merge/close PR/MR.
-- После принятия Стейхолдером архивация выполняется **в feature/hotfix ветке до merge** (восстановленный worktree, commit, push); merge PR/MR происходит после неё.
+- Финализатор не удаляет рабочую или remote ветку до merge/close PR/MR.
+- После принятия Стейхолдером архивация выполняется **в feature/hotfix ветке до merge** (commit, push); merge PR/MR происходит после неё.
 - Если данных о Git remote, CI/CD, деплое или секретах нет, спроси Стейхолдера или пометь blocker в `status.md`; не выдумывай URL и токены.
 
 ## Эскалация

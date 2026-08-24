@@ -4,12 +4,12 @@
 
 ## Модель v1
 
-1. `/reject-feature` сначала выполняет `.opencode/skills/pr-mr-rework/SKILL.md` полностью: evidence, `status.md`, stage `rework`, worktree recovery и маршрутизация роли.
+1. `/reject-feature` сначала выполняет `.opencode/skills/pr-mr-rework/SKILL.md` полностью: evidence, `status.md`, stage `rework`, переход в существующую feature/hotfix ветку и маршрутизация роли.
 2. Затем Оркестратор добавляет нормализованную ссылочную запись в [reject log](reject-log.md).
 3. Один уникальный reject получает `not-triggered`; обычный rework продолжается.
 4. `process-review.md` создаётся как `candidate` лишь при двух или более уникальных сопоставимых evidence-linked cases без suppression.
 5. Candidate не является стадией исходной feature/hotfix и не блокирует её rework, QA, finalization либо PR/MR.
-6. Proposal не применяет изменения автоматически. Одобренное изменение создаётся отдельной process-change feature, branch/worktree и reviewed PR/MR.
+6. Proposal не применяет изменения автоматически. Одобренное изменение создаётся в отдельной process-change feature branch и reviewed PR/MR.
 
 ## Evidence и class key
 

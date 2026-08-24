@@ -38,7 +38,7 @@ _Фальсифицируемое объяснение повторяемой п
 - **Proposed change:** _не применяется автоматически_
 - **Affected files / roles:** _точные пути и владельцы_
 - **Expected improvement:** _наблюдаемое поведение_
-- **Safety constraints preserved:** _roles, gates, QA, worktree discipline, Finalizer, PR-only_
+- **Safety constraints preserved:** _roles, gates, QA, branch discipline, Finalizer, PR-only_
 
 ## Regression set and verdict
 
@@ -49,4 +49,4 @@ _Фальсифицируемое объяснение повторяемой п
 - **Verdict:** `quality improvement demonstrated` | `inconclusive` | `safety regression`
 - **Recommendation:** `separate PR/MR` | `do not change process`
 
-Без regression evidence verdict — `inconclusive`, а recommendation — `do not change process`. При положительном verdict создайте отдельную process-change feature/branch/worktree и human-reviewed PR/MR; не изменяйте исходный rework автоматически.
+Без regression evidence verdict — `inconclusive`, а recommendation — `do not change process`. При положительном verdict создайте отдельную process-change feature branch и human-reviewed PR/MR; не изменяйте исходный rework автоматически.

@@ -5,7 +5,7 @@ hidden: true
 permission:
   edit: allow
   bash:
-    "*": ask
+    "*": deny
     "pwd": allow
     "ls*": allow
     "tree*": allow
@@ -15,8 +15,34 @@ permission:
     "tail *": allow
     "sed -n *": allow
     "wc *": allow
+    "find *": allow
+    "grep *": allow
+    "egrep *": allow
+    "fgrep *": allow
+    "sort *": allow
+    "uniq *": allow
+    "cut *": allow
+    "tr *": allow
+    "tee *": allow
+    "printf *": allow
+    "echo *": allow
+    "basename *": allow
+    "dirname *": allow
+    "realpath *": allow
+    "readlink *": allow
+    "which *": allow
+    "stat *": allow
+    "file *": allow
+    "diff *": allow
+    "cmp *": allow
+    "sha256sum *": allow
+    "md5sum *": allow
     "git status*": allow
+    "git branch*": allow
     "git diff*": allow
+    "git ls-files*": allow
+    "git rev-parse*": allow
+    "git check-ignore*": allow
     "git log*": allow
     "git show*": allow
     "git add*": allow
@@ -58,4 +84,5 @@ permission:
 - Для async-операций применяй `CancellationToken` там, где это уместно.
 - Пиши тесты там, где это уместно для риска изменения; не снижай покрытие без обоснования.
 - Обновляй `tasks/NNN-*.md` и `status.md` ссылками на результат, проверки и риски.
+- Если нужная команда не разрешена, не обходи ограничение: передай Техлиду точную команду, цель и текст отказа.
 - После изменения файлов сделай локальный commit без push и верни handoff Техлиду.

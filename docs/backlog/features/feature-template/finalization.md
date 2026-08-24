@@ -5,7 +5,6 @@
 - **Ссылка:** _TBD_
 - **Ветка:** _TBD_
 - **Commit со ссылкой на PR/MR:** _TBD_
-- **Worktree cleanup:** _TBD_
 
 ## Delivery checklist
 
