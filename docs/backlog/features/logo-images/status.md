@@ -72,6 +72,14 @@
 
 ## Changelog (handoff)
 
+### 2026-08-24 — CI-инцидент на PR #3: flaky-тест изоляции (не код фичи)
+
+- Первый CI-прогон PR #3 упал: `ImageUrlHelperTests.ShouldIgnoreTmdbImages_WhenPluginNotInitialized_ReturnsFalse` (`Assert.False() Failure`) — [лог](https://github.com/milleraa/jellyfin-poiskkino-plugin/actions/runs/32688926759/job/97318957305).
+- Анализ: тест живёт в **дефолтной** xUnit-коллекции и требует `Plugin.Instance == null`; коллекция `PluginInstanceCollection` (инициализирует плагин, сброс только в `Dispose` fixture) выполняется xUnit v2 **параллельно** с ней. Новые тесты фичи расширили окно работы с инициализированным плагином → вероятность гонки выросла. Корень — предсуществующая слабая изоляция статического состояния, не изменения `PoiskKinoImageProvider`.
+- Evidence: re-run CI — **pass** ([job](https://github.com/milleraa/jellyfin-poiskkino-plugin/actions/runs/32688926759/job/97320112071)); локально 5 полных прогонов подряд — 163/163 каждый. Классификация: вероятностный flaky, воспроизводимый под таймингами CI-runner'а.
+- Неблокирующий follow-up (кандидат в backlog / rework по решению Стейхолдера): включить `ImageUrlHelperTests` в общую коллекцию с явным сбросом `Plugin.Instance` перед проверкой «not initialized» (либо убрать зависимость от статики через абстракцию).
+- Продуктовый код фичи инцидентом не затронут. Стадия остаётся `pr-mr-ready`; решение о rework тестовой изоляции — за Стейхолдером вместе с accept/reject.
+
 ### 2026-08-24 — PR #3 открыт, → pr-mr-ready
 
 - Финализатор: целостность ветки проверена — чистое дерево, линейная история `8d48967..f0bfb8c` (10 коммитов), diff против `main` соответствует scope фичи (код: `PoiskKinoImageProvider.cs` + тесты; docs: папка фичи + `docs/qa/test-runs.md`).

@@ -28,6 +28,11 @@
 - `/accept-feature` → Финализатор выполняет archive finalization **в ветке `feature/logo-images` до merge**: восстановление worktree из существующей ветки, перенос папки в `docs/archive/features/logo-images/`, запись в `docs/history/completed-work.md`, стадия `accepted` в архивном `status.md`, commit + push → затем merge одним мержем.
 - `/reject-feature` → возврат в rework через `.opencode/skills/pr-mr-rework/SKILL.md`.
 
+### CI-инцидент (зафиксирован, не блокирует review)
+
+- Первый CI-прогон PR #3 упал на предсуществующем flaky-тесте изоляции `ImageUrlHelperTests.ShouldIgnoreTmdbImages_WhenPluginNotInitialized_ReturnsFalse` (гонка дефолтной коллекции с `PluginInstanceCollection` за статический `Plugin.Instance`); вероятность выросла из-за новых тестов фичи. Re-run — pass; локально 5×163/163. Детали и follow-up — в [status.md](status.md), Changelog 2026-08-24.
+- Продуктовый код фичи не затронут; при rework-решении маршрут: QA/TechLead (тестовая изоляция).
+
 ## Acceptance/archive
 
 - **Accepted / merged:** _TBD — ожидается решение Стейхолдера_
