@@ -6,7 +6,7 @@
 - **Feature / Hotfix:** [docs/backlog/features/logo-images/](../)
 - **Назначено:** `developer-csharp`
 - **Стек / infra-область:** C# / xUnit unit-тесты; продакшн-код не меняется (если тест вскроет баг — согласовать с Техлидом до правок)
-- **Статус:** draft
+- **Статус:** done
 - **Ветка:** `feature/logo-images` (тот же worktree `/home/alex/src/my/jellyfin-metadata-plugin-wt-logo-images`; выполнять строго после задачи 001)
 
 ## Описание

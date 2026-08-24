@@ -6,8 +6,8 @@
 
 | Поле | Значение |
 |------|----------|
-| **Стадия** | `development` |
-| **Owner** | `Tech Lead` |
+| **Стадия** | `qa` |
+| **Owner** | `QA` |
 | **Worktree** | `/home/alex/src/my/jellyfin-metadata-plugin-wt-logo-images` |
 | **Ветка** | `feature/logo-images` |
 | **PR/MR** | _нет_ |
@@ -25,7 +25,7 @@
 | ID | Файл | Роль / стек | Статус |
 |----|------|-------------|--------|
 | 001 | [tasks/001-image-provider-logo-support.md](tasks/001-image-provider-logo-support.md) | developer-csharp (C# / Jellyfin adapter + unit-тесты) | done |
-| 002 | [tasks/002-logo-tmdb-filter-tests.md](tasks/002-logo-tmdb-filter-tests.md) | developer-csharp (C# / xUnit) | in progress |
+| 002 | [tasks/002-logo-tmdb-filter-tests.md](tasks/002-logo-tmdb-filter-tests.md) | developer-csharp (C# / xUnit) | done |
 
 Порядок и зависимости: [tech-plan.md](tech-plan.md). Выполнение строго последовательное в единственном worktree.
 
@@ -37,6 +37,8 @@
 | Новые интеграции / порты / очереди / storage / jobs | _нет_ |
 | Docker / compose / CI/CD / deploy / Helm / K8s / observability | _нет_ |
 | DevOps-задача | _не нужна_ |
+
+Повторная проверка Техлидом после реализации (2026-08-24, диффы `08db124`, `641b5df`): изменений инфраструктуры нет — только `PoiskKinoImageProvider.cs` + unit-тесты; новых env vars/secrets/интеграций/портов/миграций/Docker/CI-CD не появилось. Impact check закрыт.
 
 ## QA
 
@@ -67,6 +69,15 @@
 Один unique reject получает `not-triggered` и не блокирует rework. `candidate` возможен только при двух или более unique comparable evidence-linked cases; изменения процесса выполняются только отдельным reviewed PR/MR. Правила: [process learning](../../../process/learning/README.md).
 
 ## Changelog (handoff)
+
+### 2026-08-24 — реализация принята Техлидом, → qa
+
+- Задача 001 done (commit `08db124` `feat(images): return logo images from PoiskKino as ImageType.Logo`): `GetSupportedImages` → `[Primary, Backdrop, Logo]`; маппинг логотипа в обеих ветках с guard `IsNullOrWhiteSpace` (Poster/Backdrop не тронуты); XML-summary обновлён; тесты обновлены (`GetSupportedImages_*`, `GetImages_ByProviderId_*` переименованы под 3 типа; fallback-тест переписан на проверку по типам; новый тест «logo отсутствует»).
+- Отступление от ТЗ задачи 001, принято Техлидом: в `MixedSearchResponseJson` записи «Оппенгеймер» добавлен также `"backdrop"` — иначе fallback вернул бы 2 изображения и проверку порядка Primary → Backdrop → Logo выполнить было бы невозможно; остальные потребители фикстуры проверены, набор зелёный.
+- Задача 002 done (commit `641b5df` `test(images): cover TMDB filtering for logo type`): AC-6/AC-7 покрыты (TMDB-логотип фильтруется при дефолтном `IgnoreTmdbImages=true`, возвращается при `false` с восстановлением флага); продакшн-код не менялся.
+- Приёмка: `dotnet build` 0 ошибок; `dotnet test` — **163 passed / 0 failed** (было 161 до фичи). Ревью против architecture.md: guard-несимметричность по AC-4 соблюдена, OQ-2 уважен (`ShouldFilterUrl` не введён), порядок Primary → Backdrop → Logo детерминирован.
+- DevOps impact check: подтверждён повторно по диффам — impact нет, DevOps-задача не нужна.
+- Handoff → Оркестратор: стадия `qa`, owner `QA`. QA запускает Оркестратор.
 
 ### 2026-08-24 — декомпозиция готова, → development
 
