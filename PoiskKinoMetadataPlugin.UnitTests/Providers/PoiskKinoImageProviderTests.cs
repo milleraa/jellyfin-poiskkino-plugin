@@ -162,6 +162,57 @@ public class PoiskKinoImageProviderTests : PluginTestBase
         Assert.Equal(shouldBeFiltered ? 0 : 1, primaryCount);
     }
 
+    // AC-6, AC-7: постер и фон вне TMDB, логотип на tmdb.org
+    private const string TmdbLogoMovieJson = """
+    {
+        "id": 300,
+        "name": "TMDB Logo Movie",
+        "poster": { "url": "https://example.com/poster.jpg" },
+        "backdrop": { "url": "https://example.com/backdrop.jpg" },
+        "logo": { "url": "https://image.tmdb.org/t/p/original/logo.png" }
+    }
+    """;
+
+    [Fact]
+    public async Task GetImages_TmdbLogo_FilteredWhenIgnoreTmdbEnabled()
+    {
+        // AC-6, AC-11: логотип с TMDB-URL отфильтрован при IgnoreTmdbImages = true
+        PluginTestFixture.SetUpPlugin(TestApiKey);
+        Plugin.Instance!.Configuration.IgnoreTmdbImages = true;
+        SetupMovieByIdResponse(TmdbLogoMovieJson);
+        var provider = CreateProvider();
+        var item = new Movie();
+        item.SetProviderId(ProviderNames.PoiskKino, "300");
+
+        var images = (await provider.GetImages(item, CancellationToken.None)).ToList();
+
+        Assert.DoesNotContain(images, i => i.Type == ImageType.Logo);
+        Assert.Contains(images, i => i.Type == ImageType.Primary);
+        Assert.Contains(images, i => i.Type == ImageType.Backdrop);
+    }
+
+    [Fact]
+    public async Task GetImages_TmdbLogo_ReturnedWhenIgnoreTmdbDisabled()
+    {
+        // AC-7: логотип возвращается как есть при IgnoreTmdbImages = false
+        PluginTestFixture.SetUpPlugin(TestApiKey);
+        Plugin.Instance!.Configuration.IgnoreTmdbImages = false;
+        SetupMovieByIdResponse(TmdbLogoMovieJson);
+        var provider = CreateProvider();
+        var item = new Movie();
+        item.SetProviderId(ProviderNames.PoiskKino, "300");
+
+        var images = (await provider.GetImages(item, CancellationToken.None)).ToList();
+
+        Assert.Equal(3, images.Count);
+        Assert.Contains(images, i => i.Type == ImageType.Logo && i.Url == "https://image.tmdb.org/t/p/original/logo.png");
+        Assert.Contains(images, i => i.Type == ImageType.Primary);
+        Assert.Contains(images, i => i.Type == ImageType.Backdrop);
+
+        // Восстанавливаем дефолт, чтобы флаг не протёк в другие тесты общей коллекции
+        Plugin.Instance!.Configuration.IgnoreTmdbImages = true;
+    }
+
     [Fact]
     public async Task GetImages_LogoMissing_ReturnsPosterAndBackdropWithoutLogo()
     {
