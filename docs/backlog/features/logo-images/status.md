@@ -6,13 +6,14 @@
 
 | Поле | Значение |
 |------|----------|
-| **Стадия** | `finalization` (rework-валидация QA пройдена) |
-| **Owner** | `Orchestrator` (Финализатор повторно доставляет PR #3) |
-| **Worktree** | `/home/alex/src/my/jellyfin-metadata-plugin-wt-logo-images` (сохранён Финализатором для возможного rework/archive; ранее ошибочно помечен как удалён — исправлено Оркестратором) |
+| **Стадия** | `pr-mr-ready` (повторная доставка после rework; CI зелёный) |
+| **Owner** | `Orchestrator` / Стейхолдер (gate: `/accept-feature` или `/reject-feature`) |
+| **Worktree** | `/home/alex/src/my/jellyfin-metadata-plugin-wt-logo-images` (сохранён Финализатором для archive при accept; НЕ удалять) |
 | **Ветка** | `feature/logo-images` (push в `origin`; ветку и remote branch не удалять до merge/close) |
-| **PR/MR** | [jellyfin-poiskkino-plugin#3](https://github.com/milleraa/jellyfin-poiskkino-plugin/pull/3) |
-| **Commit со ссылкой на PR/MR** | `6b8ef58` (`docs(logo-images): open PR #3 …`) |
-| **Блокеры** | нет — flaky-гонка устранена (commit `f3beb9a`, приёмка Техлида 2026-08-24: build 0 err, 5×163/163) |
+| **PR/MR** | [jellyfin-poiskkino-plugin#3](https://github.com/milleraa/jellyfin-poiskkino-plugin/pull/3) · [rework-комментарий](https://github.com/milleraa/jellyfin-poiskkino-plugin/pull/3#issuecomment-5398172719) |
+| **Commit со ссылкой на PR/MR** | см. changelog ниже (повторная доставка) + `6b8ef58` (`docs(logo-images): open PR #3 …`, первая доставка) |
+| **CI PR #3** | pass — первый прогон после rework-push ([run](https://github.com/milleraa/jellyfin-poiskkino-plugin/actions/runs/32750717011), 2026-08-24) |
+| **Блокеры** | нет — flaky-гонка устранена (`f3beb9a`); merge PR #3 не выполнять до решения Стейхолдера |
 
 > ⚠️ **ВАЖНО для Стейхолдера:** merge PR #3 пока **НЕ делать**. Ждём явного решения: `/accept-feature` или `/reject-feature`. При accept Финализатор выполнит archive finalization в ветке `feature/logo-images` (перенос папки в `docs/archive/features/logo-images/`, запись в `docs/history/completed-work.md`, стадия `accepted`) и финальный push — только после этого merge одним мержем. При reject — возврат в rework через `.opencode/skills/pr-mr-rework/SKILL.md`.
 
@@ -75,6 +76,15 @@
 Один unique evidence-linked reject → `not-triggered`: обычный rework продолжается без создания process-review.
 
 ## Changelog (handoff)
+
+### 2026-08-24 — повторная доставка PR #3 после rework, → pr-mr-ready
+
+- Финализатор: целостность ветки проверена — чистое дерево, `3a5b97d..aef3607` (5 коммитов) соответствует scope rework: тест-фикс `f3beb9a` (только `ImageUrlHelperTests.cs`) + docs (задача 003, приёмка Техлида, QA прогон 2).
+- Push ветки `feature/logo-images` в origin (`45bf9d2..aef3607`); PR [jellyfin-poiskkino-plugin#3](https://github.com/milleraa/jellyfin-poiskkino-plugin/pull/3) обновлён [комментарием о rework](https://github.com/milleraa/jellyfin-poiskkino-plugin/pull/3#issuecomment-5398172719): причина rework, фикс 003 (`f3beb9a`), результаты валидации.
+- **CI PR #3: pass** — первый прогон после push ([run 32750717011](https://github.com/milleraa/jellyfin-poiskkino-plugin/actions/runs/32750717011), build-and-test, ~35s). Flaky-фикс подтверждён на CI.
+- Worktree сохранён (нужен для archive при accept); remote branch не тронута; merge PR #3 не выполняется.
+- ⚠️ Стейхолдеру: **не принимать PR в системе управления кодом сразу** — сначала сообщить решение агенту (`/accept-feature` или `/reject-feature`). При accept Финализатор выполнит archive finalization в этой ветке (перенос папки в `docs/archive/features/logo-images/`, запись в `docs/history/completed-work.md`, стадия `accepted`) и финальный push — только затем merge одним мержем. При reject — возврат через `.opencode/skills/pr-mr-rework/SKILL.md`.
+- Handoff → Оркестратор/Стейхолдер: стадия `pr-mr-ready`, gate pr-mr-ready.
 
 ### 2026-08-24 — rework-валидация QA pass, → finalization
 
