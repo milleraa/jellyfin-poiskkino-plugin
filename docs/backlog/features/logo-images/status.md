@@ -6,13 +6,13 @@
 
 | Поле | Значение |
 |------|----------|
-| **Стадия** | `pr-mr-ready` |
-| **Owner** | `Stakeholder` (review PR/MR; Оркестратор маршрутизирует решение) |
+| **Стадия** | `rework` |
+| **Owner** | `Orchestrator` → handoff `Tech Lead` |
 | **Worktree** | `/home/alex/src/my/jellyfin-metadata-plugin-wt-logo-images` (сохранён Финализатором для возможного rework/archive; ранее ошибочно помечен как удалён — исправлено Оркестратором) |
 | **Ветка** | `feature/logo-images` (push в `origin`; ветку и remote branch не удалять до merge/close) |
 | **PR/MR** | [jellyfin-poiskkino-plugin#3](https://github.com/milleraa/jellyfin-poiskkino-plugin/pull/3) |
 | **Commit со ссылкой на PR/MR** | `6b8ef58` (`docs(logo-images): open PR #3 …`) |
-| **Блокеры** | ⚠️ **да** — flaky CI на PR #3 (2 фейла из 3 прогонов): `ImageUrlHelperTests.ShouldIgnoreTmdbImages_WhenPluginNotInitialized_ReturnsFalse`; требуется rework тестовой изоляции (QA/TechLead) |
+| **Блокеры** | 🔧 в rework — flaky CI (изоляция тестов), фикс назначен Техлиду |
 
 > ⚠️ **ВАЖНО для Стейхолдера:** merge PR #3 пока **НЕ делать**. Ждём явного решения: `/accept-feature` или `/reject-feature`. При accept Финализатор выполнит archive finalization в ветке `feature/logo-images` (перенос папки в `docs/archive/features/logo-images/`, запись в `docs/history/completed-work.md`, стадия `accepted`) и финальный push — только после этого merge одним мержем. При reject — возврат в rework через `.opencode/skills/pr-mr-rework/SKILL.md`.
 
@@ -28,6 +28,7 @@
 |----|------|-------------|--------|
 | 001 | [tasks/001-image-provider-logo-support.md](tasks/001-image-provider-logo-support.md) | developer-csharp (C# / Jellyfin adapter + unit-тесты) | done |
 | 002 | [tasks/002-logo-tmdb-filter-tests.md](tasks/002-logo-tmdb-filter-tests.md) | developer-csharp (C# / xUnit) | done |
+| 003 | [tasks/003-fix-imageurlhelper-test-isolation.md](tasks/003-fix-imageurlhelper-test-isolation.md) | developer-csharp (rework: xUnit изоляция, flaky CI) | pending |
 
 Порядок и зависимости: [tech-plan.md](tech-plan.md). Выполнение строго последовательное в единственном worktree.
 
@@ -52,25 +53,33 @@
 
 | Поле | Значение |
 |------|----------|
-| **Feedback source** | _чат / PR/MR comments / CI_ |
-| **Feedback summary** | _нет_ |
-| **Rework route** | _Analyst / Architect / Tech Lead / DevOps / QA_ |
-| **Worktree restored from branch** | _нет / да_ |
-| **Rework tasks** | _ссылки на tasks/_ |
+| **Feedback source** | чат Стейхолдера (решение: фикс flaky-теста до accept) + CI PR #3 (fail → pass → fail → pass) |
+| **Feedback summary** | Предсуществующий тест `ImageUrlHelperTests.ShouldIgnoreTmdbImages_WhenPluginNotInitialized_ReturnsFalse` гонит с `PluginInstanceCollection` за статический `Plugin.Instance`; новые тесты фичи расширили окно гонки. Код фичи не скомпрометирован (локально 5×163/163). |
+| **Rework route** | Tech Lead (нужен кодовый фикс тестовой изоляции; DevOps impact — нет) |
+| **Worktree restored from branch** | да — worktree сохранён Финализатором, восстановление не требовалось (`/home/alex/src/my/jellyfin-metadata-plugin-wt-logo-images` @ `feature/logo-images`) |
+| **Rework tasks** | [tasks/003-fix-imageurlhelper-test-isolation.md](tasks/003-fix-imageurlhelper-test-isolation.md) |
 
 ## Process learning (неблокирующий triage)
 
 | Поле | Значение |
 |------|----------|
-| **Learning triage** | _not-triggered_ |
-| **Class key** | _—_ |
-| **Learning evidence** | _—_ |
-| **Suppression reason** | _нет_ |
-| **Process review** | _нет_ |
+| **Learning triage** | `not-triggered` |
+| **Class key** | `tech-lead+pr-mr-ready-green-ci+implementation` |
+| **Learning evidence** | PR #3 CI: fail/pass/fail/pass (~50%); падение предсуществующего `ImageUrlHelperTests.ShouldIgnoreTmdbImages_WhenPluginNotInitialized_ReturnsFalse` — гонка дефолтной коллекции с `PluginInstanceCollection` за статический `Plugin.Instance`; локально 5×163/163 |
+| **Suppression reason** | нет |
+| **Process review** | нет |
 
-Один unique reject получает `not-triggered` и не блокирует rework. `candidate` возможен только при двух или более unique comparable evidence-linked cases; изменения процесса выполняются только отдельным reviewed PR/MR. Правила: [process learning](../../../process/learning/README.md).
+Один unique evidence-linked reject → `not-triggered`: обычный rework продолжается без создания process-review.
 
 ## Changelog (handoff)
+
+### 2026-08-24 — pr-mr-ready → rework (решение Стейхолдера)
+
+- Стейхолдер выбрал: **фикс flaky-теста до accept** (вариант 1); PR #3 остаётся открытым, merge по-прежнему не выполнять.
+- Применён `.opencode/skills/pr-mr-rework`: feedback зафиксирован (чат + CI PR #3), стадия → `rework`, worktree сохранён (восстановление не требовалось), новая ветка не создавалась.
+- Классификация: нужен кодовый фикс тестовой инфраструктуры → **Техлид**. Создана задача [tasks/003](tasks/003-fix-imageurlhelper-test-isolation.md) (pending).
+- Learning triage: `not-triggered` (один unique evidence-linked reject), запись в `docs/process/learning/reject-log.md`.
+- Handoff → Техлид (`.opencode/agents/tech-lead.md`): задача 003; после фикса — внутренний цикл приёмки, затем QA → Финализатор (повторная доставка PR #3).
 
 ### 2026-08-24 — ⚠️ BLOCKER: flaky CI воспроизводится (2/3 прогонов), PR #3 не готов к merge
 
