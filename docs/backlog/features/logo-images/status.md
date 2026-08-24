@@ -6,8 +6,8 @@
 
 | Поле | Значение |
 |------|----------|
-| **Стадия** | `qa` (rework-фикс принят Техлидом) |
-| **Owner** | `Orchestrator` (QA запускает Оркестратор; повторная валидация фикса 003) |
+| **Стадия** | `finalization` (rework-валидация QA пройдена) |
+| **Owner** | `Orchestrator` (Финализатор повторно доставляет PR #3) |
 | **Worktree** | `/home/alex/src/my/jellyfin-metadata-plugin-wt-logo-images` (сохранён Финализатором для возможного rework/archive; ранее ошибочно помечен как удалён — исправлено Оркестратором) |
 | **Ветка** | `feature/logo-images` (push в `origin`; ветку и remote branch не удалять до merge/close) |
 | **PR/MR** | [jellyfin-poiskkino-plugin#3](https://github.com/milleraa/jellyfin-poiskkino-plugin/pull/3) |
@@ -49,7 +49,8 @@
 
 | Дата | Результат | Ссылка на прогон |
 |------|-------------|------------------|
-| 2026-08-24 | **pass** — AC-1..AC-12 все pass, дефектов нет | [qa.md](qa.md) · [test-runs](../../../qa/test-runs.md) (163/163 ×2, build 0 err) |
+| 2026-08-24 | **pass** — rework-валидация фикса 003: build 0 err, 5×163/163 подряд, ImageUrlHelperTests 13/13 (+ flaky-тест ×3 одиночно), регресс Logo PoiskKinoImageProviderTests 14/14; дефектов нет | [qa.md](qa.md), прогон 2 · [test-runs](../../../qa/test-runs.md) |
+| 2026-08-24 | **pass** — AC-1..AC-12 все pass, дефектов нет | [qa.md](qa.md), прогон 1 · [test-runs](../../../qa/test-runs.md) (163/163 ×2, build 0 err) |
 
 ## PR/MR feedback / rework
 
@@ -74,6 +75,15 @@
 Один unique evidence-linked reject → `not-triggered`: обычный rework продолжается без создания process-review.
 
 ## Changelog (handoff)
+
+### 2026-08-24 — rework-валидация QA pass, → finalization
+
+- Повторная QA-валидация фикса 003 в worktree `feature/logo-images` @ `1bc63a8` (.NET SDK 10.0.111, Linux); предусловия соблюдены — приёмка Техлида и закрытый DevOps impact check по диффу `f3beb9a` из status.md.
+- Валидация фикса: `git show f3beb9a --stat` — только `ImageUrlHelperTests.cs` (+23/-2), продакшн-код не изменён (`git log c069df2..HEAD` по коду — единственный коммит `f3beb9a`, тестовый файл). AC-1/AC-4 подтверждены кодом: класс в `[Collection("PluginInstanceCollection")]` (последовательный прогон с плагин-тестами), save/restore `Plugin.Instance` через reflection с громким `Assert.NotNull(instanceProperty)` в try/finally.
+- Прогоны (независимо от Техлида): `dotnet build -c Release` — 0 ошибок; **5 полных прогонов** `dotnet test --no-build -c Release` подряд — **163 passed / 0 failed каждый**; целевой `ImageUrlHelperTests` — 13/13 (flaky `ShouldIgnoreTmdbImages_WhenPluginNotInitialized_ReturnsFalse` стабилен, дополнительно ×3 одиночных прогона — pass); регрессия Logo `PoiskKinoImageProviderTests` — 14/14.
+- Регрессия AC фичи: продакшн-код идентичен прогону 1 → чеклист AC-1..AC-12 остаётся подтверждённым; ключевые сценарии Logo перепроверены целевым прогоном. Дефектов не найдено.
+- Запись о прогоне: [qa.md](qa.md) (прогон 2) · [docs/qa/test-runs.md](../../../qa/test-runs.md).
+- Handoff → Оркестратор: стадия `finalization`, owner `Finalizer` — повторная доставка PR #3 (push/merge не выполнялись).
 
 ### 2026-08-24 — rework-фикс принят Техлидом, → qa
 

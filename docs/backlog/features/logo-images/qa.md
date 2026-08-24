@@ -1,6 +1,44 @@
 # QA — `logo-images`
 
-Дата QA: 2026-08-24. Предусловие выполнено: приёмка реализации Техлидом зафиксирована в [status.md](status.md) (2026-08-24), DevOps impact check закрыт. Среда: worktree `/home/alex/src/my/jellyfin-metadata-plugin-wt-logo-images`, ветка `feature/logo-images` @ `c069df2`, .NET SDK 10.0.111 (target net9.0), Linux. Playwright неприменим — серверный плагин без UI ([playwright.md](../../../qa/playwright.md)); проверка кодом/тестами.
+## Прогон 2 — rework-валидация фикса 003 (2026-08-24)
+
+Повторная валидация после rework: PR #3 вернули из-за flaky CI на предсуществующем тесте `ImageUrlHelperTests.ShouldIgnoreTmdbImages_WhenPluginNotInitialized_ReturnsFalse` (гонка статического `Plugin.Instance`). Техлид принял фикс задачи [003](tasks/003-fix-imageurlhelper-test-isolation.md) (commit `f3beb9a`); продакшн-код не менялся. Предусловия соблюдены: приёмка Техлида и закрытый DevOps impact check по диффу `f3beb9a` зафиксированы в [status.md](status.md). Среда: worktree `/home/alex/src/my/jellyfin-metadata-plugin-wt-logo-images`, ветка `feature/logo-images` @ `1bc63a8`, .NET SDK 10.0.111 (target net9.0), Linux. Playwright неприменим — серверный плагин без UI ([playwright.md](../../../qa/playwright.md)).
+
+### Валидация фикса
+
+| Проверка | Статус | Evidence |
+|----------|--------|----------|
+| Фикс соответствует ТЗ 003 | ✅ Pass | `git show f3beb9a --stat`: только `ImageUrlHelperTests.cs` (+23/-2); класс в `[Collection("PluginInstanceCollection")]`; save/restore `Plugin.Instance` через reflection с громким `Assert.NotNull(instanceProperty)` в try/finally |
+| AC-1 003 (детерминизм теста) | ✅ Pass | Тест «not initialized» выставляет `Plugin.Instance = null` явно и восстанавливает исходное значение; вакуумный pass исключён (`Assert.NotNull`) |
+| AC-4 003 (нет пересечения коллекций) | ✅ Pass | Чтением кода/конфигурации: одна общая коллекция → последовательный прогон с плагин-тестами; `xunit.runner.json` не требуется |
+| Продакшн-код не изменён | ✅ Pass | `git log c069df2..HEAD -- PoiskKinoMetadataPlugin/ PoiskKinoMetadataPlugin.UnitTests/` — единственный коммит `f3beb9a`, затрагивает только тестовый файл |
+
+### Результаты прогонов
+
+| № | Команда | Результат |
+|---|---------|-----------|
+| 1 | `dotnet build PoiskKinoMetadataPlugin.slnx -c Release` | **0 ошибок**, 0 предупреждений (инкрементальная сборка) |
+| 2–6 | `dotnet test --no-build -c Release` ×5 подряд | **163 passed / 0 failed** все 5 прогонов (длительности 644–772 ms) |
+| 7 | `dotnet test --filter FullyQualifiedName~ImageUrlHelperTests` | **13/13 passed**, включая ранее flaky `ShouldIgnoreTmdbImages_WhenPluginNotInitialized_ReturnsFalse` |
+| 8 | Одиночный flaky-тест ×3 повторных прогона | **1/1 passed** каждый — стабилен |
+| 9 | Регрессия Logo: `--filter FullyQualifiedName~PoiskKinoImageProviderTests` | **14/14 passed** (GetSupportedImages ×3 типа, ByProviderId + Logo URL, fallback OQ-1, TMDB ×2, LogoMissing) |
+
+### Регрессия по AC фичи
+
+Продакшн-код идентичен прогону 1 (проверено диффом `c069df2..HEAD`), полный набор зелёный 5× подряд → чеклист AC-1..AC-12 из прогона 1 остаётся подтверждённым. Выборочно перепроверены ключевые сценарии Logo целевым прогоном `PoiskKinoImageProviderTests` (14/14).
+
+### Вердикт
+
+- [x] Pass
+- [ ] Rework
+
+Дефекты: _не найдены_. Handoff → Оркестратор: стадия `finalization`, owner `Finalizer` — повторная доставка PR #3.
+
+---
+
+## Прогон 1 — первичная валидация (2026-08-24)
+
+Предусловие выполнено: приёмка реализации Техлидом зафиксирована в [status.md](status.md) (2026-08-24), DevOps impact check закрыт. Среда: worktree `/home/alex/src/my/jellyfin-metadata-plugin-wt-logo-images`, ветка `feature/logo-images` @ `c069df2`, .NET SDK 10.0.111 (target net9.0), Linux. Playwright неприменим — серверный плагин без UI ([playwright.md](../../../qa/playwright.md)); проверка кодом/тестами.
 
 ## Покрытие
 
