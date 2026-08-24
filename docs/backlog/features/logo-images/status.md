@@ -6,8 +6,8 @@
 
 | Поле | Значение |
 |------|----------|
-| **Стадия** | `analysis` |
-| **Owner** | `Analyst` |
+| **Стадия** | `analysis-review` |
+| **Owner** | `Orchestrator` / `Stakeholder decision` |
 | **Worktree** | `/home/alex/src/my/jellyfin-metadata-plugin-wt-logo-images` |
 | **Ветка** | `feature/logo-images` |
 | **PR/MR** | _нет_ |
@@ -75,3 +75,10 @@
 
 - Папка фичи создана из шаблона по запросу Стейхолдера.
 - Точка расширения подтверждена: `IRemoteImageProvider.GetSupportedImages` + `ImageType.Logo` доступны в целевом Jellyfin 10.11.x.
+
+### 2026-08-24 — analysis → analysis-review
+
+- Анализ завершён (`analysis.md`): все гипотезы брифа проверены по коду и OpenAPI-спеке, блокирующих вопросов нет.
+- Факт: `/v1.5/movie/search` не имеет `selectFields`; `logo` входит в дефолтную схему ответа — условный out-of-scope из брифа закрыт.
+- Рекомендация Аналитика: `continue`. Открытый неблокирующий вопрос OQ-1 (логотип в fallback-ветке поиска) — решить на gate Стейхолдера.
+- Handoff → Оркестратор: обязательная остановка на решении Стейхолдера перед архитектурой.
