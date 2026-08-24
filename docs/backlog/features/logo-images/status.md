@@ -11,8 +11,8 @@
 | **Worktree** | `/home/alex/src/my/jellyfin-metadata-plugin-wt-logo-images` (удалён Финализатором после повторного push) |
 | **Ветка** | `feature/logo-images` (push в `origin`; ветку и remote branch не удалять до merge/close) |
 | **PR/MR** | [jellyfin-poiskkino-plugin#3](https://github.com/milleraa/jellyfin-poiskkino-plugin/pull/3) |
-| **Commit со ссылкой на PR/MR** | см. Changelog 2026-08-24 — `docs(logo-images): open PR #3, -> pr-mr-ready` |
-| **Блокеры** | _нет_ |
+| **Commit со ссылкой на PR/MR** | `6b8ef58` (`docs(logo-images): open PR #3 …`) |
+| **Блокеры** | ⚠️ **да** — flaky CI на PR #3 (2 фейла из 3 прогонов): `ImageUrlHelperTests.ShouldIgnoreTmdbImages_WhenPluginNotInitialized_ReturnsFalse`; требуется rework тестовой изоляции (QA/TechLead) |
 
 > ⚠️ **ВАЖНО для Стейхолдера:** merge PR #3 пока **НЕ делать**. Ждём явного решения: `/accept-feature` или `/reject-feature`. При accept Финализатор выполнит archive finalization в ветке `feature/logo-images` (перенос папки в `docs/archive/features/logo-images/`, запись в `docs/history/completed-work.md`, стадия `accepted`) и финальный push — только после этого merge одним мержем. При reject — возврат в rework через `.opencode/skills/pr-mr-rework/SKILL.md`.
 
@@ -71,6 +71,15 @@
 Один unique reject получает `not-triggered` и не блокирует rework. `candidate` возможен только при двух или более unique comparable evidence-linked cases; изменения процесса выполняются только отдельным reviewed PR/MR. Правила: [process learning](../../../process/learning/README.md).
 
 ## Changelog (handoff)
+
+### 2026-08-24 — ⚠️ BLOCKER: flaky CI воспроизводится (2/3 прогонов), PR #3 не готов к merge
+
+- Второй CI-прогон PR #3 ([job](https://github.com/milleraa/jellyfin-poiskkino-plugin/actions/runs/32689565732/job/97320697578)) упал на **том же** тесте `ImageUrlHelperTests.ShouldIgnoreTmdbImages_WhenPluginNotInitialized_ReturnsFalse`. Итог по прогонам: fail → pass (re-run) → fail — вероятность фейла на CI ~2/3.
+- Классификация обновлена: **не** разовый flake, а систематическая гонка изоляции тестов. Поставка с нестабильно-красным CI не может считаться ready для Стейхолдера.
+- Продуктовый код фичи по-прежнему не скомпрометирован: все падения — в предсуществующем тесте `Helpers/ImageUrlHelperTests` вне коллекции `PluginInstanceCollection`; локально 5×163/163 зелёные. Механизм: параллельное выполнение дефолтной коллекции с `PluginInstanceCollection`, статический `Plugin.Instance` протекает; новые тесты фичи расширили окно гонки.
+- **Решение Финализатора:** правки тестового кода вне мандата роли — работа возвращается Оркестратору для маршрутизации rework (`pr-mr-rework` → QA/TechLead): включить `ImageUrlHelperTests` в общую коллекцию + явный сброс `Plugin.Instance` перед проверкой «not initialized» (либо устранить зависимость от статики). После фикса — повторная доставка PR #3.
+- Worktree сохранён до решения Стейхолдера (нужен и для rework, и для архивации при accept); ветка и remote branch не тронуты.
+- Handoff → Оркестратор/Стейхолдер: blocker зафиксирован; merge PR #3 НЕ выполнять.
 
 ### 2026-08-24 — CI-инцидент на PR #3: flaky-тест изоляции (не код фичи)
 

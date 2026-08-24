@@ -21,17 +21,17 @@
 - [x] Документация: ADR не требуется (зафиксировано Архитектором); DevOps docs не менялись (impact нет). Устаревание `docs/product/requirements.md:12` передано Аналитику/Стейхолдеру на этапе архитектуры.
 - [x] Папка фичи остаётся в `docs/backlog/features/logo-images/` до принятия Стейхолдером.
 
-## ⚠️ Статус: ожидание решения Стейхолдера
+## ⚠️ Статус: BLOCKER — flaky CI, ожидание решения Стейхолдера/Оркестратора
 
-**Merge PR #3 пока НЕ выполнять.** Стадия `pr-mr-ready` — review-состояние:
+**Merge PR #3 НЕ выполнять.** Стадия формально `pr-mr-ready`, но поставка заблокирована нестабильным CI:
 
-- `/accept-feature` → Финализатор выполняет archive finalization **в ветке `feature/logo-images` до merge**: восстановление worktree из существующей ветки, перенос папки в `docs/archive/features/logo-images/`, запись в `docs/history/completed-work.md`, стадия `accepted` в архивном `status.md`, commit + push → затем merge одним мержем.
-- `/reject-feature` → возврат в rework через `.opencode/skills/pr-mr-rework/SKILL.md`.
+- Flaky-тест `ImageUrlHelperTests.ShouldIgnoreTmdbImages_WhenPluginNotInitialized_ReturnsFalse` упал 2 раза из 3 CI-прогонов (гонка изоляции, продуктовый код фичи не затронут). Детали и evidence — в [status.md](status.md), Changelog.
+- **Маршрут:** Оркестратор → rework (`pr-mr-rework`) → QA/TechLead: фикс тестовой изоляции → повторная доставка PR. Либо явное решение Стейхолдера принять PR с известным flake (не рекомендуется).
+- При `/accept-feature` несмотря на blocker: сначала фикс изоляции в этой ветке, затем archive finalization (перенос в `docs/archive/features/logo-images/`, запись в `docs/history/completed-work.md`, стадия `accepted`), commit + push, затем merge одним мержем.
 
-### CI-инцидент (зафиксирован, не блокирует review)
+### Worktree
 
-- Первый CI-прогон PR #3 упал на предсуществующем flaky-тесте изоляции `ImageUrlHelperTests.ShouldIgnoreTmdbImages_WhenPluginNotInitialized_ReturnsFalse` (гонка дефолтной коллекции с `PluginInstanceCollection` за статический `Plugin.Instance`); вероятность выросла из-за новых тестов фичи. Re-run — pass; локально 5×163/163. Детали и follow-up — в [status.md](status.md), Changelog 2026-08-24.
-- Продуктовый код фичи не затронут; при rework-решении маршрут: QA/TechLead (тестовая изоляция).
+Локальный worktree `/home/alex/src/my/jellyfin-metadata-plugin-wt-logo-images` **сохранён** (отклонение от DoD-пункта об удалении — осознанное, причина: активный blocker; worktree потребуется и для rework-фикса, и для архивации при accept). Ветка `feature/logo-images` и remote branch сохранены до merge/close.
 
 ## Acceptance/archive
 
