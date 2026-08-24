@@ -6,8 +6,8 @@
 
 | Поле | Значение |
 |------|----------|
-| **Стадия** | `qa` |
-| **Owner** | `QA` |
+| **Стадия** | `finalization` |
+| **Owner** | `Finalizer` |
 | **Worktree** | `/home/alex/src/my/jellyfin-metadata-plugin-wt-logo-images` |
 | **Ветка** | `feature/logo-images` |
 | **PR/MR** | _нет_ |
@@ -44,7 +44,7 @@
 
 | Дата | Результат | Ссылка на прогон |
 |------|-------------|------------------|
-| — | — | [test-runs](../../../qa/test-runs.md) |
+| 2026-08-24 | **pass** — AC-1..AC-12 все pass, дефектов нет | [qa.md](qa.md) · [test-runs](../../../qa/test-runs.md) (163/163 ×2, build 0 err) |
 
 ## PR/MR feedback / rework
 
@@ -69,6 +69,16 @@
 Один unique reject получает `not-triggered` и не блокирует rework. `candidate` возможен только при двух или более unique comparable evidence-linked cases; изменения процесса выполняются только отдельным reviewed PR/MR. Правила: [process learning](../../../process/learning/README.md).
 
 ## Changelog (handoff)
+
+### 2026-08-24 — QA pass, → finalization
+
+- QA-валидация в worktree `feature/logo-images` @ `c069df2` (.NET SDK 10.0.111, Linux): предусловия соблюдены — приёмка Техлида и закрытый DevOps impact check из status.md.
+- Чеклист AC-1..AC-7 (функционал + фильтрация) и AC-8..AC-12 (тесты): **все pass**, дефектов не найдено; evidence с кодом/тестами — [qa.md](qa.md).
+- Прогоны: `dotnet build -c Release` — 0 ошибок (warnings = baseline 61× CS1591, вне фичи их нет); `dotnet test` ×2 подряд — **163 passed / 0 failed** оба раза (совпало с отчётом Техлида); фильтрованный прогон `PoiskKinoImageProviderTests` — 14/14.
+- Отдельно проверены: fallback-ветка поиска (OQ-1, порядок Primary → Backdrop → Logo детерминирован тестом) и отклонение Техлида (`"backdrop"` у «Оппенгеймера» в `MixedSearchResponseJson`) — потребители фикстуры не затронуты.
+- Изоляция тестов подтверждена (одна коллекция `PluginInstanceCollection`, `SetUpPlugin` пересоздаёт конфиг). Playwright неприменим — серверный плагин без UI ([playwright.md](../../../qa/playwright.md)).
+- Неблокирующие наблюдения (в backlog по желанию, не дефекты): whitespace-only `logo.url` без отдельного теста (покрыт guard'ом `IsNullOrWhiteSpace`); restore флага TMDB в тесте без try/finally (риск снят пересозданием плагина в каждом тесте).
+- Handoff → Оркестратор: стадия `finalization`, owner `Finalizer`. Запись о прогоне: [test-runs](../../../qa/test-runs.md).
 
 ### 2026-08-24 — реализация принята Техлидом, → qa
 
