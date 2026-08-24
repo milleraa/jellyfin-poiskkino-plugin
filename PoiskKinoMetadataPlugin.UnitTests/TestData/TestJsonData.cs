@@ -397,6 +397,8 @@ public static class TestJsonData
                 "isSeries": false,
                 "year": 2023,
                 "poster": { "url": "https://example.com/movie-poster.jpg" },
+                "backdrop": { "url": "https://example.com/movie-backdrop.jpg" },
+                "logo": { "url": "https://example.com/movie-logo.png" },
                 "rating": { "kp": 8.6, "imdb": 8.4 }
             },
             {

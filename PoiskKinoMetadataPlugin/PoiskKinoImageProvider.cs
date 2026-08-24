@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 namespace PoiskKinoMetadataPlugin;
 
 /// <summary>
-/// Провайдер изображений (постеры и фоны) из PoiskKino API.
+/// Провайдер изображений (постеры, фоны и логотипы) из PoiskKino API.
 /// </summary>
 /// <remarks>
 /// Создаёт новый экземпляр класса <see cref="PoiskKinoImageProvider"/>.
@@ -45,7 +45,7 @@ public class PoiskKinoImageProvider(
     /// <inheritdoc />
     public IEnumerable<ImageType> GetSupportedImages(BaseItem item)
     {
-        return [ImageType.Primary, ImageType.Backdrop];
+        return [ImageType.Primary, ImageType.Backdrop, ImageType.Logo];
     }
 
     /// <inheritdoc />
@@ -149,6 +149,17 @@ public class PoiskKinoImageProvider(
                         });
                     }
 
+                    // Добавляем логотип из результата поиска
+                    if (apiItem.Logo != null && !string.IsNullOrWhiteSpace(apiItem.Logo.Url))
+                    {
+                        images.Add(new RemoteImageInfo
+                        {
+                            Url = apiItem.Logo.Url,
+                            Type = ImageType.Logo,
+                            ProviderName = Name
+                        });
+                    }
+
                     return images;
                 }
             }
@@ -176,6 +187,17 @@ public class PoiskKinoImageProvider(
                 {
                     Url = movieData.Backdrop.Url,
                     Type = ImageType.Backdrop,
+                    ProviderName = Name
+                });
+            }
+
+            // Добавляем логотип из полных данных фильма
+            if (movieData.Logo != null && !string.IsNullOrWhiteSpace(movieData.Logo.Url))
+            {
+                images.Add(new RemoteImageInfo
+                {
+                    Url = movieData.Logo.Url,
+                    Type = ImageType.Logo,
                     ProviderName = Name
                 });
             }
