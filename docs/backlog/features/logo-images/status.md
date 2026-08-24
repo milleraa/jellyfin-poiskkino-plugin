@@ -6,8 +6,8 @@
 
 | Поле | Значение |
 |------|----------|
-| **Стадия** | `architecture` |
-| **Owner** | `Architect` |
+| **Стадия** | `tech-decomposition` |
+| **Owner** | `Tech Lead` |
 | **Worktree** | `/home/alex/src/my/jellyfin-metadata-plugin-wt-logo-images` |
 | **Ветка** | `feature/logo-images` |
 | **PR/MR** | _нет_ |
@@ -64,6 +64,15 @@
 Один unique reject получает `not-triggered` и не блокирует rework. `candidate` возможен только при двух или более unique comparable evidence-linked cases; изменения процесса выполняются только отдельным reviewed PR/MR. Правила: [process learning](../../../process/learning/README.md).
 
 ## Changelog (handoff)
+
+### 2026-08-24 — архитектура готова, → tech-decomposition
+
+- Дизайн зафиксирован в [architecture.md](architecture.md): расширение `PoiskKinoImageProvider` (`GetSupportedImages` → `[Primary, Backdrop, Logo]`), маппинг `logo.url` в обеих ветках (по ID и fallback из поиска по решению OQ-1), единая точка TMDB-фильтрации — существующий пост-фильтр.
+- Решение Архитектора по OQ-2: защитный вызов `ShouldFilterUrl` при маппинге логотипа **не вводить** — пост-фильтр функционально эквивалентен, дублирование не нужно; триггер пересмотра зафиксирован.
+- Новый ADR **не требуется**: тривиальное расширение существующего адаптера без новых границ/интеграций/компромиссов (зафиксировано явно).
+- Внимание Техлида: существующий тест `GetImages_MovieFallsBackToSearch_ReturnsImagesFromSearch` сломается преднамеренно (`Assert.All(movie-poster.jpg)`) — переписать на проверку по типам + добавить `logo` в `MixedSearchResponseJson`; guard для логотипов — `IsNullOrWhiteSpace` (AC-3), постер/фон не трогать (AC-4).
+- Документационные последствия: `docs/product/requirements.md:12` устареет после реализации (передано Аналитику/Стейхолдеру); DevOps impact — нет.
+- Handoff → Оркестратор: стадия `tech-decomposition`, owner `Tech Lead`, вход: `analysis.md`, `architecture.md`.
 
 ### 2026-08-24 — analysis-review пройден, → architecture
 
