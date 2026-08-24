@@ -6,7 +6,7 @@
 
 | Поле | Значение |
 |------|----------|
-| **Стадия** | `tech-decomposition` |
+| **Стадия** | `development` |
 | **Owner** | `Tech Lead` |
 | **Worktree** | `/home/alex/src/my/jellyfin-metadata-plugin-wt-logo-images` |
 | **Ветка** | `feature/logo-images` |
@@ -24,7 +24,10 @@
 
 | ID | Файл | Роль / стек | Статус |
 |----|------|-------------|--------|
-| — | — | — | — |
+| 001 | [tasks/001-image-provider-logo-support.md](tasks/001-image-provider-logo-support.md) | developer-csharp (C# / Jellyfin adapter + unit-тесты) | draft |
+| 002 | [tasks/002-logo-tmdb-filter-tests.md](tasks/002-logo-tmdb-filter-tests.md) | developer-csharp (C# / xUnit) | draft |
+
+Порядок и зависимости: [tech-plan.md](tech-plan.md). Выполнение строго последовательное в единственном worktree.
 
 ## DevOps impact check
 
@@ -64,6 +67,14 @@
 Один unique reject получает `not-triggered` и не блокирует rework. `candidate` возможен только при двух или более unique comparable evidence-linked cases; изменения процесса выполняются только отдельным reviewed PR/MR. Правила: [process learning](../../../process/learning/README.md).
 
 ## Changelog (handoff)
+
+### 2026-08-24 — декомпозиция готова, → development
+
+- Tech plan заполнен ([tech-plan.md](tech-plan.md)): две последовательные задачи для `developer-csharp` в единственном worktree.
+- Задача 001: реализация Logo (`GetSupportedImages` → `[Primary, Backdrop, Logo]`, маппинг `movieData.Logo?.Url` и fallback `apiItem.Logo?.Url` по OQ-1, guard `IsNullOrWhiteSpace`, XML-summary) + синхронное обновление существующих тестов (fallback-тест переписывается на проверку по типам, `logo` добавляется в `MixedSearchResponseJson`).
+- Задача 002: тесты TMDB-политики для Logo (AC-6/AC-7), продакшн-код не меняется; зависит от 001.
+- DevOps impact check: **нет** по всем пунктам (подтверждено Архитектором) — DevOps-задача не создаётся, стадия `devops-check` будет закрыта фиксацией этого факта перед QA.
+- Handoff → `developer-csharp` (задача 001).
 
 ### 2026-08-24 — архитектура готова, → tech-decomposition
 
