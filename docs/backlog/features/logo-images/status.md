@@ -6,13 +6,15 @@
 
 | Поле | Значение |
 |------|----------|
-| **Стадия** | `finalization` |
-| **Owner** | `Finalizer` |
-| **Worktree** | `/home/alex/src/my/jellyfin-metadata-plugin-wt-logo-images` |
-| **Ветка** | `feature/logo-images` |
-| **PR/MR** | _нет_ |
-| **Commit со ссылкой на PR/MR** | _нет_ |
+| **Стадия** | `pr-mr-ready` |
+| **Owner** | `Stakeholder` (review PR/MR; Оркестратор маршрутизирует решение) |
+| **Worktree** | `/home/alex/src/my/jellyfin-metadata-plugin-wt-logo-images` (удалён Финализатором после повторного push) |
+| **Ветка** | `feature/logo-images` (push в `origin`; ветку и remote branch не удалять до merge/close) |
+| **PR/MR** | [jellyfin-poiskkino-plugin#3](https://github.com/milleraa/jellyfin-poiskkino-plugin/pull/3) |
+| **Commit со ссылкой на PR/MR** | см. Changelog 2026-08-24 — `docs(logo-images): open PR #3, -> pr-mr-ready` |
 | **Блокеры** | _нет_ |
+
+> ⚠️ **ВАЖНО для Стейхолдера:** merge PR #3 пока **НЕ делать**. Ждём явного решения: `/accept-feature` или `/reject-feature`. При accept Финализатор выполнит archive finalization в ветке `feature/logo-images` (перенос папки в `docs/archive/features/logo-images/`, запись в `docs/history/completed-work.md`, стадия `accepted`) и финальный push — только после этого merge одним мержем. При reject — возврат в rework через `.opencode/skills/pr-mr-rework/SKILL.md`.
 
 ### Стадии (справочно)
 
@@ -69,6 +71,15 @@
 Один unique reject получает `not-triggered` и не блокирует rework. `candidate` возможен только при двух или более unique comparable evidence-linked cases; изменения процесса выполняются только отдельным reviewed PR/MR. Правила: [process learning](../../../process/learning/README.md).
 
 ## Changelog (handoff)
+
+### 2026-08-24 — PR #3 открыт, → pr-mr-ready
+
+- Финализатор: целостность ветки проверена — чистое дерево, линейная история `8d48967..f0bfb8c` (10 коммитов), diff против `main` соответствует scope фичи (код: `PoiskKinoImageProvider.cs` + тесты; docs: папка фичи + `docs/qa/test-runs.md`).
+- Push ветки `feature/logo-images` в `origin`, создан PR [jellyfin-poiskkino-plugin#3](https://github.com/milleraa/jellyfin-poiskkino-plugin/pull/3): summary, test plan (163/163 unit ×2, build 0 err), ссылки на фичу/tasks/QA, риски, CI (GitHub Actions `ci.yaml`, build+test на PR).
+- **Merge PR #3 не выполнять** до решения Стейхолдера (`/accept-feature` / `/reject-feature`); при accept — архивация в этой же ветке и финальный push, затем merge одним мержем.
+- Локальный worktree удалён после повторного push; ветка и remote branch сохранены до merge/close.
+- DevOps impact: нет (подтверждено ранее); ADR: не требуется.
+- Handoff → Стейхолдер (через Оркестратора): стадия `pr-mr-ready`.
 
 ### 2026-08-24 — QA pass, → finalization
 
