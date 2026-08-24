@@ -1,5 +1,10 @@
+using System.Reflection;
+
 namespace PoiskKinoMetadataPlugin.UnitTests.Helpers;
 
+// Общая последовательная коллекция с плагин-тестами: Plugin.Instance — статическое состояние,
+// и параллельный прогон с PluginInstanceCollection давал бы гонку на тестах «not initialized».
+[Collection("PluginInstanceCollection")]
 public class ImageUrlHelperTests
 {
     [Theory]
@@ -22,9 +27,25 @@ public class ImageUrlHelperTests
     [Fact]
     public void ShouldIgnoreTmdbImages_WhenPluginNotInitialized_ReturnsFalse()
     {
-        var result = ImageUrlHelper.ShouldIgnoreTmdbImages();
+        // Save/restore обязателен: Plugin.Instance — статическое состояние, общее для всех
+        // коллекций xUnit; без восстановления порядок тестов внутри коллекции влиял бы на результат.
+        var instanceProperty = typeof(Plugin).GetProperty("Instance", BindingFlags.Static | BindingFlags.Public);
+        Assert.NotNull(instanceProperty); // если рефлексия сломается — тест должен упасть, а не пройти вакуумно.
 
-        Assert.False(result);
+        var original = Plugin.Instance;
+        try
+        {
+            // Сеттер Instance приватный — выставляем через reflection, как в PluginTestFixture.Dispose.
+            instanceProperty.SetValue(null, null);
+
+            var result = ImageUrlHelper.ShouldIgnoreTmdbImages();
+
+            Assert.False(result);
+        }
+        finally
+        {
+            instanceProperty.SetValue(null, original);
+        }
     }
 
     [Fact]
