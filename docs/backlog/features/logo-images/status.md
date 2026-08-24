@@ -6,8 +6,8 @@
 
 | Поле | Значение |
 |------|----------|
-| **Стадия** | `analysis-review` |
-| **Owner** | `Orchestrator` / `Stakeholder decision` |
+| **Стадия** | `architecture` |
+| **Owner** | `Architect` |
 | **Worktree** | `/home/alex/src/my/jellyfin-metadata-plugin-wt-logo-images` |
 | **Ветка** | `feature/logo-images` |
 | **PR/MR** | _нет_ |
@@ -64,6 +64,13 @@
 Один unique reject получает `not-triggered` и не блокирует rework. `candidate` возможен только при двух или более unique comparable evidence-linked cases; изменения процесса выполняются только отдельным reviewed PR/MR. Правила: [process learning](../../../process/learning/README.md).
 
 ## Changelog (handoff)
+
+### 2026-08-24 — analysis-review пройден, → architecture
+
+- Стейхолдер: продолжаем к Архитектору.
+- Решение по OQ-1: **в scope** — логотип добавляется и в fallback-ветке «только данные из поиска» (рекомендация Аналитика принята).
+- OQ-2 (защитный вызов `ShouldFilterUrl`) — на решение Архитектора.
+- Handoff → Архитектор (`.opencode/agents/architect.md`), вход: `analysis.md`, `brief.md`.
 
 ### 2026-08-24 — intake → analysis
 
