@@ -8,7 +8,7 @@
 |------|----------|
 | **Стадия** | `pr-mr-ready` |
 | **Owner** | `Stakeholder` (review PR/MR; Оркестратор маршрутизирует решение) |
-| **Worktree** | `/home/alex/src/my/jellyfin-metadata-plugin-wt-logo-images` (удалён Финализатором после повторного push) |
+| **Worktree** | `/home/alex/src/my/jellyfin-metadata-plugin-wt-logo-images` (сохранён Финализатором для возможного rework/archive; ранее ошибочно помечен как удалён — исправлено Оркестратором) |
 | **Ветка** | `feature/logo-images` (push в `origin`; ветку и remote branch не удалять до merge/close) |
 | **PR/MR** | [jellyfin-poiskkino-plugin#3](https://github.com/milleraa/jellyfin-poiskkino-plugin/pull/3) |
 | **Commit со ссылкой на PR/MR** | `6b8ef58` (`docs(logo-images): open PR #3 …`) |
