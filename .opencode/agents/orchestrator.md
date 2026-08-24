@@ -13,18 +13,62 @@ permission:
     "cat *": allow
     "head *": allow
     "tail *": allow
-    "sed -n *": allow
+    "less *": allow
+    "file *": allow
+    "stat *": allow
+    "which *": allow
+    "date *": allow
+    "uname *": allow
+    "whoami": allow
+    "id": allow
+    "hostname": allow
+    "env *": allow
+    "printenv *": allow
+    "df *": allow
+    "du *": allow
+    "sed *": allow
+    "awk *": allow
+    "jq *": allow
+    "xargs *": allow
     "wc *": allow
-    "git status*": allow
-    "git branch*": allow
-    "git log*": allow
-    "git diff*": allow
-    "git show*": allow
-    "git add*": allow
-    "git commit*": allow
+    "grep *": allow
+    "egrep *": allow
+    "fgrep *": allow
+    "sort *": allow
+    "uniq *": allow
+    "cut *": allow
+    "tr *": allow
+    "tee *": allow
+    "diff *": allow
+    "cmp *": allow
+    "printf *": allow
+    "echo *": allow
+    "find *": allow
+    "basename *": allow
+    "dirname *": allow
+    "realpath *": allow
+    "readlink *": allow
+    "mkdir *": allow
+    "cp *": allow
+    "mv *": allow
+    "touch *": allow
+    "chmod *": allow
+    "tar *": allow
+    "gzip *": allow
+    "gunzip *": allow
+    "unzip *": allow
+    "sha256sum *": allow
+    "md5sum *": allow
+    "curl *": allow
+    "wget *": allow
+    "git *": allow
+    "git push*": deny
     "gh *": allow
     "glab *": allow
     "tea *": allow
+    "gh pr create*": deny
+    "glab mr create*": deny
+    "tea pr create*": deny
   webfetch: allow
   task:
     "*": deny

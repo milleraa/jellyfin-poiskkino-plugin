@@ -6,9 +6,9 @@
     "AGENTS.md"
   ],
   "permission": {
-    "edit": "ask",
+    "edit": "allow",
     "bash": "ask",
-    "webfetch": "ask",
+    "webfetch": "allow",
     "skill": {
       "*": "allow"
     }
