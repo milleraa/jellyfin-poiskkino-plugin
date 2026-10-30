@@ -11,6 +11,7 @@ public class PoiskKinoVotes
     /// Gets or sets the Kinopoisk votes count.
     /// </summary>
     [JsonPropertyName("kp")]
+    [JsonNumberHandling(JsonNumberHandling.AllowReadingFromString)]
     public int? Kp { get; set; }
 
     /// <summary>

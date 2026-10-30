@@ -103,6 +103,47 @@ public class PoiskKinoApiClientTests
         Assert.Equal(2, result.Docs.Count);
     }
 
+    // Contract fixtures: OpenAPI declares votes.kp as string, but its example is numeric.
+    [Theory]
+    [InlineData("{\"kp\":60000}", 60000)]
+    [InlineData("{\"kp\":\"60000\"}", 60000)]
+    [InlineData("{\"kp\":null}", null)]
+    [InlineData("{}", null)]
+    public async Task SearchAsync_KinopoiskVotes_ReturnsDeserializedData(string votesJson, int? expectedVotes)
+    {
+        var json = "{\"docs\":[{\"id\":301,\"votes\":" + votesJson + "}],\"total\":1}";
+        var handlerMock = CreateHandlerMock(HttpStatusCode.OK, new StringContent(json));
+        var client = CreateClient(handlerMock);
+
+        var result = await client.SearchAsync("Test", null, TestApiKey);
+
+        Assert.NotNull(result);
+        Assert.NotNull(result.Docs);
+        var movie = Assert.Single(result.Docs);
+        Assert.Equal(301, movie.Id);
+        Assert.NotNull(movie.Votes);
+        Assert.Equal(expectedVotes, movie.Votes.Kp);
+    }
+
+    [Theory]
+    [InlineData("{\"kp\":60000}", 60000)]
+    [InlineData("{\"kp\":\"60000\"}", 60000)]
+    [InlineData("{\"kp\":null}", null)]
+    [InlineData("{}", null)]
+    public async Task GetMovieByIdAsync_KinopoiskVotes_ReturnsDeserializedData(string votesJson, int? expectedVotes)
+    {
+        var json = "{\"id\":301,\"votes\":" + votesJson + "}";
+        var handlerMock = CreateHandlerMock(HttpStatusCode.OK, new StringContent(json));
+        var client = CreateClient(handlerMock);
+
+        var result = await client.GetMovieByIdAsync(301, TestApiKey);
+
+        Assert.NotNull(result);
+        Assert.Equal(301, result.Id);
+        Assert.NotNull(result.Votes);
+        Assert.Equal(expectedVotes, result.Votes.Kp);
+    }
+
     [Fact]
     public async Task SearchAsync_WithYear_IncludesYearInUrl()
     {
