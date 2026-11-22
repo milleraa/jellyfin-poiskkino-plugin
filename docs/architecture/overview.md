@@ -33,7 +33,7 @@
 
 | Система | Направление | Примечание |
 |---------|-------------|------------|
-| Jellyfin 10.9+ | host | plugin API `Jellyfin.Controller` / `Model` 10.11.5 |
+| Jellyfin 12.x | host | plugin API `Jellyfin.Controller` / `Model` 12.0.0 (.NET 10 ABI) |
 | api.poiskkino.dev | исходящий REST | эндпоинты v1.5: `movie/search`, `movie/{id}`, `season`; лимит 200 req/day |
 | TMDB (изображения) | опционально | `IgnoreTmdbImages` в конфиге |
 
@@ -44,7 +44,7 @@
 
 ## Deployment unit
 
-Один .NET 9 assembly (`PoiskKinoMetadataPlugin.dll`), GPLv2.
+Один .NET 10 assembly (`PoiskKinoMetadataPlugin.dll`), GPLv2.
 
 ## Ссылки
 

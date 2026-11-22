@@ -1,6 +1,6 @@
 # PoiskKino Metadata Plugin для Jellyfin
 
-Плагин для Jellyfin 10.11+, который предоставляет метаданные фильмов и сериалов на русском языке через API [ПоискКино](https://poiskkino.dev).
+Плагин для Jellyfin 12.x (.NET 10), который предоставляет метаданные фильмов и сериалов на русском языке через API [ПоискКино](https://poiskkino.dev).
 
 ## Возможности
 
@@ -23,8 +23,10 @@
 
 ## Требования
 
-- Jellyfin 10.11 или выше (последняя стабильная; сборка против API 10.11.5)
-- .NET 9
+- Jellyfin 12.x (сборка против plugin API 12.0.0; Jellyfin 12 перешёл на .NET 10 и новый plugin ABI)
+- .NET 10 SDK
+
+> Ветка/релизы 2.x — только для Jellyfin 12.x. Для Jellyfin 10.11.x используйте релизы 1.x (собраны под `net9.0` и API 10.11.5).
 
 ## Установка
 
@@ -84,9 +86,9 @@ Headers:
 
 ### Зависимости
 
-- `Jellyfin.Controller` (10.11.5)
-- `Jellyfin.Model` (10.11.5)
-- `Microsoft.Extensions.Http` (9.0.0)
+- `Jellyfin.Controller` (12.0.0)
+- `Jellyfin.Model` (12.0.0)
+- `Microsoft.Extensions.Http` (10.0.11)
 
 ### Сборка
 
