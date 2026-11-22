@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Net.Http;
 using MediaBrowser.Controller.Entities;
 using MediaBrowser.Controller.Entities.Movies;
@@ -107,14 +108,16 @@ public class PoiskKinoMovieProvider(
                     searchResult.ProviderIds[MetadataProvider.Imdb.ToString()] = item.ExternalId.Imdb;
                 }
 
-                if (!string.IsNullOrEmpty(item.ExternalId?.KpHd))
+                var kinopoiskId = item.ExternalId?.KpHd;
+                if (!string.IsNullOrEmpty(kinopoiskId))
                 {
-                    searchResult.ProviderIds["Kinopoisk"] = item.ExternalId.KpHd;
+                    searchResult.ProviderIds["Kinopoisk"] = kinopoiskId;
                 }
 
-                if (!string.IsNullOrEmpty(item.ExternalId?.Tmdb.ToString()))
+                var tmdbId = item.ExternalId?.Tmdb;
+                if (tmdbId.HasValue)
                 {
-                    searchResult.ProviderIds[MetadataProvider.Tmdb.ToString()] = item.ExternalId.Tmdb.ToString();
+                    searchResult.ProviderIds[MetadataProvider.Tmdb.ToString()] = tmdbId.Value.ToString(CultureInfo.InvariantCulture);
                 }
 
                 if (!string.IsNullOrEmpty(item.Poster?.Url) && !ImageUrlHelper.ShouldFilterUrl(item.Poster.Url))

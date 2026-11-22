@@ -8,7 +8,7 @@
 
 | Параметр | Значение |
 |----------|----------|
-| Target framework | `net9.0` |
+| Target framework | `net10.0` |
 | LangVersion | `latest` |
 | Nullable | `enable` |
 | GenerateDocumentationFile | `true` |
@@ -23,9 +23,9 @@ dotnet build -c Release
 
 ## Зависимости (NuGet)
 
-- `Jellyfin.Controller` 10.11.5
-- `Jellyfin.Model` 10.11.5
-- `Microsoft.Extensions.Http` 9.0.0
+- `Jellyfin.Controller` 12.0.0
+- `Jellyfin.Model` 12.0.0
+- `Microsoft.Extensions.Http` 10.0.11
 
 ## Архитектура
 

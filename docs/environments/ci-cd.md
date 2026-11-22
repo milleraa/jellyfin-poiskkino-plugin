@@ -16,7 +16,7 @@
 ## Workflow CI (`.github/workflows/ci.yaml`)
 
 1. **Trigger:** `push` / `pull_request` на `main` (игнорируя `*.md` и `docs/`)
-2. **Steps:** setup .NET 9 SDK → `dotnet restore` → `dotnet build -c Release --no-restore` → `dotnet test --no-restore --verbosity normal`
+2. **Steps:** setup .NET 10 SDK → `dotnet restore` → `dotnet build -c Release --no-restore` → `dotnet test --no-restore --verbosity normal`
 
 ## Workflow Release (`.github/workflows/release.yaml`)
 
