@@ -13,7 +13,7 @@
         → Image provider
         → External ID provider
         → PoiskKinoApiClient (cache, rate awareness)
-            → HTTPS → api.poiskkino.dev (X-API-KEY)
+            → HTTPS → api.poiskkino.dev | eu-api.poiskkino.dev (X-API-KEY, базовый URL настраивается)
     ← метаданные / URL изображений в модель Jellyfin
 ```
 
@@ -23,6 +23,7 @@
 |-----------|------------|
 | `Plugin` | Точка входа, конфигурация, embedded config page |
 | `PoiskKinoApiClient` | HTTP, JSON, кэш 24 ч, семафор запросов |
+| `ApiBaseUrlResolver` | Политика базового URL (ADR-0003): дефолт, нормализация, fallback без исключений |
 | `PoiskKinoMovieProvider` / `Series` / `Season` / `Episode` | `IRemoteMetadataProvider` |
 | `PoiskKinoImageProvider` | `IRemoteImageProvider` |
 | `PoiskKinoExternalId` | `IExternalId` |
@@ -34,7 +35,7 @@
 | Система | Направление | Примечание |
 |---------|-------------|------------|
 | Jellyfin 12.x | host | plugin API `Jellyfin.Controller` / `Model` 12.0.0 (.NET 10 ABI) |
-| api.poiskkino.dev | исходящий REST | эндпоинты v1.5: `movie/search`, `movie/{id}`, `season`; лимит 200 req/day |
+| api.poiskkino.dev / eu-api.poiskkino.dev | исходящий REST | базовый адрес настраивается (`PluginConfiguration.ApiBaseUrl`): по умолчанию `api.poiskkino.dev`, зеркало `eu-api.poiskkino.dev`; эндпоинты v1.5: `movie/search`, `movie/{id}`, `season`; лимит 200 req/day; смена — после перезапуска Jellyfin (ADR-0003) |
 | TMDB (изображения) | опционально | `IgnoreTmdbImages` в конфиге |
 
 ## Данные
