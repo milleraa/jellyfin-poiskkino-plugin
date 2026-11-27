@@ -6,7 +6,7 @@
 - **Feature / Hotfix:** [docs/backlog/features/eu-api-endpoint/](../)
 - **Назначено:** `developer-csharp`
 - **Стек / infra-область:** HTML + JS страницы конфигурации плагина Jellyfin (embedded resource `Configuration/configPage.html`); C# не меняется
-- **Статус:** todo
+- **Статус:** `done` (см. [Результат выполнения](#результат-выполнения))
 - **Ветка:** `feature/eu-api-endpoint` (worktree `/home/alex/src/my/jellyfin-metadata-plugin`); выполнять строго после задачи [002](002-configuration-client-providers.md), task-branch не создавать
 
 ## Описание
@@ -76,3 +76,56 @@ dotnet test PoiskKinoMetadataPlugin.slnx       # регрессий нет
 ## Handoff
 
 - После выполнения: локальный commit без push (например, `feat(config): add API base URL field to plugin configuration page`), статус задачи → `in review`, сообщить Техлиду: фрагмент разметки, изменения в `loadConfiguration`/`saveConfiguration`, сценарий ручной проверки для QA.
+
+## Результат выполнения
+
+**Статус:** `done`. Коммиты в ветке `feature/eu-api-endpoint` (без push):
+
+| Коммит | Содержимое |
+|--------|------------|
+| `1693590` — `feat(config): добавить поле базового URL API` | `PoiskKinoMetadataPlugin/Configuration/configPage.html` |
+| `1533989` — `fix(api): не логировать userinfo из невалидного базового URL` | security-фикс к задаче 002 (санитизация `Warning`) + тесты |
+| `docs(eu-api-endpoint): отметить задачу 003 выполненной` | этот файл, [tasks/README.md](README.md), [status.md](../status.md), [002](002-configuration-client-providers.md) |
+
+### Изменения в `configPage.html`
+
+1. **Разметка** (между `apiKey` и `ignoreTmdbImages`):
+   ```html
+   <div class="inputContainer">
+       <label class="inputLabel inputLabelUnfocused" for="apiBaseUrl">Базовый URL API</label>
+       <input id="apiBaseUrl" name="apiBaseUrl" type="text" is="emby-input" list="apiBaseUrlOptions" />
+       <datalist id="apiBaseUrlOptions">
+           <option value="https://api.poiskkino.dev"></option>
+           <option value="https://eu-api.poiskkino.dev"></option>
+       </datalist>
+       <div class="fieldDescription"> ... </div>
+   </div>
+   ```
+   Подсказка: дефолт `https://api.poiskkino.dev`; для серверов вне РФ / при недоступности основного адреса — `https://eu-api.poiskkino.dev` (токен и методы те же); схему можно не указывать; завершающий `/` не нужен; путь после хоста не поддерживается; **«Изменение применяется после перезапуска Jellyfin.»** `type="text"` (не `url`), `datalist` — подсказка без ограничения ввода.
+2. **`loadConfiguration`** (после `ApiKey`):
+   ```js
+   document.getElementById('apiBaseUrl').value =
+       (config && config.ApiBaseUrl) ? config.ApiBaseUrl : 'https://api.poiskkino.dev';
+   ```
+3. **`saveConfiguration`**: `config.ApiBaseUrl = document.getElementById('apiBaseUrl').value;` — без `trim()`, без схемы, без удаления `/` (D-ARCH-4); `ApiKey`, `IgnoreTmdbImages`, `pluginUniqueId`, `processPluginConfigurationUpdateResult` не тронуты.
+
+### Проверки
+
+- Статически: `for="apiBaseUrl"` ⇔ `id="apiBaseUrl"`; поле читается в `loadConfiguration` и пишется в `saveConfiguration`; в подсказке оба хоста и фраза о перезапуске; `pluginUniqueId` и `<html lang="ru">` без изменений; JS-валидации/whitelist/trim нет.
+- `dotnet build PoiskKinoMetadataPlugin.slnx -c Release` — 0 ошибок, только baseline `CS1591` (122), страница собирается как embedded resource.
+- `dotnet test PoiskKinoMetadataPlugin.slnx -c Release` — **267/267 passed** (было 264, +3 — тесты санитизации `userinfo`), failed 0.
+
+### Ручной сценарий для QA (живой Jellyfin; HTML автотестов не имеет)
+
+1. Dashboard → Plugins → PoiskKino Metadata → открыть настройки. В поле «Базовый URL API» при свежей/старой конфигурации должен быть виден `https://api.poiskkino.dev` (не пусто).
+2. Ввести `https://eu-api.poiskkino.dev` → «Сохранить» → дождаться успешного уведомления → F5/повторно открыть страницу: значение на месте (`https://eu-api.poiskkino.dev`); в `plugins/configurations/PoiskKinoMetadataPlugin.xml` элемент `<ApiBaseUrl>` содержит введённое значение без канонизации.
+3. Ввести `eu-api.poiskkino.dev/` → «Сохранить» → страница после перезагрузки показывает **ровно** `eu-api.poiskkino.dev/` (JS не нормализует); после перезапуска Jellyfin в логе `Information` «PoiskKino API base URL: https://eu-api.poiskkino.dev/» и запросы идут на EU-хост.
+4. Очистить поле → «Сохранить» → перезагрузить страницу: подставлен дефолт `https://api.poiskkino.dev`; после перезапуска Jellyfin в логе только `Information` с дефолтом, `Warning` нет (правило 1 резолвера).
+5. Ввести заведомо невалидное `http://api.poiskkino.dev` → сохранить → после перезапуска в логе один `Warning` с причиной, поиск работает на дефолтном хосте, страница показывает введённое значение.
+6. Полный end-to-end с реальным поиском на EU-хосте требует ключа (R2/A7) — остаётся за администратором/QA.
+
+### Замечания для Техлида
+
+1. **`datalist` — опция из задачи, не блокирует приёмку.** Если в живом Jellyfin `list` на `is="emby-input"` поведёт себя неожиданно, удаление трёх строк (`list=`, `<datalist>`) ни на что не влияет — подсказка остаётся в `fieldDescription`.
+2. **Поведение после «Сохранить»:** клиент применяет новое значение только после перезапуска Jellyfin (AC-7′) — это сказано в подсказке; UI, однако, показывает сохранённое значение сразу (это ожидаемо).
+3. **Security-фикс к 002** (`1533989`): `Warning` теперь логирует значение без `userinfo` (включая форму без схемы `user:p@host`), с тестами на три варианта входа; см. обновлённое замечание 2 в [002](002-configuration-client-providers.md).
