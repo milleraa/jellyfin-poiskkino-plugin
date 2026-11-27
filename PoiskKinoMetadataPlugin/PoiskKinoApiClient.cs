@@ -52,7 +52,7 @@ public class PoiskKinoApiClient
         {
             _logger.LogWarning(
                 "Invalid API base URL '{RawApiBaseUrl}' (truncated to {MaxLength} chars), falling back to '{DefaultBaseUrl}': {Reason}",
-                TruncateForLog(apiBaseUrl, MaxLoggedRawBaseUrlLength),
+                TruncateForLog(RedactUserInfo(apiBaseUrl), MaxLoggedRawBaseUrlLength),
                 MaxLoggedRawBaseUrlLength,
                 ApiBaseUrlResolver.DefaultBaseUrl,
                 resolvedBaseUrl.FallbackReason);
@@ -422,6 +422,40 @@ public class PoiskKinoApiClient
         {
             _requestSemaphore.Release();
         }
+    }
+
+    /// <summary>
+    /// Удаляет <c>userinfo</c> (логин и пароль) из сырого значения перед выводом в лог.
+    /// </summary>
+    /// <param name="rawValue">Сырое значение из конфигурации «как ввёл администратор».</param>
+    /// <returns>Значение без фрагмента между <c>://</c> и <c>@</c> включительно либо без изменений.</returns>
+    /// <remarks>
+    /// Резолвер отклоняет адреса с <c>userinfo</c>, но в <c>Warning</c> попадает сырая строка,
+    /// поэтому пароль из <c>https://user:password@host</c> мог бы оказаться в логе (риск A6, ADR-0003).
+    /// Обрабатывается и значение без схемы (<c>user:password@host</c>).
+    /// </remarks>
+    private static string RedactUserInfo(string? rawValue)
+    {
+        var value = rawValue ?? string.Empty;
+
+        var schemeSeparatorIndex = value.IndexOf("://", StringComparison.Ordinal);
+        var authorityStart = schemeSeparatorIndex < 0 ? 0 : schemeSeparatorIndex + 3;
+
+        var atIndex = value.IndexOf('@', authorityStart);
+        if (atIndex < 0)
+        {
+            return value;
+        }
+
+        // '@' считается разделителем userinfo только в пределах authority: дальше мог бы быть путь или query.
+        var authorityEndIndex = value.IndexOfAny(['/', '?', '#'], authorityStart);
+        if (authorityEndIndex >= 0 && authorityEndIndex < atIndex)
+        {
+            return value;
+        }
+
+        var schemePrefix = schemeSeparatorIndex < 0 ? string.Empty : value[..authorityStart];
+        return string.Concat(schemePrefix, value.AsSpan(atIndex + 1));
     }
 
     /// <summary>

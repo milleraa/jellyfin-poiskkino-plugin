@@ -160,6 +160,31 @@ public class PoiskKinoApiClientBaseUrlTests
         VerifyLog(LogLevel.Information, Times.Once());
     }
 
+    // AC-9 (риск A6): пароль из userinfo не попадает в Warning, хост остаётся в сообщении.
+    [Theory]
+    [InlineData("https://admin:sup3r-secret@api.poiskkino.dev")]
+    [InlineData("admin:sup3r-secret@api.poiskkino.dev")]
+    [InlineData("https://admin:sup3r-secret@eu-api.poiskkino.dev:8443")]
+    public void Constructor_UserInfoInBaseUrl_RedactedInWarning(string rawApiBaseUrl)
+    {
+        const string secret = "sup3r-secret";
+
+        _ = CreateClientWith(rawApiBaseUrl);
+
+        Assert.Contains(secret, rawApiBaseUrl, StringComparison.Ordinal); // контроль тестовых данных: пароль во входе есть
+        VerifyLog(LogLevel.Warning, Times.Once());
+        _loggerMock.Verify(
+            l => l.Log(
+                LogLevel.Warning,
+                It.IsAny<EventId>(),
+                It.Is<It.IsAnyType>((state, _) =>
+                    !state.ToString()!.Contains(secret, StringComparison.Ordinal) &&
+                    state.ToString()!.Contains("poiskkino.dev", StringComparison.Ordinal)),
+                It.IsAny<Exception?>(),
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+            Times.Once);
+    }
+
     // AC-9: API-ключ не попадает ни в одно сообщение лога клиента.
     [Fact]
     public async Task ApiKey_NeverAppearsInLogs()
