@@ -6,11 +6,12 @@
 
 | Поле | Значение |
 |------|----------|
-| **Стадия** | `qa` |
+| **Стадия** | `finalization` |
 | **Owner** | `Orchestrator` |
 | **Ветка** | `feature/eu-api-endpoint` (локально, не запушена) |
 | **PR/MR** | issue [#8](https://github.com/milleraa/jellyfin-poiskkino-plugin/issues/8) — открыт; PR/MR нет |
 | **Commit со ссылкой на PR/MR** | _нет_ |
+| **QA** | **pass** (2026-11-28, `9577df6`) — см. [qa.md](qa.md), [test-runs](../../../qa/test-runs.md) |
 | **Блокеры** | _нет_ |
 
 ### Классификация (intake)
@@ -68,7 +69,7 @@
 
 | Дата | Результат | Ссылка на прогон |
 |------|-------------|------------------|
-| — | — | [test-runs](../../../qa/test-runs.md) |
+| 2026-11-28 | **pass** — 281/281 ×4 прогона, build 0 ошибок (baseline `CS1591` = 122); AC-1…AC-12 (с AC-7′) pass, дефектов нет | [test-runs](../../../qa/test-runs.md), [qa.md](qa.md) |
 
 ## PR/MR feedback / rework
 
@@ -93,6 +94,24 @@
 Один unique reject получает `not-triggered` и не блокирует rework. `candidate` возможен только при двух или более unique comparable evidence-linked cases; изменения процесса выполняются только отдельным reviewed PR/MR. Правила: [process learning](../../../process/learning/README.md).
 
 ## Changelog (handoff)
+
+### 2026-11-28 — handoff QA → finalization
+
+- from: QA (Playwright)
+- to: Orchestrator
+- stage: `finalization`
+- artifacts: [qa.md](qa.md) (таблица AC-1…AC-12 → evidence, прогоны, ограничения, вердикт), запись в [test-runs](../../../qa/test-runs.md) от 2026-11-28, ветка `feature/eu-api-endpoint` @ `9577df6` (перед QA-коммитом)
+- notes:
+  - **Вердикт: pass, дефектов нет.** Все проверки выполнены собственными командами, не по отчётам предыдущих ролей.
+  - **Сборка:** `dotnet build PoiskKinoMetadataPlugin.slnx -c Release --no-incremental` → 0 ошибок, все предупреждения — `CS1591` (122 в двух проектах, baseline), новых типов предупреждений нет; среда .NET SDK `10.0.115`, `net10.0`.
+  - **Тесты:** `dotnet test PoiskKinoMetadataPlugin.slnx -c Release` — **281/281** (0 failed, 0 skipped) четыре прогона подряд (flaky-контроль после истории `logo-images` — расхождений нет). Фильтрованные: `ApiBaseUrlResolverTests` 71/71, `PoiskKinoApiClientBaseUrlTests` 35/35, `PluginConfigurationTests` 3/3, проводочный тест провайдера 1/1.
+  - **Негативный контроль AC-5:** временно заменил в конструкторе `ApiBaseUrlResolver.Resolve(apiBaseUrl)` → `Resolve(null)` — упали **18 из 35** тестов клиента (`Expected: "eu-api.poiskkino.dev"`, `Actual: "api.poiskkino.dev"`); файл восстановлен (`git checkout --`, дерево чистое), повторный прогон 281/281. То есть тесты действительно отличают «ходим на сконфигурированный хост» от «ходим на дефолт».
+  - **AC-покрытие:** AC-1 (дефолт в инициализаторе + legacy XML без `<ApiBaseUrl>`), AC-2 (инварианты `rg`: 120 с / 24 ч / 200 / `SemaphoreSlim(1, 1)`; блоки 401/403/429/404 не тронуты), AC-3 (trim, без схемы, завершающий `/`, порт, регистр/IDN), AC-4 (fallback без исключений: `http`, мусор, подпуть, `userinfo`/query/fragment, IPv6-литерал, 29 hostile-входов), AC-5 (три `RequestUri` + проводка из конфигурации, единственный литерал хоста `ApiBaseUrlResolver.cs:49`), AC-6/AC-8 (статически + XML round-trip), AC-7′ (фраза о перезапуске в README/overview/UI), AC-9 (`Information`/`Warning`, `ApiKey_NeverAppearsInLogs`, усечение 200, пароль с `@` редактируется), AC-10 (build/test), AC-11 (README + overview сверены с кодом), AC-12 (нет новых пакетов/env/CI).
+  - **Пробы хостов (без ключа):** `GET /v1.5/token` → `401` на `https://api.poiskkino.dev` и `https://eu-api.poiskkino.dev` — оба зеркала живы.
+  - **Ограничения прогона (не fail, зафиксированы в [qa.md](qa.md)):** UI и запись `plugins/configurations/*.xml` в живом Jellyfin — ручной сценарий администратора (6 шагов из [task 003](tasks/003-config-page-field.md)); e2e-поиск на EU-хосте без реального ключа (R2/A7); live-переключение не проверялось (действует AC-7′, A1); кэш без хоста в ключе (R7/A3) — безопасно при restart-семантике; IPv6-литерал и подпуть → fallback+`Warning`; `datalist` на `is="emby-input"` автотестами не покрыт.
+  - **Residual risk (принят Техлидом, подтверждён прогоном):** ключ, вставленный в поле базового URL — `userinfo` редактируется (`https://KEY@host` → `https://host`), query/fragment и «голое значение» попадают в лог как часть адреса; `ApiKey` из конфигурации не логируется (AC-9). Требует ошибки администратора; QA не блокирует.
+  - **Некритичные наблюдения:** имя файла `ConfigurationTests.cs` vs класс `PluginConfigurationTests`; подсказка в UI короче README (не упоминает `userinfo`/query/fragment); логи на английском. Rework не требуется.
+  - **DevOps impact:** без изменений — новых env/secrets/интеграций/зависимостей/CI в диффе нет; стадия `devops-check` не открывается. Следующий шаг — Финализация (release notes, README/overview уже обновлены, PR/MR готовит Оркестратор).
 
 ### 2026-11-28 00:50 — приёмка rework: accept → QA
 
