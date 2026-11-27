@@ -6,7 +6,7 @@
 - **Feature / Hotfix:** [docs/backlog/features/eu-api-endpoint/](../)
 - **Назначено:** `developer-csharp`
 - **Стек / infra-область:** C# / .NET 10, xUnit unit-тесты; чистая функция без Jellyfin, HTTP и логгера
-- **Статус:** todo
+- **Статус:** `done` (см. [Результат выполнения](#результат-выполнения))
 - **Ветка:** `feature/eu-api-endpoint` (worktree `/home/alex/src/my/jellyfin-metadata-plugin`); выполнять первой, task-branch не создавать
 
 ## Описание
@@ -81,3 +81,31 @@ dotnet test PoiskKinoMetadataPlugin.slnx
 ## Handoff
 
 - После выполнения: локальный commit без push (например, `feat(api): add ApiBaseUrlResolver for configurable base URL`), статус задачи → `in review`, сообщить Техлиду: путь к файлам, число новых тестов, вывод `dotnet test`.
+
+## Результат выполнения
+
+**Статус:** `done`, готово к review Техлида. Коммиты в ветке `feature/eu-api-endpoint` (без push):
+
+| Коммит | Содержимое |
+|--------|------------|
+| `365d395` — `feat(api): добавить ApiBaseUrlResolver для настраиваемого базового URL` | хелпер + тесты |
+| `docs(eu-api-endpoint): отметить задачу 001 выполненной` | этот файл, [tasks/README.md](README.md), [status.md](../status.md) |
+
+| Артефакт | Что сделано |
+|----------|-------------|
+| `PoiskKinoMetadataPlugin/ApiBaseUrlResolver.cs` (новый) | `internal readonly record struct ResolvedBaseUrl(Uri BaseAddress, bool UsedFallback, string? FallbackReason)`; `internal static class ApiBaseUrlResolver` с `public const string DefaultBaseUrl = "https://api.poiskkino.dev"` и `Resolve(string?)`. Правила 1–10 реализованы, исключений наружу нет, зависимостей от Jellyfin/HTTP/логгера нет (единственный `using` — `System.Globalization`). XML-doc на русском. |
+| `PoiskKinoMetadataPlugin.UnitTests/Helpers/ApiBaseUrlResolverTests.cs` (новый) | 71 тест: 13 табличных `[Theory]` + 4 `[Fact]`, включая фuzz-тест «не бросает исключение ни на одном входе» (29 враждебных входов, в том числе очень длинные строки). |
+
+**Проверки**
+
+- `dotnet build PoiskKinoMetadataPlugin.slnx -c Release` — 0 ошибок; предупреждения только `CS1591` (122 на solution, все — существующие отсутствующие XML-doc в `Models/` и `Providers/`; в новых файлах предупреждений нет).
+- `dotnet test PoiskKinoMetadataPlugin.slnx -c Release` — **242/242 passed** (до задачи было 171, новых 71), failed 0, skipped 0.
+- `rg`-проверка: единственное упоминание хоста в коде — `PoiskKinoApiClient.cs:15` (существующая константа, удаляется в задаче 002) и `ApiBaseUrlResolver.cs:49` (`DefaultBaseUrl`). Прочие файлы не изменены (AC-8), `.csproj` без правок (AC-7).
+
+**Замечания для Техлида**
+
+1. **Правило 8 и `System.Uri`.** У `Uri` для `https://host` `AbsoluteUri`/`ToString()` всегда содержат завершающий `/` (корневой путь). «Без завершающего `/`» реализовано как `BaseAddress.OriginalString == "https://host[:port]"` и `AbsolutePath == "/"`; тесты проверяют именно эти два инварианта. Для `HttpClient.BaseAddress` семантика идентична, но формулировку AC-3 стоит читать как «каноническая строка без `/`», а не «`AbsoluteUri` без `/`».
+2. **Порт по умолчанию.** Для `https://host:443` в каноническую строку порт не попадает (`https://host`), но `BaseAddress.Port == 443` — AC-4 (правило 9) выполнен. Неявный порт схемы (`https` → 443) не пишется, чтобы результат зависел только от входа.
+3. **`https://host//`** отвергается как непустой путь (`AbsolutePath == "//"`), то есть как подпуть, а не как «лишний завершающий `/`». Отдельного кейса в задаче не было — зафиксировано в тестах.
+4. **`FallbackReason`** — короткая английская строка без эха сырого значения (в частности, `userinfo` с паролем не попадает в причину; эхо есть только у имени схемы и пути). Причина рассчитана на `Warning`-лог в задаче 002.
+5. **`Plugin.Instance`/`PluginConfiguration` не тронуты** (scope задачи 002), поэтому дефолт пока объявлен и в резолвере, и в существующей `PoiskKinoApiClient.ApiBaseUrl`; после задачи 002 константа в клиенте удаляется и `ApiBaseUrlResolver.DefaultBaseUrl` становится единственным местом хранения дефолта (AC-1).
