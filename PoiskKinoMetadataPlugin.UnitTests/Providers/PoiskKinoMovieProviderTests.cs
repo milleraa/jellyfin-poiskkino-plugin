@@ -290,6 +290,46 @@ public class PoiskKinoMovieProviderTests : PluginTestBase
     }
 
     [Fact]
+    public async Task GetSearchResults_CustomApiBaseUrl_RequestGoesToConfiguredHost()
+    {
+        PluginTestFixture.SetUpPlugin(TestApiKey);
+        var capturedRequests = new List<HttpRequestMessage>();
+        _handlerMock
+            .Protected()
+            .Setup<Task<HttpResponseMessage>>(
+                "SendAsync",
+                ItExpr.IsAny<HttpRequestMessage>(),
+                ItExpr.IsAny<CancellationToken>())
+            .Callback<HttpRequestMessage, CancellationToken>((request, _) => capturedRequests.Add(request))
+            .ReturnsAsync(new HttpResponseMessage
+            {
+                StatusCode = HttpStatusCode.OK,
+                Content = new StringContent(
+                    TestJsonData.SearchResponseJson,
+                    new MediaTypeHeaderValue("application/json")),
+            });
+
+        try
+        {
+            // AC-5 (проводка): значение из конфигурации доходит до фактического адреса запроса.
+            Plugin.Instance!.Configuration.ApiBaseUrl = "https://eu-api.poiskkino.dev";
+            var provider = CreateProvider();
+
+            await provider.GetSearchResults(new MovieInfo { Name = "Оппенгеймер" }, CancellationToken.None);
+
+            var request = Assert.Single(capturedRequests);
+            Assert.Equal("https", request.RequestUri!.Scheme);
+            Assert.Equal("eu-api.poiskkino.dev", request.RequestUri.Host);
+            Assert.Equal("/v1.5/movie/search", request.RequestUri.AbsolutePath);
+        }
+        finally
+        {
+            // Пересоздаём плагин с дефолтом, чтобы значение не протекало в другие тесты коллекции.
+            PluginTestFixture.SetUpPlugin(TestApiKey);
+        }
+    }
+
+    [Fact]
     public async Task GetImageResponse_EmptyUrl_ReturnsBadRequest()
     {
         var provider = CreateProvider();

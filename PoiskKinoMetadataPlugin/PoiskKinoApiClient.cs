@@ -12,9 +12,9 @@ namespace PoiskKinoMetadataPlugin;
 /// </summary>
 public class PoiskKinoApiClient
 {
-    private const string ApiBaseUrl = "https://api.poiskkino.dev";
     private const int CacheExpirationHours = 24;
     private const int MaxRequestsPerDay = 200;
+    private const int MaxLoggedRawBaseUrlLength = 200;
 
     private readonly HttpClient _httpClient;
     private readonly ILogger<PoiskKinoApiClient> _logger;
@@ -26,14 +26,38 @@ public class PoiskKinoApiClient
     /// </summary>
     /// <param name="httpClientFactory">Фабрика HTTP-клиентов.</param>
     /// <param name="logger">Экземпляр логгера.</param>
-    public PoiskKinoApiClient(IHttpClientFactory httpClientFactory, ILogger<PoiskKinoApiClient> logger)
+    /// <param name="apiBaseUrl">
+    /// Сырое значение базового URL из конфигурации плагина «как ввёл администратор»;
+    /// <c>null</c> или пустое значение — <see cref="ApiBaseUrlResolver.DefaultBaseUrl"/>.
+    /// Нормализация и валидация выполняются один раз, при создании клиента, в <see cref="ApiBaseUrlResolver"/>.
+    /// </param>
+    public PoiskKinoApiClient(
+        IHttpClientFactory httpClientFactory,
+        ILogger<PoiskKinoApiClient> logger,
+        string? apiBaseUrl = null)
     {
+        _logger = logger;
+
+        // Единственная точка резолва: исключений нет, невалидное значение даёт дефолт + причину (D-ARCH-1).
+        var resolvedBaseUrl = ApiBaseUrlResolver.Resolve(apiBaseUrl);
+
         _httpClient = httpClientFactory.CreateClient();
-        _httpClient.BaseAddress = new Uri(ApiBaseUrl);
+        _httpClient.BaseAddress = resolvedBaseUrl.BaseAddress;
         _httpClient.Timeout = TimeSpan.FromSeconds(120);
         _httpClient.DefaultRequestHeaders.Add("User-Agent", "Jellyfin-PoiskKino-Plugin/1.0");
-        
-        _logger = logger;
+
+        _logger.LogInformation("PoiskKino API base URL: {BaseUrl}", _httpClient.BaseAddress);
+
+        if (resolvedBaseUrl.UsedFallback)
+        {
+            _logger.LogWarning(
+                "Invalid API base URL '{RawApiBaseUrl}' (truncated to {MaxLength} chars), falling back to '{DefaultBaseUrl}': {Reason}",
+                TruncateForLog(apiBaseUrl, MaxLoggedRawBaseUrlLength),
+                MaxLoggedRawBaseUrlLength,
+                ApiBaseUrlResolver.DefaultBaseUrl,
+                resolvedBaseUrl.FallbackReason);
+        }
+
         _cache = new ConcurrentDictionary<string, CacheEntry<object>>();
         _requestSemaphore = new SemaphoreSlim(1, 1);
     }
@@ -398,6 +422,18 @@ public class PoiskKinoApiClient
         {
             _requestSemaphore.Release();
         }
+    }
+
+    /// <summary>
+    /// Обрезает сырое значение из конфигурации для безопасного вывода в лог.
+    /// </summary>
+    /// <param name="rawValue">Сырое значение из конфигурации.</param>
+    /// <param name="maxLength">Максимальная длина результата в символах.</param>
+    /// <returns>Значение без изменений или его первые <paramref name="maxLength"/> символов.</returns>
+    private static string TruncateForLog(string? rawValue, int maxLength)
+    {
+        var value = rawValue ?? string.Empty;
+        return value.Length <= maxLength ? value : value[..maxLength];
     }
 
     /// <summary>
