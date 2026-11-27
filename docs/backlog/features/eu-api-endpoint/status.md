@@ -6,8 +6,8 @@
 
 | Поле | Значение |
 |------|----------|
-| **Стадия** | `analysis` |
-| **Owner** | `Analyst` |
+| **Стадия** | `analysis-review` |
+| **Owner** | `Orchestrator` / `Stakeholder decision` |
 | **Ветка** | `feature/eu-api-endpoint` (локально, не запушена) |
 | **PR/MR** | issue [#8](https://github.com/milleraa/jellyfin-poiskkino-plugin/issues/8) — открыт; PR/MR нет |
 | **Commit со ссылкой на PR/MR** | _нет_ |
@@ -98,3 +98,11 @@
 - stage: `analysis`
 - artifacts: [brief.md](brief.md), [analysis.md](analysis.md)
 - notes: тип работы — enhancement-фича, Аналитик обязателен по процессу. В `brief.md` четыре открытых вопроса (OQ-1…OQ-4): UI свободное поле vs. выбор, нужен ли failover, фича vs. hotfix, миграция конфигурации.
+
+### 2026-11-27 — handoff
+
+- from: Analyst
+- to: Orchestrator (gate `analysis-review`, решение — Stakeholder)
+- stage: `analysis-review`
+- artifacts: [analysis.md](analysis.md) (user stories, AC-1…AC-12, NFR, out of scope, зависимости, риски R1–R9, ответы OQ-1…OQ-4, вопросы Q1–Q3, решения D-1…D-8), [brief.md](brief.md) (уточнена строка про llms.txt)
+- notes: рекомендация `continue`. OQ-1 — свободное поле URL с серверной нормализацией и подсказкой (допустим `<datalist>` с двумя хостами); OQ-2 — failover подтверждён как out of scope; OQ-3 — enhancement подтверждён; OQ-4 — миграция не нужна: `BasePluginConfiguration` пуст, конфигурация читается `XmlSerializer.DeserializeFromFile` в один XML, отсутствующий элемент оставляет инициализатор-дефолт (evidence: исходники Jellyfin `BasePluginOfT.cs`/`MyXmlSerializer.cs`), остаточный smoke — AC-8. Реальные риски: R1 — base URL привязан к конструктору клиента, поэтому нужен AC-7 «применение без перезагрузки» (альтернатива AC-7′ — по решению Q2); R2 — нет реального API-ключа, end-to-end smoke EU-зеркала недоступен (только пробы 401 + unit-тесты); R6 — формулировка llms.txt о EU-зеркале не воспроизводится, опора на `servers` спеки; R3 — семантика лимита 200/сутки между хостами неизвестна (информационно через `/v1.5/token`). Вопросы Стейхолдеру: Q1 (свободный хост vs whitelist двух хостов), Q2 (применение без перезагрузки), Q3 (показывать ли `/v1.5/token` — рекомендовано вне scope). Блокирующих вопросов нет.
