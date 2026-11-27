@@ -2,10 +2,10 @@
 
 ## PR/MR
 
-- **Ссылка:** _TBD — заполняется сразу после `gh pr create` (отдельный commit со ссылкой)_
+- **Ссылка:** [jellyfin-poiskkino-plugin#9](https://github.com/milleraa/jellyfin-poiskkino-plugin/pull/9) — `feat(config): настраиваемый базовый URL API (зеркало eu-api)` (base `main` ← head `feature/eu-api-endpoint`, `Closes #8`)
 - **Ветка:** `feature/eu-api-endpoint` ← `main` (push в `origin`; ветку и remote branch не удалять до merge/close PR)
-- **Диапазон коммитов:** `4610179..3ef319c` (23 коммита: снапшот спеки + intake → анализ → решения Стейхолдера → архитектура + ADR-0003 → декомпозиция → задачи 001–005 → QA)
-- **Commit со ссылкой на PR/MR:** _TBD_
+- **Диапазон коммитов:** `4610179..3ef319c` (23 коммита: снапшот спеки + intake → анализ → решения Стейхолдера → архитектура + ADR-0003 → декомпозиция → задачи 001–005 → QA) + финализационные коммиты `0cfc524` (этот файл) и `docs(eu-api-endpoint): открыть PR #9, -> pr-mr-ready`
+- **Commit со ссылкой на PR/MR:** `docs(eu-api-endpoint): открыть PR #9, -> pr-mr-ready` (обновлены [status.md](status.md) и этот файл), повторный push в ту же ветку
 - **Issue:** [#8](https://github.com/milleraa/jellyfin-poiskkino-plugin/issues/8) — `feat(config): настраиваемый базовый URL API — зеркало eu-api.poiskkino.dev` (label `enhancement`)
 
 ## Что вошло в PR
@@ -37,7 +37,7 @@
 - [x] DevOps-обновления не требуются: новых env vars/secrets/интеграций/портов/миграций/зависимостей и изменений Docker/CI/CD/deploy нет; `docs/engineering/devops.md` и `docs/environments/ci-cd.md` актуальны без правок.
 - [x] QA дала вердикт **pass** (2026-11-28, [qa.md](qa.md); AC-1…AC-12 с AC-7′; дефектов нет).
 - [x] Тесты и проверки зафиксированы в [qa.md](qa.md) и [test-runs](../../../qa/test-runs.md).
-- [ ] Push выполнен, PR/MR открыт, ссылка записана в `status.md` и в этом файле, отдельный commit со ссылкой сделан, повторный push выполнен — _в процессе: заполняется commit'ом со ссылкой на PR_.
+- [x] Push выполнен, PR #9 открыт, ссылка записана в `status.md` и в этом файле, отдельный commit со ссылкой сделан, повторный push выполнен.
 - [x] Рабочая и remote ветки сохранены (до merge/close PR; `--force` не применяется, ветки не удаляются).
 - [x] Документация и ADR обновлены при изменении поведения: `README.md`, `docs/architecture/overview.md`, ADR-0003 + индекс ADR.
 - [x] Папка фичи остаётся в `docs/backlog/features/eu-api-endpoint/` до принятия Стейхолдером и **не** переносится в `docs/archive/` на стадии `pr-mr-ready`.
@@ -55,7 +55,7 @@ dotnet test PoiskKinoMetadataPlugin.slnx -c Release
 # Пройдено: 281, не пройдено: 0, пропущено: 0, всего 281
 ```
 
-CI (GitHub Actions, `.github/workflows/ci.yaml`): build + test на push/PR в `main`; статус run для `feature/eu-api-endpoint` — см. `status.md` (Changelog) и сам PR (check «build»/«test» в одном job). Workflow настроен на path-ignore `*.md` и `docs/` — изменения кода в этом PR триггерят CI.
+CI (GitHub Actions, `.github/workflows/ci.yaml`): build + test на push/PR в `main`. Run для `feature/eu-api-endpoint`: [46044828492](https://github.com/milleraa/jellyfin-poiskkino-plugin/actions/runs/46044828492), job `build-and-test` — на момент оформления PR `pending`; проверка статуса — `gh pr checks 9`. Workflow настроен на path-ignore `*.md` и `docs/` — изменения кода в этом PR триггерят CI.
 
 ## Test plan для ревьюера
 

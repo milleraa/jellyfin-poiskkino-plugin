@@ -6,11 +6,11 @@
 
 | Поле | Значение |
 |------|----------|
-| **Стадия** | `finalization` |
-| **Owner** | `Orchestrator` |
-| **Ветка** | `feature/eu-api-endpoint` (локально, не запушена) |
-| **PR/MR** | issue [#8](https://github.com/milleraa/jellyfin-poiskkino-plugin/issues/8) — открыт; PR/MR нет |
-| **Commit со ссылкой на PR/MR** | _нет_ |
+| **Стадия** | `pr-mr-ready` |
+| **Owner** | `Orchestrator` / `Stakeholder review` |
+| **Ветка** | `feature/eu-api-endpoint` (запушена в `origin`, remote branch сохранён до merge/close) |
+| **PR/MR** | [PR #9](https://github.com/milleraa/jellyfin-poiskkino-plugin/pull/9) — `feat(config): настраиваемый базовый URL API (зеркало eu-api)`, base `main` ← head `feature/eu-api-endpoint`; закрывает issue [#8](https://github.com/milleraa/jellyfin-poiskkino-plugin/issues/8) (`Closes #8`) |
+| **Commit со ссылкой на PR/MR** | `docs(eu-api-endpoint): открыть PR #9, -> pr-mr-ready` (см. git log ветки) |
 | **QA** | **pass** (2026-11-28, `9577df6`) — см. [qa.md](qa.md), [test-runs](../../../qa/test-runs.md) |
 | **Блокеры** | _нет_ |
 
@@ -94,6 +94,21 @@
 Один unique reject получает `not-triggered` и не блокирует rework. `candidate` возможен только при двух или более unique comparable evidence-linked cases; изменения процесса выполняются только отдельным reviewed PR/MR. Правила: [process learning](../../../process/learning/README.md).
 
 ## Changelog (handoff)
+
+### 2026-11-28 — handoff Finalizer → Orchestrator (PR открыт, `pr-mr-ready`)
+
+- from: Finalizer
+- to: Orchestrator (`Stakeholder review`)
+- stage: `pr-mr-ready`
+- artifacts: [PR #9](https://github.com/milleraa/jellyfin-poiskkino-plugin/pull/9) (`feature/eu-api-endpoint` → `main`), [finalization.md](finalization.md), коммиты `0cfc524` (finalization.md) и `docs(eu-api-endpoint): открыть PR #9, -> pr-mr-ready` (ссылка на PR), remote branch `origin/feature/eu-api-endpoint`
+- notes:
+  - **Push и PR:** ветка впервые запушена `git push -u origin feature/eu-api-endpoint` (без `--force`), PR создан в `main`; label не добавлялся — у прошлых PR репозитория (#3, #5, #7) labels пустые, label `enhancement` есть только у issue. Диапазон PR: `4610179..3ef319c` (23 коммита) + 2 финализационных коммита.
+  - **Финальные проверки (мои команды, 2026-11-28):** `dotnet build PoiskKinoMetadataPlugin.slnx -c Release --no-incremental` → **0 ошибок**, 122 предупреждения — все `CS1591` (baseline, 61 + 61 на два проекта), других типов нет; `dotnet test PoiskKinoMetadataPlugin.slnx -c Release` → **281/281 passed**, 0 failed, 0 skipped.
+  - **Секреты:** в диффе `main..HEAD` файлов `.env`/`*.key`/`*.pem`/`*.pfx`/`credentials*`/`*token*` нет; по содержимому единственное совпадение с шаблоном секрета — тестовый литерал `TestApiKey = "test-api-key"` в unit-тестах. Рабочее дерево чистое (кроме игнорируемых `bin/`/`obj/`).
+  - **CI:** GitHub Actions `build-and-test` (`.github/workflows/ci.yaml`) запущен на push; на момент оформления — `pending` ([run 46044828492](https://github.com/milleraa/jellyfin-poiskkino-plugin/actions/runs/46044828492)), финальный статус проверяется `gh pr checks 9`. Обязательность для merge — green build + тесты.
+  - **Что осталось (граница моей роли):** решение Стейхолдера по PR (`/accept-feature` или rework через `.opencode/skills/pr-mr-rework/SKILL.md`). Папка фичи **остаётся в `docs/backlog/features/eu-api-endpoint/`**, стадия `accepted` не выставлялась. Архивация (перенос в `docs/archive/features/eu-api-endpoint/`, запись в [completed-work](../../../history/completed-work.md), `accepted`) выполняется **после acceptance Стейхолдера и до merge** — отдельным шагом в этой же ветке с push, затем merge одним мержем. Merge PR Финализатором не выполнялся и без решения Стейхолдера не выполняется.
+  - **Риски для ревьюера:** A1 (ленивые клиенты → «смешанный» хост до рестарта, принято с AC-7′), A3/R7 (хост не в ключе in-memory кэша — безопасно при restart-семантике, инвариант в ADR-0003), R2/A7 (нет реального ключа → E2E EU не проверен; покрыто unit-тестами `RequestUri` + пробами `401`), residual risk «ключ, вставленный в поле базового URL» (query/fragment и «голое значение» попадают в лог как адрес; `userinfo` редактируется; принят Техлидом и QA).
+  - **Что осталось непроверенным:** живой UI-сценарий Jellyfin (6 шагов из [task 003](tasks/003-config-page-field.md)) и E2E-поиск на EU-хосте с реальным ключом — ручная проверка администратора после релиза.
 
 ### 2026-11-28 — handoff QA → finalization
 
