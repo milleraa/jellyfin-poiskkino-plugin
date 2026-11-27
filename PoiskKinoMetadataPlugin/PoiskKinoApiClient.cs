@@ -428,11 +428,13 @@ public class PoiskKinoApiClient
     /// Удаляет <c>userinfo</c> (логин и пароль) из сырого значения перед выводом в лог.
     /// </summary>
     /// <param name="rawValue">Сырое значение из конфигурации «как ввёл администратор».</param>
-    /// <returns>Значение без фрагмента между <c>://</c> и <c>@</c> включительно либо без изменений.</returns>
+    /// <returns>Значение без <c>userinfo</c> в authority (с сохранением схемы) либо без изменений.</returns>
     /// <remarks>
     /// Резолвер отклоняет адреса с <c>userinfo</c>, но в <c>Warning</c> попадает сырая строка,
     /// поэтому пароль из <c>https://user:password@host</c> мог бы оказаться в логе (риск A6, ADR-0003).
     /// Обрабатывается и значение без схемы (<c>user:password@host</c>).
+    /// <c>userinfo</c> заканчивается последним <c>@</c> внутри authority (пароль сам может содержать <c>@</c>),
+    /// <c>@</c> в пути, query или fragment не вырезается — это не credentials.
     /// </remarks>
     private static string RedactUserInfo(string? rawValue)
     {
@@ -441,15 +443,18 @@ public class PoiskKinoApiClient
         var schemeSeparatorIndex = value.IndexOf("://", StringComparison.Ordinal);
         var authorityStart = schemeSeparatorIndex < 0 ? 0 : schemeSeparatorIndex + 3;
 
-        var atIndex = value.IndexOf('@', authorityStart);
-        if (atIndex < 0)
+        // Authority кончается на первом '/', '?' или '#' (или на конце строки).
+        var authorityEndIndex = value.IndexOfAny(['/', '?', '#'], authorityStart);
+        var authorityEnd = authorityEndIndex < 0 ? value.Length : authorityEndIndex;
+        if (authorityEnd <= authorityStart)
         {
+            // Пустой authority ("https://", "https:///x") — вырезать нечего, но и падать нельзя.
             return value;
         }
 
-        // '@' считается разделителем userinfo только в пределах authority: дальше мог бы быть путь или query.
-        var authorityEndIndex = value.IndexOfAny(['/', '?', '#'], authorityStart);
-        if (authorityEndIndex >= 0 && authorityEndIndex < atIndex)
+        // Берём ПОСЛЕДНИЙ '@' в authority: пароль может содержать '@' (admin:p@ss@host).
+        var atIndex = value.LastIndexOf('@', authorityEnd - 1, authorityEnd - authorityStart);
+        if (atIndex < 0)
         {
             return value;
         }

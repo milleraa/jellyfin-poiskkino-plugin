@@ -161,14 +161,20 @@ public class PoiskKinoApiClientBaseUrlTests
     }
 
     // AC-9 (риск A6): пароль из userinfo не попадает в Warning, хост остаётся в сообщении.
+    // Задача 005: userinfo заканчивается ПОСЛЕДНИМ '@' в authority — пароль может содержать '@' (p@ss).
     [Theory]
-    [InlineData("https://admin:sup3r-secret@api.poiskkino.dev")]
-    [InlineData("admin:sup3r-secret@api.poiskkino.dev")]
-    [InlineData("https://admin:sup3r-secret@eu-api.poiskkino.dev:8443")]
-    public void Constructor_UserInfoInBaseUrl_RedactedInWarning(string rawApiBaseUrl)
+    [InlineData("https://admin:sup3r-secret@api.poiskkino.dev", "sup3r-secret", "secret", "https://api.poiskkino.dev")]
+    [InlineData("admin:sup3r-secret@api.poiskkino.dev", "sup3r-secret", "secret", "api.poiskkino.dev")]
+    [InlineData("https://admin:sup3r-secret@eu-api.poiskkino.dev:8443", "sup3r-secret", "secret", "https://eu-api.poiskkino.dev:8443")]
+    [InlineData("https://admin:p@ss@api.poiskkino.dev", "p@ss", "ss@", "https://api.poiskkino.dev")]
+    [InlineData("admin:p@ss@api.poiskkino.dev", "p@ss", "ss@", "api.poiskkino.dev")]
+    [InlineData("https://admin:p@ss@eu-api.poiskkino.dev:8443", "p@ss", "ss@", "https://eu-api.poiskkino.dev:8443")]
+    public void Constructor_UserInfoInBaseUrl_RedactedInWarning(
+        string rawApiBaseUrl,
+        string secret,
+        string leakedTail,
+        string expectedLoggedBaseUrl)
     {
-        const string secret = "sup3r-secret";
-
         _ = CreateClientWith(rawApiBaseUrl);
 
         Assert.Contains(secret, rawApiBaseUrl, StringComparison.Ordinal); // контроль тестовых данных: пароль во входе есть
@@ -179,10 +185,50 @@ public class PoiskKinoApiClientBaseUrlTests
                 It.IsAny<EventId>(),
                 It.Is<It.IsAnyType>((state, _) =>
                     !state.ToString()!.Contains(secret, StringComparison.Ordinal) &&
+                    !state.ToString()!.Contains(leakedTail, StringComparison.Ordinal) &&
+                    state.ToString()!.Contains("'" + expectedLoggedBaseUrl + "'", StringComparison.Ordinal) &&
                     state.ToString()!.Contains("poiskkino.dev", StringComparison.Ordinal)),
                 It.IsAny<Exception?>(),
                 It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
             Times.Once);
+    }
+
+    // AC-2 (задача 005): '@' вне authority — не credentials, значение в Warning остаётся прежним.
+    [Theory]
+    [InlineData("https://api.poiskkino.dev/path@x")]
+    [InlineData("https://api.poiskkino.dev?email=a@b")]
+    [InlineData("https://api.poiskkino.dev#a@b")]
+    public void Constructor_AtSignOutsideAuthority_LoggedUnchanged(string rawApiBaseUrl)
+    {
+        var exception = Record.Exception(() => CreateClientWith(rawApiBaseUrl));
+
+        Assert.Null(exception);
+        VerifyLog(LogLevel.Warning, Times.Once());
+        _loggerMock.Verify(
+            l => l.Log(
+                LogLevel.Warning,
+                It.IsAny<EventId>(),
+                It.Is<It.IsAnyType>((state, _) => state.ToString()!.Contains("'" + rawApiBaseUrl + "'", StringComparison.Ordinal)),
+                It.IsAny<Exception?>(),
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+            Times.Once);
+    }
+
+    // AC-6 (задача 005): граничные значения redaction — без исключений и без пустого authority-диапазона.
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("https://")]
+    [InlineData("https:///x")]
+    [InlineData("@")]
+    [InlineData("@@@")]
+    [InlineData("://@")]
+    [InlineData("https://@")]
+    public void Constructor_DegenerateUserInfoInputs_DoNotThrow(string? rawApiBaseUrl)
+    {
+        var exception = Record.Exception(() => CreateClientWith(rawApiBaseUrl));
+
+        Assert.Null(exception);
     }
 
     // AC-9: API-ключ не попадает ни в одно сообщение лога клиента.
@@ -211,7 +257,7 @@ public class PoiskKinoApiClientBaseUrlTests
         return new PoiskKinoApiClient(factoryMock.Object, _loggerMock.Object);
     }
 
-    private PoiskKinoApiClient CreateClientWith(string rawApiBaseUrl)
+    private PoiskKinoApiClient CreateClientWith(string? rawApiBaseUrl)
     {
         var factoryMock = CreateHttpClientFactoryMock();
         return new PoiskKinoApiClient(factoryMock.Object, _loggerMock.Object, rawApiBaseUrl);
