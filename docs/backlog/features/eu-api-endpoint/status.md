@@ -6,8 +6,8 @@
 
 | Поле | Значение |
 |------|----------|
-| **Стадия** | `development` |
-| **Owner** | `Orchestrator` |
+| **Стадия** | `tech-lead-review` |
+| **Owner** | `Tech Lead` |
 | **Ветка** | `feature/eu-api-endpoint` (локально, не запушена) |
 | **PR/MR** | issue [#8](https://github.com/milleraa/jellyfin-poiskkino-plugin/issues/8) — открыт; PR/MR нет |
 | **Commit со ссылкой на PR/MR** | _нет_ |
@@ -92,6 +92,14 @@
 Один unique reject получает `not-triggered` и не блокирует rework. `candidate` возможен только при двух или более unique comparable evidence-linked cases; изменения процесса выполняются только отдельным reviewed PR/MR. Правила: [process learning](../../../process/learning/README.md).
 
 ## Changelog (handoff)
+
+### 2026-11-28 — handoff development → tech-lead-review
+
+- from: Orchestrator
+- to: Tech Lead
+- stage: `tech-lead-review`
+- artifacts: коммиты `023460e..0bf0083` (задачи 001–004 + security-фикс), [tech-plan.md](tech-plan.md), [tasks/](tasks/README.md)
+- notes: все четыре задачи отмечены `done` исполнителем, `dotnet build -c Release` — 0 ошибок (предупреждения только baseline `CS1591` = 122), `dotnet test` — 267/267 passed. На приёмку отдельно выносятся три отклонения от исходных задач: (1) в 5 провайдерах свойство `ApiBaseUrl` сделано `static` вместо `instance` — инициализатор `Lazy<>` не может обращаться к экземпляру (`CS0236`); (2) Оркестратор расширил scope 003 санитизацией `userinfo` перед `Warning` (коммит `1533989`, security); (3) в README исправлен устаревший пример запроса `/v1/search` → `/v1.5/movie/search`.
 
 ### 2026-11-27 23:30 — intake
 
