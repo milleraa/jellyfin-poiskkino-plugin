@@ -6,7 +6,7 @@
 
 | Поле | Значение |
 |------|----------|
-| **Стадия** | `tech-decomposition` |
+| **Стадия** | `development` |
 | **Owner** | `Orchestrator` |
 | **Ветка** | `feature/eu-api-endpoint` (локально, не запушена) |
 | **PR/MR** | issue [#8](https://github.com/milleraa/jellyfin-poiskkino-plugin/issues/8) — открыт; PR/MR нет |
@@ -35,15 +35,24 @@
 
 | ID | Файл | Роль / стек | Статус |
 |----|------|-------------|--------|
-| — | — | — | — |
+| 001 | [tasks/001-api-base-url-resolver.md](tasks/001-api-base-url-resolver.md) — `ApiBaseUrlResolver` + unit-тесты (AC-1, AC-3, AC-4) | `developer-csharp` / C# + xUnit | `todo` |
+| 002 | [tasks/002-configuration-client-providers.md](tasks/002-configuration-client-providers.md) — `PluginConfiguration.ApiBaseUrl`, клиент, 5 провайдеров, тесты фактического хоста (AC-1, AC-2, AC-4, AC-5, AC-8, AC-9, AC-10, AC-12) | `developer-csharp` / C# + xUnit + Moq | `todo` |
+| 003 | [tasks/003-config-page-field.md](tasks/003-config-page-field.md) — поле «Базовый URL API» в `Configuration/configPage.html` (AC-6) | `developer-csharp` / HTML + JS | `todo` |
+| 004 | [tasks/004-docs-base-url.md](tasks/004-docs-base-url.md) — `README.md` + `docs/architecture/overview.md`, включая AC-7′ (AC-7′, AC-11) | `developer-csharp` / Markdown | `todo` |
+
+Порядок: 001 → 002 → 003 → 004, строго последовательно в ветке `feature/eu-api-endpoint`, каждая задача — локальный commit без push. План: [tech-plan.md](tech-plan.md).
 
 ## DevOps impact check
 
+**Статус: закрыт** — 2026-11-28, Техлид, по факту дизайна ([architecture.md](architecture.md), [ADR-0003](../../../architecture/decisions/ADR-0003-configurable-api-base-url.md)). DevOps-задача не создавалась, стадия `devops-check` не открывается.
+
 | Вопрос | Результат |
 |--------|-----------|
-| Новые env vars / secrets | _нет_ (поле конфигурации плагина, не env) |
-| Новые интеграции / порты / очереди / storage / jobs | _нет_ (новый внешний хост `eu-api.poiskkino.dev`, уже объявлен API) |
-| Docker / compose / CI/CD / deploy / Helm / K8s / observability | _нет_ |
+| Новые env vars / secrets | _нет_ — значение хранится в XML-конфигурации плагина (`plugins/configurations/PoiskKinoMetadataPlugin.xml`), новых секретов нет; API-ключ не логируется (AC-9) |
+| Новые интеграции / порты / очереди / storage / jobs | _нет_ — новый исходящий хост `eu-api.poiskkino.dev` уже объявлен API (`servers` спеки) и используется только по явному выбору администратора; новых портов/очередей/БД/фоновых задач нет |
+| Миграции данных | _нет_ — отсутствующий элемент XML оставляет инициализатор-дефолт (analysis OQ-4, F6/F7) |
+| Новые зависимости (NuGet/образы) | _нет_ — xUnit/Moq уже подключены (AC-12) |
+| Docker / compose / CI/CD / deploy / Helm / K8s / observability | _нет_ — нет новых шагов CI и изменений инфраструктуры; наблюдаемость — существующий `ILogger` (`Information`/`Warning`, D-ARCH-5), runbook не требуется |
 | DevOps-задача | _не нужна_ |
 
 ## Недостаточность разрешений
@@ -130,3 +139,20 @@
   - **Уточнения требований (не блокирующие, повторный проход Аналитика не нужен):** AC-3 не описывает путь/порт/userinfo/query (принято: порт разрешён, остальное → fallback); AC-3/AC-6 не говорят о канонизации сохранённого значения (принято: значения в конфигурации/UI не переписываются, нормализация — при создании клиента).
   - **Техлиду:** 6 кандидатов на декомпозицию — §10 `architecture.md`; документационная часть — §7 (README включая AC-7′, overview.md, release notes на финализации).
   - **Вне моего файлового scope:** в `README.md` фичи до сих пор «Статус `intake`» — обновить Оркестратору.
+
+### 2026-11-28 00:20 — handoff
+
+- from: Tech Lead
+- to: Orchestrator
+- stage: `development`
+- artifacts: [tech-plan.md](tech-plan.md), [tasks/README.md](tasks/README.md), [tasks/001-api-base-url-resolver.md](tasks/001-api-base-url-resolver.md), [tasks/002-configuration-client-providers.md](tasks/002-configuration-client-providers.md), [tasks/003-config-page-field.md](tasks/003-config-page-field.md), [tasks/004-docs-base-url.md](tasks/004-docs-base-url.md)
+- notes:
+  - **Декомпозиция готова, плейсхолдеров нет.** 4 задачи, роль `developer-csharp` (субагенты в этой среде не запускаются Техлидом — задачи выполняет Оркестратор), строго последовательно в ветке `feature/eu-api-endpoint`, без task-branches, каждая — локальный commit без push.
+  - **Порядок и зависимости:** 001 (хелпер `ApiBaseUrlResolver` + theory-таблица правил D-ARCH-1) → 002 (конфигурация + клиент с `string? apiBaseUrl = null` + 5 провайдеров + тесты на `RequestUri` и логирование) → 003 (поле в `configPage.html`) → 004 (`README.md` + `docs/architecture/overview.md`, AC-7′). 002 зависит от 001; 003 от 002; 004 от 002/003.
+  - **Отличие от architecture.md §10 (обосновано в tech-plan.md):** `PluginConfiguration.ApiBaseUrl` перенесён из «политики» в задачу 002 (поле проверяется вместе с пробросом значения до `HttpClient`, а 001 остаётся чистой функцией без влияния на поведение); документация вынесена в отдельную 004, чтобы не смешивать её с review-диффом кода.
+  - **DevOps impact check закрыт по факту дизайна:** новых env/secrets, интеграций, портов, миграций, зависимостей и изменений CI/Docker/Helm/K8s нет; наблюдаемость — существующий `ILogger` (D-ARCH-5). DevOps-задача не нужна, стадия `devops-check` не открывается.
+  - **Что проверяет Техлид на приёмке:** 001 — правила 1–10 покрыты построчно, ни один вход не бросает исключение, `UsedFallback`/`Reason` по таблице; 002 — кастомный хост в `RequestUri` трёх запросов, дефолт для старой XML-конфигурации, `grep` отсутствия хардкода хоста вне резолвера, `Information`/`Warning` без `ApiKey`, дифф без изменений кэша/таймаута/лимита, `build -c Release` + `test` зелёные; 003 — загрузка/сохранение поля, дефолт при отсутствии, подсказка с двумя хостами и перезапуском, JS не нормализует URL; 004 — оба хоста, дефолт, правила нормализации, явная фраза о перезапуске, нет ссылки на `llms.txt`/рекламы прокси.
+  - **Ограничение проверки:** реального API-ключа нет (analysis F14, R2/A7) — end-to-end smoke EU-зеркала остаётся за QA/администратором; unit-тесты проверяют `RequestUri`, а не сетевой ответ.
+  - **Вне scope / follow-up:** live-переключение base URL и хост в ключе кэша, серверная диагностика `/v1.5/token`, base URL с подпутём, failover — отдельные будущие фичи (tech-plan.md «Вне scope и follow-up»).
+  - **Недостаточность разрешений:** не зафиксирована — декомпозиция выполнена без запуска сборки и субагентов.
+  - **Замечание architecture.md §7 про README фичи снято** коммитом `bbfda17` (стадия в README не дублируется) — действий не требуется.
