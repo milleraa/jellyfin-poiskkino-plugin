@@ -6,7 +6,7 @@
 - **Feature / Hotfix:** [docs/backlog/features/eu-api-endpoint/](../)
 - **Назначено:** `developer-csharp`
 - **Стек / infra-область:** C# / .NET 10, Jellyfin 12.0.0 (`Jellyfin.Controller`/`Jellyfin.Model`), xUnit + Moq (`Moq.Protected`); HTTP-транспорт плагина
-- **Статус:** todo
+- **Статус:** `done` (см. [Результат выполнения](#результат-выполнения))
 - **Ветка:** `feature/eu-api-endpoint` (worktree `/home/alex/src/my/jellyfin-metadata-plugin`); выполнять строго после задачи [001](001-api-base-url-resolver.md), task-branch не создавать
 
 ## Описание
@@ -84,3 +84,38 @@ rg -n "poiskkino\.dev" PoiskKinoMetadataPlugin --glob '!obj/**' --glob '!bin/**'
 ## Handoff
 
 - После выполнения: локальный commit без push (например, `feat(api): use configurable base URL in API client and providers`), статус задачи → `in review`, сообщить Техлиду: список изменённых файлов, число новых тестов, вывод `build`/`test` и `rg`-проверки, явно указать, что в диффе нет изменений таймаута/кэша/лимита.
+
+## Результат выполнения
+
+**Статус:** `done`, готово к review Техлида. Коммиты в ветке `feature/eu-api-endpoint` (без push):
+
+| Коммит | Содержимое |
+|--------|------------|
+| `f076662` — `feat(api): читать базовый URL из конфигурации плагина` | код + тесты |
+| `docs(eu-api-endpoint): отметить задачу 002 выполненной` | этот файл, [tasks/README.md](README.md), [status.md](../status.md) |
+
+### Изменённые файлы
+
+| Файл | Изменение |
+|------|-----------|
+| `PoiskKinoMetadataPlugin/Configuration.cs` | +`public string ApiBaseUrl { get; set; } = ApiBaseUrlResolver.DefaultBaseUrl;` с XML-doc (русский): сырое значение, нормализация в резолвере, имя — часть XML-схемы (A8). Литерала хоста в `*.cs` нет. |
+| `PoiskKinoMetadataPlugin/PoiskKinoApiClient.cs` | удалён `private const string ApiBaseUrl`; конструктор `(IHttpClientFactory, ILogger<PoiskKinoApiClient>, string? apiBaseUrl = null)`; `ApiBaseUrlResolver.Resolve(apiBaseUrl)` один раз в конструкторе → `HttpClient.BaseAddress`; `Information` с фактическим базовым URL + `Warning` при fallback (сырое значение усечено до 200 символов, причина от резолвера); добавлен `TruncateForLog`. |
+| `PoiskKinoMovieProvider.cs`, `PoiskKinoSeriesProvider.cs`, `PoiskKinoSeasonProvider.cs`, `PoiskKinoEpisodeProvider.cs`, `PoiskKinoImageProvider.cs` | по одному свойству `ApiBaseUrl` (из `Plugin.Instance?.Configuration?.ApiBaseUrl`, как `ApiKey`) и по одному аргументу в `new PoiskKinoApiClient(...)` внутри `Lazy`. Бизнес-логика не тронута. |
+| `PoiskKinoMetadataPlugin.UnitTests/ApiClient/PoiskKinoApiClientBaseUrlTests.cs` (новый) | 18 тестов: 2-аргументный конструктор → дефолтный хост; кастомный хост в `RequestUri` всех трёх запросов (scheme+host+port+path); нормализация вариантов ввода; fallback `http://`/`not a url`/подпуть → дефолт + один `Warning`; отсутствие исключений на 7 видах входа; сохранение явного порта; усечение сырого значения до 200 символов; `ApiKey` отсутствует в логах. |
+| `PoiskKinoMetadataPlugin.UnitTests/ConfigurationTests.cs` (новый) | 3 теста: дефолт из резолвера; десериализация старой XML без `<ApiBaseUrl>` сохраняет `ApiKey`/`IgnoreTmdbImages` и даёт дефолт (AC-1/AC-8); round-trip сохраняет введённое значение без канонизации (D-ARCH-4). |
+| `PoiskKinoMetadataPlugin.UnitTests/Providers/PoiskKinoMovieProviderTests.cs` | +1 тест проводки: `Plugin.Instance.Configuration.ApiBaseUrl = "https://eu-api.poiskkino.dev"` → `GetSearchResults` уходит на `eu-api.poiskkino.dev`; в `finally` — `PluginTestFixture.SetUpPlugin`, чтобы значение не протекало в соседние тесты коллекции. |
+
+### Проверки
+
+- `dotnet build -c Release` и `dotnet build PoiskKinoMetadataPlugin.slnx -c Release --no-incremental` — 0 ошибок; предупреждения только `CS1591` (122 на solution — baseline существующих XML-doc-пропусков в `Models/`/`Providers/`; в новых/изменённых файлах новых нет).
+- `dotnet test PoiskKinoMetadataPlugin.slnx -c Release` — **264/264 passed** (было 242, новых 22), failed 0, skipped 0.
+- `rg -n "poiskkino\.dev" PoiskKinoMetadataPlugin --glob '*.cs' --glob '!obj/**' --glob '!bin/**'` — единственное вхождение в коде плагина: `ApiBaseUrlResolver.cs:49` (`DefaultBaseUrl`). В `Configuration/configPage.html:17` остался существующий сайт-линк `https://poiskkino.dev` (не API-хост; правится в задаче 003). В тестах литералы хоста есть — AC-5 их разрешает.
+- Дифф без изменений `Timeout = 120 s`, `CacheExpirationHours`, `MaxRequestsPerDay`, `SemaphoreSlim(1,1)`, обработки 401/403/429/404/исключений — строки не тронуты.
+
+### Замечания для Техлида
+
+1. **`ApiBaseUrl` в провайдерах — `static`**, а не `instance`, как в тексте задачи. Причина: инициализатор поля `Lazy<PoiskKinoApiClient>` не может обращаться к экземпляру (`CS0236`: «инициализатор поля не может обращаться к нестатическому полю/методу/свойству»), а лямбда должна читать конфигурацию **в момент первого запроса**, а не при создании провайдера. Альтернатива — конвертация пяти primary-конструкторов в обычные, то есть заметно больший дифф. Семантика и источник значения (`Plugin.Instance`) не изменились; в коде — комментарий. Если `instance`-форма принципиальна, это отдельная правка на 5 файлов.
+2. **`Warning` содержит сырое значение** (усечённое до 200), как требует D-ARCH-5. Если администратор введёт `https://user:password@host`, пароль попадёт в лог. API-ключ не попадает никогда (резолвер его не получает; тест-ассерт есть). Возможно, стоит добавить в резолвер редактирование `userinfo` в логе — вне scope этой задачи.
+3. **`Information`-сообщение** содержит `Uri` (`https://host/` — форма с завершающим `/`), то есть для лога канонический вид `OriginalString` не используется; для человека это несущественно.
+4. **Логирование — при создании клиента**, то есть до 5 пар строк на процесс (по одной на провайдер), как в D-ARCH-5; не на запрос.
+5. **Проверка `AC-5` по `.html`** формально не входит в `*.cs`-grep: в `configPage.html` остаётся сайт-линк `https://poiskkino.dev` — его трогает задача 003.
