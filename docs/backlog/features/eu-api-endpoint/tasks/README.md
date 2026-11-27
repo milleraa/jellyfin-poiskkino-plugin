@@ -9,4 +9,4 @@
 | 001 | [001-api-base-url-resolver.md](001-api-base-url-resolver.md) — `ApiBaseUrlResolver` + unit-тесты | `developer-csharp` | done |
 | 002 | [002-configuration-client-providers.md](002-configuration-client-providers.md) — конфигурация, клиент, 5 провайдеров, тесты фактического хоста | `developer-csharp` | done |
 | 003 | [003-config-page-field.md](003-config-page-field.md) — поле базового URL в `configPage.html` | `developer-csharp` | done |
-| 004 | [004-docs-base-url.md](004-docs-base-url.md) — `README.md` + `docs/architecture/overview.md` | `developer-csharp` | todo |
+| 004 | [004-docs-base-url.md](004-docs-base-url.md) — `README.md` + `docs/architecture/overview.md` | `developer-csharp` | done |
