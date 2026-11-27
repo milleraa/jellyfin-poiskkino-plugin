@@ -6,8 +6,8 @@
 
 | Поле | Значение |
 |------|----------|
-| **Стадия** | `rework` |
-| **Owner** | `Orchestrator` (dispatch → `developer-csharp`, [tasks/005](tasks/005-redact-userinfo-all-at.md)) |
+| **Стадия** | `tech-lead-review` (повторная приёмка после rework) |
+| **Owner** | `Tech Lead` |
 | **Ветка** | `feature/eu-api-endpoint` (локально, не запушена) |
 | **PR/MR** | issue [#8](https://github.com/milleraa/jellyfin-poiskkino-plugin/issues/8) — открыт; PR/MR нет |
 | **Commit со ссылкой на PR/MR** | _нет_ |
@@ -93,6 +93,14 @@
 Один unique reject получает `not-triggered` и не блокирует rework. `candidate` возможен только при двух или более unique comparable evidence-linked cases; изменения процесса выполняются только отдельным reviewed PR/MR. Правила: [process learning](../../../process/learning/README.md).
 
 ## Changelog (handoff)
+
+### 2026-11-28 — handoff rework → tech-lead-review (раунд 2)
+
+- from: Orchestrator
+- to: Tech Lead
+- stage: `tech-lead-review`
+- artifacts: коммиты `bf2f6bc` (fix) и `81bff03` (статус задачи 005), [tasks/005-redact-userinfo-all-at.md](tasks/005-redact-userinfo-all-at.md)
+- notes: дефект из приёмки исправлен — `RedactUserInfo` вырезает весь `userinfo` до **последнего** `@` в authority с guard на пустой authority. По заявлению исполнителя: `dotnet build` — 0 ошибок (только baseline `CS1591` = 122), `dotnet test` — 281/281 passed (+14 кейсов: пароль с `@`, `@` в пути/query/fragment, вырожденные входы `https:///x`, `@@@`, `://@`). Формат сообщения, усечение до 200 и `Information`-строка не менялись; резолвер, конфигурация, провайдеры, UI и документация не тронуты. Нужен повторный accept для перевода в `qa`.
 
 ### 2026-11-28 00:35 — приёмка Техлида: rework (1 узкая правка)
 
