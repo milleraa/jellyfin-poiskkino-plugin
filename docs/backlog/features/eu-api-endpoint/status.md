@@ -6,8 +6,8 @@
 
 | Поле | Значение |
 |------|----------|
-| **Стадия** | `architecture` |
-| **Owner** | `Architect` |
+| **Стадия** | `tech-decomposition` |
+| **Owner** | `Orchestrator` |
 | **Ветка** | `feature/eu-api-endpoint` (локально, не запушена) |
 | **PR/MR** | issue [#8](https://github.com/milleraa/jellyfin-poiskkino-plugin/issues/8) — открыт; PR/MR нет |
 | **Commit со ссылкой на PR/MR** | _нет_ |
@@ -114,3 +114,19 @@
 - stage: `analysis-review`
 - artifacts: [analysis.md](analysis.md) (user stories, AC-1…AC-12, NFR, out of scope, зависимости, риски R1–R9, ответы OQ-1…OQ-4, вопросы Q1–Q3, решения D-1…D-8), [brief.md](brief.md) (уточнена строка про llms.txt)
 - notes: рекомендация `continue`. OQ-1 — свободное поле URL с серверной нормализацией и подсказкой (допустим `<datalist>` с двумя хостами); OQ-2 — failover подтверждён как out of scope; OQ-3 — enhancement подтверждён; OQ-4 — миграция не нужна: `BasePluginConfiguration` пуст, конфигурация читается `XmlSerializer.DeserializeFromFile` в один XML, отсутствующий элемент оставляет инициализатор-дефолт (evidence: исходники Jellyfin `BasePluginOfT.cs`/`MyXmlSerializer.cs`), остаточный smoke — AC-8. Реальные риски: R1 — base URL привязан к конструктору клиента, поэтому нужен AC-7 «применение без перезагрузки» (альтернатива AC-7′ — по решению Q2); R2 — нет реального API-ключа, end-to-end smoke EU-зеркала недоступен (только пробы 401 + unit-тесты); R6 — формулировка llms.txt о EU-зеркале не воспроизводится, опора на `servers` спеки; R3 — семантика лимита 200/сутки между хостами неизвестна (информационно через `/v1.5/token`). Вопросы Стейхолдеру: Q1 (свободный хост vs whitelist двух хостов), Q2 (применение без перезагрузки), Q3 (показывать ли `/v1.5/token` — рекомендовано вне scope). Блокирующих вопросов нет.
+
+### 2026-11-27 20:10 — handoff
+
+- from: Architect
+- to: Orchestrator
+- stage: `tech-decomposition`
+- artifacts: [architecture.md](architecture.md), [ADR-0003](../../../architecture/decisions/ADR-0003-configurable-api-base-url.md), [ADR index](../../../architecture/decisions/README.md)
+- notes:
+  - **Дизайн:** `PluginConfiguration.ApiBaseUrl` (инициализатор = дефолт `https://api.poiskkino.dev`) + чистый хелпер `ApiBaseUrlResolver` (дефолт-константа, нормализация/валидация → `ResolvedBaseUrl(Uri, UsedFallback, Reason)`, без исключений) + необязательный 3-й параметр конструктора `PoiskKinoApiClient(..., string? apiBaseUrl = null)`; 5 провайдеров передают сырое значение из `Plugin.Instance.Configuration` по паттерну `ApiKey`; клиент один раз резолвит, ставит `HttpClient.BaseAddress`, логирует `Information`/`Warning`.
+  - **Корневой base URL:** пути запросов относительные с ведущим `/`, поэтому base URL с подпутём отвергается с предупреждением (иначе `System.Uri` молча теряет путь); прокси с подпутём — out of scope, возможная будущая фича.
+  - **Q2/AC-7′:** значение — construction-time, смена применяется после перезапуска; в `README.md` это должно быть написано явно. Уточнение фактуры: `UpdateConfiguration` в Jellyfin обновляет конфигурацию в памяти сразу, то есть AC-7 технически достижим, но по решению Стейхолдера не реализуется (зафиксировано альтернативой в ADR-0003).
+  - **Q3 — решение: вне scope.** CORS у `/v1.5/token` открыт (preflight `204`, `allow-origin: *`, `allow-headers: x-api-key`), но браузерная проба измеряет путь браузера администратора, а не Jellyfin-сервера; корректный вариант требует серверного эндпоинта плагина (новая HTTP-поверхность, запрещено AC-12) и не тестируется в CI без ключа. Зафиксировано как отдельная будущая фича (серверная диагностика «проверить подключение»).
+  - **Риски для Техлида (A1–A8 в architecture.md):** частичное применение значения между 5 ленивыми клиентами до перезапуска; кэш 24 ч не содержит хост в ключе (инвариант на случай будущего live-переключения); fallback при подпути/`http`/`userinfo`; нет реального ключа → E2E EU не проверить (unit-тесты на `RequestUri` + пробы 401); имя `ApiBaseUrl` становится частью XML-схемы.
+  - **Уточнения требований (не блокирующие, повторный проход Аналитика не нужен):** AC-3 не описывает путь/порт/userinfo/query (принято: порт разрешён, остальное → fallback); AC-3/AC-6 не говорят о канонизации сохранённого значения (принято: значения в конфигурации/UI не переписываются, нормализация — при создании клиента).
+  - **Техлиду:** 6 кандидатов на декомпозицию — §10 `architecture.md`; документационная часть — §7 (README включая AC-7′, overview.md, release notes на финализации).
+  - **Вне моего файлового scope:** в `README.md` фичи до сих пор «Статус `intake`» — обновить Оркестратору.
