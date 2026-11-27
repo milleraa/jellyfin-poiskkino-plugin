@@ -18,6 +18,22 @@
                             Демо-ключ ограничен 200 запросами в сутки.
                         </div>
                     </div>
+                    <div class="inputContainer">
+                        <label class="inputLabel inputLabelUnfocused" for="apiBaseUrl">Базовый URL API</label>
+                        <input id="apiBaseUrl" name="apiBaseUrl" type="text" is="emby-input" list="apiBaseUrlOptions" />
+                        <datalist id="apiBaseUrlOptions">
+                            <option value="https://api.poiskkino.dev"></option>
+                            <option value="https://eu-api.poiskkino.dev"></option>
+                        </datalist>
+                        <div class="fieldDescription">
+                            По умолчанию используется <code>https://api.poiskkino.dev</code>.
+                            Если сервер Jellyfin находится вне РФ или основной адрес недоступен из вашей сети — укажите
+                            <code>https://eu-api.poiskkino.dev</code>: токен и методы те же.
+                            Схему <code>https://</code> можно не указывать, завершающий <code>/</code> не нужен,
+                            путь после хоста не поддерживается.
+                            <strong>Изменение применяется после перезапуска Jellyfin.</strong>
+                        </div>
+                    </div>
                     <div class="checkboxContainer checkboxContainer-withDescription">
                         <label>
                             <input id="ignoreTmdbImages" name="ignoreTmdbImages" type="checkbox" is="emby-checkbox" />
@@ -49,6 +65,11 @@
                             document.getElementById('apiKey').value = config.ApiKey;
                         }
 
+                        // Значение показывается как есть (без нормализации, D-ARCH-4);
+                        // при отсутствии или пустой строке — дефолт (AC-6).
+                        document.getElementById('apiBaseUrl').value =
+                            (config && config.ApiBaseUrl) ? config.ApiBaseUrl : 'https://api.poiskkino.dev';
+
                         if (config && typeof config.IgnoreTmdbImages !== 'undefined') {
                             document.getElementById('ignoreTmdbImages').checked = config.IgnoreTmdbImages;
                         } else {
@@ -64,6 +85,8 @@
 
                     ApiClient.getPluginConfiguration(PoiskKinoConfigurationPage.pluginUniqueId).then(function (config) {
                         config.ApiKey = document.getElementById('apiKey').value;
+                        // Сырое значение без trim/схемы/слэшей: нормализация — только на сервере (D-ARCH-4, AC-3).
+                        config.ApiBaseUrl = document.getElementById('apiBaseUrl').value;
                         config.IgnoreTmdbImages = document.getElementById('ignoreTmdbImages').checked;
 
                         ApiClient.updatePluginConfiguration(PoiskKinoConfigurationPage.pluginUniqueId, config).then(function (result) {
