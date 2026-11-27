@@ -10,4 +10,4 @@
 | 002 | [002-configuration-client-providers.md](002-configuration-client-providers.md) — конфигурация, клиент, 5 провайдеров, тесты фактического хоста | `developer-csharp` | done |
 | 003 | [003-config-page-field.md](003-config-page-field.md) — поле базового URL в `configPage.html` | `developer-csharp` | done |
 | 004 | [004-docs-base-url.md](004-docs-base-url.md) — `README.md` + `docs/architecture/overview.md` | `developer-csharp` | done |
-| 005 | [005-redact-userinfo-all-at.md](005-redact-userinfo-all-at.md) — rework: полная санитизация `userinfo` (пароль с `@`) в `Warning` | `developer-csharp` | todo |
+| 005 | [005-redact-userinfo-all-at.md](005-redact-userinfo-all-at.md) — rework: полная санитизация `userinfo` (пароль с `@`) в `Warning` | `developer-csharp` | done |

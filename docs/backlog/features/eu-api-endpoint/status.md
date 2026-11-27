@@ -39,7 +39,7 @@
 | 002 | [tasks/002-configuration-client-providers.md](tasks/002-configuration-client-providers.md) — `PluginConfiguration.ApiBaseUrl`, клиент, 5 провайдеров, тесты фактического хоста (AC-1, AC-2, AC-4, AC-5, AC-8, AC-9, AC-10, AC-12) | `developer-csharp` / C# + xUnit + Moq | `done` — принято Техлидом |
 | 003 | [tasks/003-config-page-field.md](tasks/003-config-page-field.md) — поле «Базовый URL API» в `Configuration/configPage.html` (AC-6) | `developer-csharp` / HTML + JS | `done` — принято Техлидом |
 | 004 | [tasks/004-docs-base-url.md](tasks/004-docs-base-url.md) — `README.md` + `docs/architecture/overview.md`, включая AC-7′ (AC-7′, AC-11) | `developer-csharp` / Markdown | `done` — принято Техлидом |
-| 005 | [tasks/005-redact-userinfo-all-at.md](tasks/005-redact-userinfo-all-at.md) — rework: `RedactUserInfo` вырезает `userinfo` до **последнего** `@` в authority (пароль с `@` не утекает в `Warning`) | `developer-csharp` / C# + xUnit | `todo` |
+| 005 | [tasks/005-redact-userinfo-all-at.md](tasks/005-redact-userinfo-all-at.md) — rework: `RedactUserInfo` вырезает `userinfo` до **последнего** `@` в authority (пароль с `@` не утекает в `Warning`) | `developer-csharp` / C# + xUnit | `done` (`bf2f6bc`) |
 
 Порядок: 001 → 002 → 003 → 004 (приняты), затем rework [005](tasks/005-redact-userinfo-all-at.md) → повторная приёмка Техлида → QA. Строго последовательно в ветке `feature/eu-api-endpoint`, каждая задача — локальный commit без push. План: [tech-plan.md](tech-plan.md).
 

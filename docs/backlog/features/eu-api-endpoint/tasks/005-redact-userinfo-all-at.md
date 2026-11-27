@@ -6,7 +6,7 @@
 - **Feature / Hotfix:** [docs/backlog/features/eu-api-endpoint/](../)
 - **Назначено:** `developer-csharp`
 - **Стек / infra-область:** C# / .NET 10, xUnit + Moq; только `PoiskKinoApiClient` (приватный метод логирования) и тесты
-- **Статус:** todo
+- **Статус:** `done` (см. [Результат выполнения](#результат-выполнения))
 - **Ветка:** `feature/eu-api-endpoint` (worktree `/home/alex/src/my/jellyfin-metadata-plugin`); rework на существующей ветке, task-branch не создавать
 
 ## Описание
@@ -95,3 +95,48 @@ dotnet test PoiskKinoMetadataPlugin.slnx -c Release
 ## Handoff
 
 - После выполнения: локальный commit без push (например, `fix(api): вырезать userinfo до последнего '@' в authority`), обновить этот файл (`done` + результат), [tasks/README.md](README.md), [status.md](../status.md) → стадия `tech-lead-review`, owner `Tech Lead`; сообщить Техлиду результаты build/test и дифф.
+
+## Результат выполнения
+
+**Статус:** `done`. Коммиты в ветке `feature/eu-api-endpoint` (без push):
+
+| Коммит | Содержимое |
+|--------|------------|
+| `bf2f6bc` — `fix(api): вырезать весь userinfo до последнего @ в логе` | `PoiskKinoApiClient.RedactUserInfo` + тесты |
+| `docs(eu-api-endpoint): отметить задачу 005 выполненной` | этот файл, [tasks/README.md](README.md), [status.md](../status.md) |
+
+### Как исправлен `RedactUserInfo`
+
+Было: `value.IndexOf('@', authorityStart)` — первый `@` в authority; хвост пароля с `@` оставался в логе.
+Стало (правила 1–5 задачи):
+
+1. authority — от `://` (или от начала строки) до первого из `/`, `?`, `#` или до конца строки (`authorityEnd`);
+2. guard `authorityEnd <= authorityStart` — пустой authority (`https://`, `https:///x`) возвращается без изменений и без исключений;
+3. `value.LastIndexOf('@', authorityEnd - 1, authorityEnd - authorityStart)` — вырезается всё от начала authority до **последнего** `@` в authority включительно (пароль может содержать `@`), схема сохраняется;
+4. `@` только в пути/query/fragment — значение возвращается без изменений;
+5. порядок операций прежний: `TruncateForLog(RedactUserInfo(raw), 200)`; метод остался `private static`, публичный API, `ApiBaseUrlResolver`, конфигурация, провайдеры, `configPage.html` и документация не трогались.
+
+Поведение после фикса: `https://admin:p@ss@api.poiskkino.dev` → в `Warning` `https://api.poiskkino.dev`; `admin:p@ss@api.poiskkino.dev` → `api.poiskkino.dev`; `https://admin:p@ss@eu-api.poiskkino.dev:8443` → `https://eu-api.poiskkino.dev:8443`. Правило резолвера «userinfo → fallback с причиной» не менялось (меняется только текст лога).
+
+### Тесты (`ApiClient/PoiskKinoApiClientBaseUrlTests.cs`)
+
+| Тест | Что проверяет |
+|------|----------------|
+| `Constructor_UserInfoInBaseUrl_RedactedInWarning` — 6 строк теории | 3 прежних кейса (`sup3r-secret`) без правки ожиданий + 3 новых с `@` в пароле (`https://admin:p@ss@api.poiskkino.dev`, `admin:p@ss@api.poiskkino.dev`, `https://admin:p@ss@eu-api.poiskkino.dev:8443`). Ассерты: в сообщении нет секрета, нет хвоста (`ss@` / `secret`), есть точное санитизированное значение (`'https://api.poiskkino.dev'` / `'https://eu-api.poiskkino.dev:8443'` / `'api.poiskkino.dev'`), `Warning` ровно один |
+| `Constructor_AtSignOutsideAuthority_LoggedUnchanged` — 3 строки | `https://api.poiskkino.dev/path@x`, `?email=a@b`, `#a@b`: `Warning` один, в сообщении значение **без изменений** (redaction не съедает путь/query/fragment), исключений нет |
+| `Constructor_DegenerateUserInfoInputs_DoNotThrow` — 8 строк | `null`, `""`, `https://`, `https:///x`, `@`, `@@@`, `://@`, `https://@` — пустой/вырожденный authority, никаких исключений |
+
+Прежние тесты (в т. ч. `ApiKey_NeverAppearsInLogs`, усечение до 200 символов) прошли без правок.
+
+### Проверки
+
+- `dotnet build PoiskKinoMetadataPlugin.slnx -c Release --no-incremental` — 0 ошибок, предупреждения только baseline `CS1591` (122), новых нет.
+- `dotnet test PoiskKinoMetadataPlugin.slnx -c Release` — **281/281 passed** (было 267, +14 кейсов), failed 0, skipped 0.
+- `git status` после коммита кода — изменены только `PoiskKinoApiClient.cs` и `ApiClient/PoiskKinoApiClientBaseUrlTests.cs` (AC-7).
+
+### Замечания для Техлида
+
+1. **`LastIndexOf(char, startIndex, count)`** используется с диапазоном только внутри authority (`startIndex = authorityEnd - 1`, `count = authorityEnd - authorityStart`); guard на пустой authority обязателен и покрыт тестом `https:///x`/`https://@`.
+2. **Регистр и экранирование:** санитизация работает по сырой строке (без `Uri`-парсинга), поэтому не зависит от того, примет ли `Uri` такое значение — это важно для диагностики невалидных входов.
+3. **Что не менялось:** формат сообщения `Invalid API base URL '{Raw}' (truncated to 200 chars), falling back to '{Default}': {Reason}`, второе усечение до 200 символов, `Information`-строка, а также нормализация/fallback в `ApiBaseUrlResolver` (ADR-0003).
+4. **Остаточный риск (принят):** если администратор вставит в поле ключ вместо URL (`https://<api-key>@host`), он попадёт в лог как часть нормализованного `Information`-адреса — резолвер получает только `ApiBaseUrl`, связи с `ApiKey` нет; вне scope фичи.
