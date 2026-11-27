@@ -55,7 +55,7 @@ dotnet test PoiskKinoMetadataPlugin.slnx -c Release
 # Пройдено: 281, не пройдено: 0, пропущено: 0, всего 281
 ```
 
-CI (GitHub Actions, `.github/workflows/ci.yaml`): build + test на push/PR в `main`. Run для `feature/eu-api-endpoint`: [46044828492](https://github.com/milleraa/jellyfin-poiskkino-plugin/actions/runs/46044828492), job `build-and-test` — на момент оформления PR `pending`; проверка статуса — `gh pr checks 9`. Workflow настроен на path-ignore `*.md` и `docs/` — изменения кода в этом PR триггерят CI.
+CI (GitHub Actions, `.github/workflows/ci.yaml`): job `build-and-test` (restore → build → test) — **зелёный**: [run 46044996030](https://github.com/milleraa/jellyfin-poiskkino-plugin/actions/runs/46044996030) (head `b0fc576`, 34 с) и [run 46044828492](https://github.com/milleraa/jellyfin-poiskkino-plugin/actions/runs/46044828492) (первый push, 28 с), `gh pr checks 9` → `build-and-test pass`. Workflow настроен на path-ignore `*.md` и `docs/`, но для `pull_request` фильтр применяется к диффу PR целиком, поэтому PR с изменениями кода всегда прогоняет CI.
 
 ## Test plan для ревьюера
 
