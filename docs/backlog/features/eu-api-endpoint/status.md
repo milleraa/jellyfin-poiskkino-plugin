@@ -6,8 +6,8 @@
 
 | Поле | Значение |
 |------|----------|
-| **Стадия** | `tech-lead-review` |
-| **Owner** | `Tech Lead` |
+| **Стадия** | `rework` |
+| **Owner** | `Orchestrator` (dispatch → `developer-csharp`, [tasks/005](tasks/005-redact-userinfo-all-at.md)) |
 | **Ветка** | `feature/eu-api-endpoint` (локально, не запушена) |
 | **PR/MR** | issue [#8](https://github.com/milleraa/jellyfin-poiskkino-plugin/issues/8) — открыт; PR/MR нет |
 | **Commit со ссылкой на PR/MR** | _нет_ |
@@ -35,16 +35,17 @@
 
 | ID | Файл | Роль / стек | Статус |
 |----|------|-------------|--------|
-| 001 | [tasks/001-api-base-url-resolver.md](tasks/001-api-base-url-resolver.md) — `ApiBaseUrlResolver` + unit-тесты (AC-1, AC-3, AC-4) | `developer-csharp` / C# + xUnit | `done` (`365d395`) |
-| 002 | [tasks/002-configuration-client-providers.md](tasks/002-configuration-client-providers.md) — `PluginConfiguration.ApiBaseUrl`, клиент, 5 провайдеров, тесты фактического хоста (AC-1, AC-2, AC-4, AC-5, AC-8, AC-9, AC-10, AC-12) | `developer-csharp` / C# + xUnit + Moq | `done` (`f076662`) |
-| 003 | [tasks/003-config-page-field.md](tasks/003-config-page-field.md) — поле «Базовый URL API» в `Configuration/configPage.html` (AC-6) | `developer-csharp` / HTML + JS | `done` (`1693590`) |
-| 004 | [tasks/004-docs-base-url.md](tasks/004-docs-base-url.md) — `README.md` + `docs/architecture/overview.md`, включая AC-7′ (AC-7′, AC-11) | `developer-csharp` / Markdown | `done` (`1106693`) |
+| 001 | [tasks/001-api-base-url-resolver.md](tasks/001-api-base-url-resolver.md) — `ApiBaseUrlResolver` + unit-тесты (AC-1, AC-3, AC-4) | `developer-csharp` / C# + xUnit | `done` — принято Техлидом |
+| 002 | [tasks/002-configuration-client-providers.md](tasks/002-configuration-client-providers.md) — `PluginConfiguration.ApiBaseUrl`, клиент, 5 провайдеров, тесты фактического хоста (AC-1, AC-2, AC-4, AC-5, AC-8, AC-9, AC-10, AC-12) | `developer-csharp` / C# + xUnit + Moq | `done` — принято Техлидом |
+| 003 | [tasks/003-config-page-field.md](tasks/003-config-page-field.md) — поле «Базовый URL API» в `Configuration/configPage.html` (AC-6) | `developer-csharp` / HTML + JS | `done` — принято Техлидом |
+| 004 | [tasks/004-docs-base-url.md](tasks/004-docs-base-url.md) — `README.md` + `docs/architecture/overview.md`, включая AC-7′ (AC-7′, AC-11) | `developer-csharp` / Markdown | `done` — принято Техлидом |
+| 005 | [tasks/005-redact-userinfo-all-at.md](tasks/005-redact-userinfo-all-at.md) — rework: `RedactUserInfo` вырезает `userinfo` до **последнего** `@` в authority (пароль с `@` не утекает в `Warning`) | `developer-csharp` / C# + xUnit | `todo` |
 
-Порядок: 001 → 002 → 003 → 004, строго последовательно в ветке `feature/eu-api-endpoint`, каждая задача — локальный commit без push. План: [tech-plan.md](tech-plan.md).
+Порядок: 001 → 002 → 003 → 004 (приняты), затем rework [005](tasks/005-redact-userinfo-all-at.md) → повторная приёмка Техлида → QA. Строго последовательно в ветке `feature/eu-api-endpoint`, каждая задача — локальный commit без push. План: [tech-plan.md](tech-plan.md).
 
 ## DevOps impact check
 
-**Статус: закрыт** — 2026-11-28, Техлид, по факту дизайна ([architecture.md](architecture.md), [ADR-0003](../../../architecture/decisions/ADR-0003-configurable-api-base-url.md)). DevOps-задача не создавалась, стадия `devops-check` не открывается.
+**Статус: закрыт** — 2026-11-28, Техлид, по факту дизайна ([architecture.md](architecture.md), [ADR-0003](../../../architecture/decisions/ADR-0003-configurable-api-base-url.md)). DevOps-задача не создавалась, стадия `devops-check` не открывается. **Подтверждён на приёмке реализации** (rev `023460e..0b4dd23`): новых env-secrets, интеграций, портов, миграций, зависимостей, изменений CI/Docker/Helm/K8s в диффе нет; rework [task 005](tasks/005-redact-userinfo-all-at.md) меняет только текст `Warning` — impact тоже нет.
 
 | Вопрос | Результат |
 |--------|-----------|
@@ -73,11 +74,11 @@
 
 | Поле | Значение |
 |------|----------|
-| **Feedback source** | _чат / PR/MR comments / CI_ |
-| **Feedback summary** | _нет_ |
-| **Rework route** | _Analyst / Architect / Tech Lead / DevOps / QA_ |
-| **Переключено на существующую ветку** | _нет / да_ |
-| **Rework tasks** | _ссылки на tasks/_ |
+| **Feedback source** | приёмка Техлида (`tech-lead-review`, rev `023460e..0b4dd23`) |
+| **Feedback summary** | один дефект в security-фиксе `1533989`: `RedactUserInfo` вырезает `userinfo` до **первого** `@`, поэтому пароль с `@` (`https://admin:p@ss@host`) оставляет хвост (`ss@host`) в `Warning` — цель «пароль не в логе» достигается не всегда. Формальные AC-1… AC-12 выполнены; feature-код иначе не переделывается |
+| **Rework route** | Tech Lead → `developer-csharp` (только `PoiskKinoApiClient` + тесты) |
+| **Переключено на существующую ветку** | да — `feature/eu-api-endpoint`, task-branch не создаётся |
+| **Rework tasks** | [tasks/005-redact-userinfo-all-at.md](tasks/005-redact-userinfo-all-at.md) |
 
 ## Process learning (неблокирующий triage)
 
@@ -92,6 +93,23 @@
 Один unique reject получает `not-triggered` и не блокирует rework. `candidate` возможен только при двух или более unique comparable evidence-linked cases; изменения процесса выполняются только отдельным reviewed PR/MR. Правила: [process learning](../../../process/learning/README.md).
 
 ## Changelog (handoff)
+
+### 2026-11-28 00:35 — приёмка Техлида: rework (1 узкая правка)
+
+- from: Tech Lead
+- to: Orchestrator (dispatch → `developer-csharp`)
+- stage: `rework`
+- artifacts: [tasks/005-redact-userinfo-all-at.md](tasks/005-redact-userinfo-all-at.md), [tasks/001](tasks/001-api-base-url-resolver.md) (уточнена формулировка AC-3 в тексте задачи), реализация `023460e..0b4dd23`
+- notes:
+  - **Проверено мной (не по отчёту исполнителя):** `dotnet build -c Release PoiskKinoMetadataPlugin.slnx --no-incremental` → 0 ошибок, все предупреждения — `CS1591` (122 в двух проектах, baseline); `dotnet test PoiskKinoMetadataPlugin.slnx -c Release` → **267/267 passed**, 0 failed, 0 skipped; `rg -n "poiskkino\.dev" PoiskKinoMetadataPlugin --glob '*.cs' --glob '!obj/**' --glob '!bin/**'` → единственное вхождение `ApiBaseUrlResolver.cs:49`; `rg` по `BaseAddress =`, `FromSeconds(120)`, `CacheExpirationHours`, `MaxRequestsPerDay`, `SemaphoreSlim` → все на прежних значениях (AC-2/D-ARCH-8); ревью диффа `023460e..0b4dd23` по 21 файлу.
+  - **AC-1…AC-12 приняты:** дефолт в инициализаторе + round-trip XML старой конфигурации (`ConfigurationTests`); кастомный хост в `RequestUri` всех трёх запросов, fallback без исключений, усечение 200, `ApiKey` не в логах; правило 7 (путь) и `userinfo`/`query`/`fragment` → fallback; UI: `type="text"`, `datalist`, дефолт при отсутствии, сохранение без канонизации (D-ARCH-4); README содержит оба хоста, правила нормализации и явное «после перезапуска» (AC-7′), `overview.md` обновлён; новых зависимостей/env/CI нет (AC-12).
+  - **Отклонение 1 (static `ApiBaseUrl` в 5 провайдерах) — принято.** `CS0236` в инициализаторе `Lazy<>` подтверждён; свойство читается внутри лямбды, то есть в момент первого запроса, а не при старте — семантика и источник (`Plugin.Instance?.Configuration`) не изменились, комментарий в коде есть. Переписывать 5 primary-конструкторов ради формы `instance` не требуется (scope/риски больше выгоды).
+  - **Отклонение 2 (`userinfo`-redaction, `1533989`) — принято частично, одна правка → [task 005](tasks/005-redact-userinfo-all-at.md).** `ApiBaseUrlResolver` не изменён, поэтому нормализация/`UsedFallback`/`FallbackReason` и правило «userinfo → fallback» остались как в ADR-0003 — менялся только текст `Warning`, что согласуется с D-ARCH-5/A6. Дефект: `RedactUserInfo` вырезает до первого `@`, поэтому `https://admin:p@ss@api.poiskkino.dev` логируется как `https://ss@api.poiskkino.dev` — хвост пароля в логе. Требуется вырезать весь `userinfo` (до последнего `@` в authority) + тесты на пароль с `@` и на `@` в пути (без изменения поведения). Правка локальная: `PoiskKinoApiClient.RedactUserInfo` + `PoiskKinoApiClientBaseUrlTests`.
+  - **Отклонение 3 (README: `GET /v1/search` → `GET /v1.5/movie/search` — принято.** Сверено со спекой: `api-docs/documentation.yaml:960` (`/v1.5/movie/search`, query-параметры `query`/`limit`/`page`, `limit` по умолчанию 10, максимум 250); клиент использует `limit=3` — пример корректен и в рамках раздела, разрешённого task 004.
+  - **Решение по AC-3: правка `analysis.md` не требуется.** Формулировка AC-3 («удаляются завершающие `/`; результат приводится к абсолютному URI») корректна; неточность была только в тексте task 001 («без завершающего `/` в `AbsoluteUri`» — для `Uri.AbsoluteUri` корня это недостижимо, там всегда `/`). Задача 001 исправлена мной: проверка идёт по `OriginalString == "https://host[:port]"` + `AbsolutePath == "/"`, что и реализовано.
+  - **Риски для QA:** A1 — до перезапуска возможно кратковременное «смешанное» состояние хостов у 5 ленивых клиентов (README это явно ограничивает: «после перезапуска»); A3/R7 — хост не входит в ключ in-memory кэша (24 ч) — в текущей restart-семантике допустимо, для будущего live-переключения обязателен инвариант из ADR-0003; R2/A7 — реального API-ключа нет, e2e-поиск на EU-хосте проверяется только администратором (unit-тесты фиксируют хост запроса, а не сетевой ответ); IPv6-литерал и base URL с подпутём отклоняются резолвером (в README документирован подпуть; IPv6 не документирован, поведение — fallback+`Warning`); `datalist` на `is="emby-input"` в Jellyfin 12.x автотестами не покрыт — при аномалии его можно удалить без влияния на поле.
+  - **Сценарии для QA (из [task 003](tasks/003-config-page-field.md)):** (1) свежая/старая конфигурация → в поле виден `https://api.poiskkino.dev`; (2) `https://eu-api.poiskkino.dev` → Сохранить → F5 → значение на месте, `<ApiBaseUrl>` в `plugins/configurations/PoiskKinoMetadataPlugin.xml` без канонизации; (3) `eu-api.poiskkino.dev/` → после перезагрузки страницы ровно введённое, после рестарта `Information` «PoiskKino API base URL: https://eu-api.poiskkino.dev/» и запросы на EU-хост; (4) пустое поле → дефолт в UI, после рестарта только `Information`, `Warning` нет; (5) `http://api.poiskkino.dev` → один `Warning` с причиной, поиск работает на дефолте, страница показывает введённое; (6) полный e2e с поиском — только при наличии ключа (R2).
+  - **DevOps impact check:** подтверждён закрытым (impact нет и для task 005); стадия `devops-check` не открывается. `Недостаточность разрешений` — не зафиксирована.
 
 ### 2026-11-28 — handoff development → tech-lead-review
 

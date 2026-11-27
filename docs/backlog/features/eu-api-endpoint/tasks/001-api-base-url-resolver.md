@@ -43,7 +43,7 @@ internal static class ApiBaseUrlResolver
 ## Acceptance criteria
 
 1. **AC-1 (значение дефолта):** `ApiBaseUrlResolver.DefaultBaseUrl == "https://api.poiskkino.dev"`; константа объявлена один раз и является единственным местом хранения дефолта в коде.
-2. **AC-3 (нормализация):** правила 1, 2, 3, 8, 10 покрыты теорией построчно; для валидных значений `BaseAddress` — абсолютный `Uri` со схемой `https` и без завершающего `/` в `AbsoluteUri` (кроме корневого).
+2. **AC-3 (нормализация):** правила 1, 2, 3, 8, 10 покрыты теорией построчно; для валидных значений `BaseAddress` — абсолютный `Uri` со схемой `https`; завершающий `/` отсутствует в канонической строке (`OriginalString == "https://host[:port]"`), а `AbsolutePath == "/"` (`Uri.AbsoluteUri` для корня всегда оканчивается на `/`, поэтому проверять «без `/`» нужно по `OriginalString`).
 3. **AC-4 (валидация без падения):** правила 4, 5, 6, 7 возвращают дефолт с `UsedFallback = true` и непустым `FallbackReason`; ни один вход не приводит к `UriFormatException`/`ArgumentException` наружу.
 4. Правило 9: явный порт сохраняется в `BaseAddress.Port`.
 5. `UsedFallback = false` для пустого/`null` значения (это не ошибка конфигурации) и для любого валидного значения.
