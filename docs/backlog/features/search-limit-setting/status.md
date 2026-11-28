@@ -6,8 +6,8 @@
 
 | Поле | Значение |
 |------|----------|
-| **Стадия** | `analysis` |
-| **Owner** | `Analyst` |
+| **Стадия** | `analysis-review` |
+| **Owner** | `Orchestrator` (решение Стейхолдера) |
 | **Ветка** | `feature/search-limit-setting` |
 | **PR/MR** | _нет_ |
 | **Commit со ссылкой на PR/MR** | _нет_ |
@@ -85,3 +85,11 @@
 - stage: `analysis`
 - artifacts: [brief.md](brief.md), `PoiskKinoApiClient.cs` (`SearchAsync`, `limit=3`, строка 105), `PoiskKinoMovieProvider.cs` (`GetSearchResultsInternal`), `SearchYearFilter.cs`, `Configuration.cs`
 - notes: Новая фича. Ключевой вопрос для анализа — влияние лимита на кэш поиска (ключ `search:{title}:{year}` не зависит от лимита) и значение по умолчанию. После анализа — обязательная остановка `analysis-review`.
+
+### 2026-11-28 — handoff
+
+- from: `Analyst`
+- to: `Orchestrator`
+- stage: `analysis-review`
+- artifacts: [analysis.md](analysis.md) (фактура F1–F13, AC-1…AC-10, риски R1–R5, вопросы Q1/Q2, решения D-1…D-5), [brief.md](brief.md)
+- notes: Анализ завершён, рекомендация `continue`. Открытые вопросы Стейхолдеру: Q1 — диапазон и дефолт лимита (рекомендация 1–10, дефолт 3); Q2 — поведение кэша при смене настройки (рекомендация: лимит в ключе кэша, вариант А). Блокеров нет; после решения Стейхолдера Оркестратор передаёт Архитектору либо выставляет `backlog-paused`.
