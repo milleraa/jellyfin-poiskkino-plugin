@@ -2,8 +2,8 @@
 
 | Поле | Значение |
 |------|----------|
-| **Стадия** | `development` |
-| **Owner** | `developer-csharp` |
+| **Стадия** | `tech-lead-review` |
+| **Owner** | `Tech Lead` |
 | **Блокер** | Нет: Оркестратор вызывает исполнителей напрямую по регламенту `4cbe4d4` |
 | **Срочность** | Hotfix по запросу Стейкхолдера; P-приоритет не задан |
 | **Ветка** | `hotfix/provider-test-coverage` от `main` (`b08b586`) |
@@ -122,3 +122,10 @@
 - stage: `development` — 002 готова к ревью
 - artifacts: [002: результат и проверки](tasks/002-metadata-person-roles.md#результат-и-проверки); локальный коммит `test(providers): проверяй роли персон через GetMetadata` в `hotfix/provider-test-coverage`, без push
 - notes: Все 25 старых сценариев перенесены на `GetMetadata`, добавлены два сценария только с `enProfession`. В изолированной копии принудительный `Actor` вызвал 6 падений на сравнении ожидаемой роли у сериалов. После восстановления 52/52 точечных тестов; полный прогон в копии и в ветке — 283/283. Живой API и Jellyfin не проверялись, итоговый DevOps impact check и приёмка остаются за Техлидом.
+
+## 2026-11-28 12:00 — handoff
+- from: Orchestrator
+- to: Tech Lead
+- stage: `tech-lead-review`
+- artifacts: [002](tasks/002-metadata-person-roles.md), `2f64018`
+- notes: Ревью 002 и итоговый DevOps impact check перед QA.
