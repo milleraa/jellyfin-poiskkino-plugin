@@ -7,7 +7,7 @@
 - **Назначено:** `developer-csharp`
 - **Стек:** C# / .NET 10, xUnit, Moq
 - **Ветка:** `hotfix/provider-test-coverage`
-- **Статус:** blocked — ожидает ручной handoff от Оркестратора
+- **Статус:** in-progress — передано Оркестратором
 - **Код:** [тесты сериалов](../../../../../PoiskKinoMetadataPlugin.UnitTests/Providers/PoiskKinoSeriesProviderTests.cs), [провайдер](../../../../../PoiskKinoMetadataPlugin/PoiskKinoSeriesProvider.cs)
 
 ## Описание
