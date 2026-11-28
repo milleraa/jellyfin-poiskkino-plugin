@@ -6,8 +6,8 @@
 
 | Поле | Значение |
 |------|----------|
-| **Стадия** | `tech-decomposition` |
-| **Owner** | `Orchestrator` |
+| **Стадия** | `development` |
+| **Owner** | `Developer-CSharp` (задача 001) |
 | **Ветка** | `feature/search-limit-setting` |
 | **PR/MR** | _нет_ |
 | **Commit со ссылкой на PR/MR** | _нет_ |
@@ -129,3 +129,11 @@
 - stage: `tech-decomposition` — **план готов к исполнению**
 - artifacts: [tech-plan.md](tech-plan.md) (декомпозиция, порядок, зависимости, решение A1, DoD), задачи [001](tasks/001-config-search-limit.md) / [002](tasks/002-client-search-limit-cache.md) / [003](tasks/003-providers-threading-readme.md), [ADR-0004](../../../architecture/decisions/ADR-0004-configurable-search-limit.md)
 - notes: Декомпозиция завершена, код не менялся. Три задачи для `developer-csharp`, строго последовательные в ветке `feature/search-limit-setting`: 001 конфигурация+UI → 002 клиент (параметр, резолвер валидации, ключ кэша, кэш-тесты) → 003 провайдеры+README+финальный гейт. Решение A1: дедупликация `Warning` памяткой на уровне экземпляра клиента (резолвер без состояния; сброс памятки при валидном значении; ≤1 предупреждение на различное невалидное значение на клиент). Уточнение к ADR-0004 п.1: параметр `searchLimit = 3` добавляется после `CancellationToken` — иначе существующие позиционные вызовы с `CancellationToken` не компилируются; новые вызовы — именованным аргументом. DevOps impact check: «нет» по всем пунктам, DevOps-задача не нужна. Ожидаемый следующий шаг: назначить 001 на `developer-csharp`; после 003 — tech-lead-review (с `test-audit`) и передача в QA.
+
+### 2026-11-28 — handoff
+
+- from: `Orchestrator`
+- to: `Developer-CSharp`
+- stage: `development`
+- artifacts: [tasks/001-config-search-limit.md](tasks/001-config-search-limit.md), [tech-plan.md](tech-plan.md), [analysis.md](analysis.md) (AC-1, AC-6), [architecture.md](architecture.md)
+- notes: Назначена задача 001 (свойство `SearchLimit`, поле на configPage.html, тесты дефолта). Задачи 002 и 003 не запускать — строго последовательно после приёмки. Ожидаемый результат: код+тесты 001, отчёт, локальный commit без push.
