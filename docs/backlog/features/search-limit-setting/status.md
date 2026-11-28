@@ -12,6 +12,7 @@
 | **PR/MR** | _нет_ |
 | **Commit со ссылкой на PR/MR** | _нет_ |
 | **Блокеры** | _нет_ |
+| **План реализации** | **готов к исполнению** — [tech-plan.md](tech-plan.md): 001 → 002 → 003, роль `developer-csharp` |
 
 ### Стадии (справочно)
 
@@ -23,16 +24,20 @@
 
 | ID | Файл | Роль / стек | Статус |
 |----|------|-------------|--------|
-| — | — | — | — |
+| 001 | [001-config-search-limit](tasks/001-config-search-limit.md) | `developer-csharp` / C#, HTML настроек | `todo` |
+| 002 | [002-client-search-limit-cache](tasks/002-client-search-limit-cache.md) | `developer-csharp` / C#, xUnit, Moq | `todo` |
+| 003 | [003-providers-threading-readme](tasks/003-providers-threading-readme.md) | `developer-csharp` / C#, xUnit, Moq | `todo` |
+
+Порядок: строго 001 → 002 → 003 в ветке `feature/search-limit-setting` (детали и зависимости — [tech-plan.md](tech-plan.md)).
 
 ## DevOps impact check
 
 | Вопрос | Результат |
 |--------|-----------|
-| Новые env vars / secrets | _нет / да_ |
-| Новые интеграции / порты / очереди / storage / jobs | _нет / да_ |
-| CI / упаковка релиза / установка / диагностика | _нет / да_ |
-| DevOps-задача | _не нужна / ссылка_ |
+| Новые env vars / secrets | **нет** |
+| Новые интеграции / порты / очереди / storage / jobs | **нет** |
+| CI / упаковка релиза / установка / диагностика | **нет** |
+| DevOps-задача | **не нужна** — подтверждено Техлидом 2026-11-28 (tech-plan.md, DevOps impact check; повторная сверка с итоговым diff перед QA) |
 
 ## Недостаточность разрешений
 
@@ -116,3 +121,11 @@
 - stage: `tech-decomposition`
 - artifacts: [architecture.md](architecture.md), [ADR-0004](../../../architecture/decisions/ADR-0004-configurable-search-limit.md)
 - notes: Дизайн готов, расхождений с анализом нет — к Аналитику не возвращался. Выбран проброс параметром `int searchLimit = 3` в `SearchAsync` (паттерн `ApiKey` — применение без перезапуска; клиент не получает ссылок на `Plugin`); валидация 1–10 — единая точка в клиенте с fallback на дефолт 3 + `Warning`; ключ кэша `search:{title}[:{year}]:{limit}` из эффективного значения (вариант А, Q2). Для декомпозиции Техлиду: механизм дедупликации `Warning` при невалидном значении (architecture.md, риск A1); существующие тесты клиента совместимы за счёт необязательного параметра. DevOps impact: нет. Блокеров нет.
+
+### 2026-11-28 — handoff
+
+- from: `Tech Lead`
+- to: `Orchestrator`
+- stage: `tech-decomposition` — **план готов к исполнению**
+- artifacts: [tech-plan.md](tech-plan.md) (декомпозиция, порядок, зависимости, решение A1, DoD), задачи [001](tasks/001-config-search-limit.md) / [002](tasks/002-client-search-limit-cache.md) / [003](tasks/003-providers-threading-readme.md), [ADR-0004](../../../architecture/decisions/ADR-0004-configurable-search-limit.md)
+- notes: Декомпозиция завершена, код не менялся. Три задачи для `developer-csharp`, строго последовательные в ветке `feature/search-limit-setting`: 001 конфигурация+UI → 002 клиент (параметр, резолвер валидации, ключ кэша, кэш-тесты) → 003 провайдеры+README+финальный гейт. Решение A1: дедупликация `Warning` памяткой на уровне экземпляра клиента (резолвер без состояния; сброс памятки при валидном значении; ≤1 предупреждение на различное невалидное значение на клиент). Уточнение к ADR-0004 п.1: параметр `searchLimit = 3` добавляется после `CancellationToken` — иначе существующие позиционные вызовы с `CancellationToken` не компилируются; новые вызовы — именованным аргументом. DevOps impact check: «нет» по всем пунктам, DevOps-задача не нужна. Ожидаемый следующий шаг: назначить 001 на `developer-csharp`; после 003 — tech-lead-review (с `test-audit`) и передача в QA.
