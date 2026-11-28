@@ -19,7 +19,7 @@
 | ID | Файл | Роль / стек | Статус |
 |----|------|-------------|--------|
 | 001 | [Поиск сериалов по году](tasks/001-series-search-year.md) | `developer-csharp` / C# · .NET | `accepted` — Техлид принял `d79f879` |
-| 002 | [Роли персон](tasks/002-metadata-person-roles.md) | `developer-csharp` / C# · .NET | `in-progress` |
+| 002 | [Роли персон](tasks/002-metadata-person-roles.md) | `developer-csharp` / C# · .NET | `ready-for-review` — ожидает приёмки Техлидом |
 
 ## DevOps impact check
 
@@ -115,3 +115,10 @@
 - stage: `development`
 - artifacts: [002](tasks/002-metadata-person-roles.md), `cddd858`
 - notes: Задача 001 принята; выполнить только 002.
+
+## 2026-11-28 11:58 — handoff
+- from: developer-csharp
+- to: Orchestrator (для передачи Tech Lead)
+- stage: `development` — 002 готова к ревью
+- artifacts: [002: результат и проверки](tasks/002-metadata-person-roles.md#результат-и-проверки); локальный коммит `test(providers): проверяй роли персон через GetMetadata` в `hotfix/provider-test-coverage`, без push
+- notes: Все 25 старых сценариев перенесены на `GetMetadata`, добавлены два сценария только с `enProfession`. В изолированной копии принудительный `Actor` вызвал 6 падений на сравнении ожидаемой роли у сериалов. После восстановления 52/52 точечных тестов; полный прогон в копии и в ветке — 283/283. Живой API и Jellyfin не проверялись, итоговый DevOps impact check и приёмка остаются за Техлидом.

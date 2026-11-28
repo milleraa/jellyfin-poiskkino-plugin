@@ -1,5 +1,7 @@
 using System.Net;
 using System.Net.Http.Headers;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Jellyfin.Data.Enums;
 using MediaBrowser.Controller.Entities.TV;
 using MediaBrowser.Controller.Providers;
@@ -193,22 +195,29 @@ public class PoiskKinoSeriesProviderTests : PluginTestBase
     }
 
     [Theory]
-    [InlineData("режиссер", PersonKind.Director)]
-    [InlineData("Director", PersonKind.Director)]
-    [InlineData("актер", PersonKind.Actor)]
-    [InlineData("Actor", PersonKind.Actor)]
-    [InlineData("продюсер", PersonKind.Producer)]
-    [InlineData("сценарист", PersonKind.Writer)]
-    [InlineData("композитор", PersonKind.Composer)]
-    [InlineData(null, PersonKind.Actor)]
-    public void GetPersonKind_VariousProfessions_MapsCorrectly(string? profession, PersonKind expected)
+    [InlineData("режиссер", null, PersonKind.Director)]
+    [InlineData("Director", null, PersonKind.Director)]
+    [InlineData("актер", null, PersonKind.Actor)]
+    [InlineData("Actor", null, PersonKind.Actor)]
+    [InlineData("продюсер", null, PersonKind.Producer)]
+    [InlineData("сценарист", null, PersonKind.Writer)]
+    [InlineData("композитор", null, PersonKind.Composer)]
+    [InlineData(null, null, PersonKind.Actor)]
+    [InlineData(null, "Director", PersonKind.Director)]
+    public async Task GetMetadata_MapsPersonRole(string? profession, string? enProfession, PersonKind expected)
     {
-        var method = typeof(PoiskKinoSeriesProvider).GetMethod(
-            "GetPersonKind", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
+        var json = JsonSerializer.Serialize(
+            new { id = 123, persons = new[] { new { name = "Test Person", profession, enProfession } } },
+            new JsonSerializerOptions { DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull });
+        SetupMovieByIdResponse(json);
+        var provider = CreateProvider();
+        var info = new SeriesInfo();
+        info.SetProviderId(ProviderNames.PoiskKino, "123");
 
-        var result = method!.Invoke(null, [profession]);
+        var result = await provider.GetMetadata(info, CancellationToken.None);
 
-        Assert.Equal(expected, result);
+        var person = Assert.Single(result.People);
+        Assert.Equal(expected, person.Type);
     }
 
     private void SetupSearchResponse(string json)

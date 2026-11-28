@@ -7,12 +7,22 @@
 - **Назначено:** `developer-csharp`
 - **Стек:** C# / .NET 10, xUnit, Moq
 - **Ветка:** `hotfix/provider-test-coverage`
-- **Статус:** draft — после приёмки 001
+- **Статус:** ready-for-review — ожидается приёмка Техлидом
+- **Локальный коммит:** `test(providers): проверяй роли персон через GetMetadata` в ветке `hotfix/provider-test-coverage` (без push)
 - **Код:** [тесты фильмов](../../../../../PoiskKinoMetadataPlugin.UnitTests/Providers/PoiskKinoMovieProviderTests.cs), [тесты сериалов](../../../../../PoiskKinoMetadataPlugin.UnitTests/Providers/PoiskKinoSeriesProviderTests.cs), провайдеры [фильмов](../../../../../PoiskKinoMetadataPlugin/PoiskKinoMovieProvider.cs) и [сериалов](../../../../../PoiskKinoMetadataPlugin/PoiskKinoSeriesProvider.cs)
 
 ## Описание
 
 Заменить обе рефлексивные проверки `GetPersonKind_VariousProfessions_MapsCorrectly` проверками наблюдаемого результата `GetMetadata` с подменой ответа API. Зафиксировать основания для удаления по `test-audit` до правок.
+
+## Аудит до замены
+
+| Кандидат на замену (база `0415546`) | Что защищает сейчас | Чем заменить |
+|---|---|---|
+| `GetPersonKind_VariousProfessions_MapsCorrectly`, `PoiskKinoMovieProviderTests.cs:278` | 17 вариантов преобразования профессий, включая язык, регистр и значение по умолчанию; не проверяет присвоение роли в `result.People` | Таблица с теми же 17 входами через `GetMetadata` и отдельной строкой для английского поля; `GetMetadata_MapsPersons` сохраняется как проверка выдачи нескольких персон |
+| `GetPersonKind_VariousProfessions_MapsCorrectly`, `PoiskKinoSeriesProviderTests.cs:204` | 8 вариантов преобразования, но не замечает, что результирующей персоне присвоили `Actor` вместо вычисленной роли | Таблица с теми же 8 входами через `GetMetadata` и отдельной строкой для английского поля |
+
+Обе таблицы появились в `47933723`; маппинг в провайдерах уже присутствует в `fb47430`. Закрытый метод нужен каждому провайдеру при заполнении `result.People`, отдельного вспомогательного кода для рефлексии нет. Удаляются только вызовы через рефлексию и неиспользуемая подготовка в старом тесте фильмов; добавлять точки доступа в продукт не требуется. Риск потери вариантов проверяется сверкой таблиц и прогонами из раздела «Проверка и критерий готовности». Граница проверки — реальный провайдер и десериализация, подменяется только ответ HTTP. В копии `0415546` старые тесты обоих провайдеров прошли 50/50 как без мутации, так и с принудительным `PersonKind.Actor` в результирующем маппинге сериалов.
 
 ## Acceptance criteria
 
@@ -33,6 +43,21 @@
 
 `dotnet test --filter 'FullyQualifiedName~PoiskKinoMovieProviderTests|FullyQualifiedName~PoiskKinoSeriesProviderTests'`, `dotnet test`, `git diff --check`. Приложить соответствие старых и новых сценариев, точную мутацию и результат до/во время/после, включая упавшее утверждение. В коммите нет изменений кода продукта.
 
+## Результат и проверки
+
+В обоих провайдерах `GetMetadata_MapsPersonRole` проверяет тип единственной персоны в `result.People`. Каждая старая строка перенесена один к одному: прежняя строка профессии передаётся в JSON как `profession`, прежнее ожидание — тот же `PersonKind`. Для `null` поля профессий отсутствуют, пустая строка сериализуется как есть. Добавлена по одной строке с `enProfession: "Director"` без поля `profession`: всего 18 сценариев для фильмов и 9 для сериалов. `GetMetadata_MapsPersons` по-прежнему проверяет возврат нескольких персон фильма.
+
+В изолированной копии `0415546` в `PoiskKinoSeriesProvider.cs` строка `Type = GetPersonKind(person.Profession ?? person.EnProfession)` временно заменена на `Type = PersonKind.Actor`. Команда для всех точечных прогонов: `dotnet test --filter 'FullyQualifiedName~PoiskKinoMovieProviderTests|FullyQualifiedName~PoiskKinoSeriesProviderTests'`.
+
+| Состояние копии | Результат |
+|---|---|
+| Исходные тесты, без мутации и с мутацией | 50/50 в обоих прогонах |
+| Новые тесты, до мутации | 52/52 |
+| Новые тесты, с мутацией | 46 прошло, 6 упало (код выхода 1), все на `Assert.Equal(expected, person.Type)` у сериалов: ожидались Director (3 сценария, включая только `enProfession`), Composer, Producer и Writer; фактически Actor |
+| Новые тесты, после побайтового восстановления (`cmp`) и пересборки | 52/52; полный `dotnet test` — 283/283 |
+
+В рабочей ветке `dotnet test` — 283/283, `git diff --check` — без замечаний. Живой API и Jellyfin не проверялись. Код продукта, инфраструктура и задача 001 не изменены.
+
 ## Handoff
 
-Локально закоммитить изменения без push, обновить задачу и [status.md](../status.md), вернуть Техлиду хеш, команды, результаты и риски. При неожиданном изменении остановиться; при отказе в разрешении сообщить точную команду, цель и текст отказа, не обходить ограничение.
+См. [статус hotfix](../status.md). Ожидаются ревью Техлида и итоговый DevOps impact check.
