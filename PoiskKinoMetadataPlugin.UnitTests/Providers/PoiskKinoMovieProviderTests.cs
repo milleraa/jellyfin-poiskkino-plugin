@@ -335,6 +335,49 @@ public class PoiskKinoMovieProviderTests : PluginTestBase
     }
 
     [Fact]
+    public async Task GetSearchResults_SearchLimitFromConfiguration_ChangesRequestLimitWithoutRestart()
+    {
+        PluginTestFixture.SetUpPlugin(TestApiKey);
+        var capturedRequests = new List<HttpRequestMessage>();
+        _handlerMock
+            .Protected()
+            .Setup<Task<HttpResponseMessage>>(
+                "SendAsync",
+                ItExpr.IsAny<HttpRequestMessage>(),
+                ItExpr.IsAny<CancellationToken>())
+            .Callback<HttpRequestMessage, CancellationToken>((request, _) => capturedRequests.Add(request))
+            .ReturnsAsync(new HttpResponseMessage
+            {
+                StatusCode = HttpStatusCode.OK,
+                Content = new StringContent(
+                    TestJsonData.SearchResponseJson,
+                    new MediaTypeHeaderValue("application/json")),
+            });
+
+        try
+        {
+            // AC-7: лимит читается из конфигурации при каждом вызове поиска (паттерн ApiKey),
+            // а не фиксируется при создании провайдера/клиента: смена значения между двумя
+            // поисками меняет URL второго запроса без пересоздания провайдера и клиента.
+            Plugin.Instance!.Configuration.SearchLimit = 7;
+            var provider = CreateProvider();
+
+            await provider.GetSearchResults(new MovieInfo { Name = "Оппенгеймер" }, CancellationToken.None);
+            Plugin.Instance.Configuration.SearchLimit = 4;
+            await provider.GetSearchResults(new MovieInfo { Name = "Оппенгеймер" }, CancellationToken.None);
+
+            Assert.Equal(2, capturedRequests.Count);
+            Assert.Contains("limit=7", capturedRequests[0].RequestUri!.Query);
+            Assert.Contains("limit=4", capturedRequests[1].RequestUri!.Query);
+        }
+        finally
+        {
+            // Пересоздаём плагин с дефолтом, чтобы значение не протекало в другие тесты коллекции.
+            PluginTestFixture.SetUpPlugin(TestApiKey);
+        }
+    }
+
+    [Fact]
     public async Task GetImageResponse_EmptyUrl_ReturnsBadRequest()
     {
         var provider = CreateProvider();
