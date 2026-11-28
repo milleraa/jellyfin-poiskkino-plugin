@@ -7,7 +7,7 @@
 | Поле | Значение |
 |------|----------|
 | **Стадия** | `development` |
-| **Owner** | `Developer-CSharp` (задача 003 — к назначению Оркестратором) |
+| **Owner** | `Developer-CSharp` (задача 003) |
 | **Ветка** | `feature/search-limit-setting` |
 | **PR/MR** | _нет_ |
 | **Commit со ссылкой на PR/MR** | _нет_ |
@@ -161,3 +161,11 @@
 - stage: `development` — задача 002 принята (`accepted`), следующий шаг — назначение 003
 - artifacts: [tasks/002-client-search-limit-cache.md](tasks/002-client-search-limit-cache.md) (решение Техлида), [tech-plan.md](tech-plan.md) (компромисс int.MinValue в A1), коммит `a0febfe` в ветке `feature/search-limit-setting` (без push)
 - notes: Приёмка 002 — **accept**. Воспроизведено: `dotnet build` (--no-incremental) — предупреждения 61/61 идентичны базе f845ad3 (все предсуществующие CS1591 в `Models/`), полный `dotnet test` 326/326 (+40), `git diff --check` чисто; ссылок на `Plugin` в клиенте/резолвере нет. Границы соблюдены: провайдеры, `configPage.html`, README не тронуты (зона 003). `test-audit` пройден: тесты поведенческие, без дублей, мутационные проверки правдоподобны (убрать `:{limit}` из ключа / убрать дедупликацию → падают заявленные тесты). Отклонения приняты: (1) дефолт `SearchLimitResolver.DefaultLimit` (const 3) вместо литерала — одна точка истины, прецедент `ApiBaseUrlResolver.DefaultBaseUrl`; (2) валидация до кэш-lookup (Warning и на кэш-хите) — структурно обязательна для варианта А, спам исключён дедупликацией. Крайний случай int.MinValue (первый поиск без Warning) принят как компромисс и зафиксирован в tech-plan (A1). DevOps impact по итоговому diff: нет, DevOps-задача не нужна. Оркестратору: назначить задачу 003 на `developer-csharp` (провайдеры Movie/Series/Image + README + финальный гейт, эта же ветка); QA не запускать — финальный tech-lead-review с `test-audit` после 003.
+
+### 2026-11-28 — handoff
+
+- from: `Orchestrator`
+- to: `Developer-CSharp`
+- stage: `development`
+- artifacts: [tasks/003-providers-threading-readme.md](tasks/003-providers-threading-readme.md), [tech-plan.md](tech-plan.md) (DoD), [analysis.md](analysis.md) (AC-2 потребители, AC-7, AC-9, AC-10)
+- notes: Назначена задача 003 (последняя в плане): проброс `SearchLimit` в Movie/Series/Image провайдеры (паттерн `ApiKey`, именованный аргумент `searchLimit:`), README, финальный гейт `dotnet build -c Release` + полный `dotnet test`, инструкция ручного QA для задачи 004 (QA-стадия). После приёмки 003 — финальный tech-lead-review с `test-audit`, затем QA.
