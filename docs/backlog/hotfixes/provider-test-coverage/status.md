@@ -3,7 +3,7 @@
 | Поле | Значение |
 |------|----------|
 | **Стадия** | `qa` |
-| **Owner** | `Orchestrator` |
+| **Owner** | `QA` |
 | **Блокер** | Нет: Оркестратор вызывает исполнителей напрямую по регламенту `4cbe4d4` |
 | **Срочность** | Hotfix по запросу Стейкхолдера; P-приоритет не задан |
 | **Ветка** | `hotfix/provider-test-coverage` от `main` (`b08b586`) |
@@ -136,3 +136,10 @@
 - stage: `qa` — готово к независимому QA, QA ещё не начат
 - artifacts: [приёмка 001](tasks/001-series-search-year.md#решение-техлида), [приёмка 002](tasks/002-metadata-person-roles.md#решение-техлида), [критерии QA](qa.md)
 - notes: 001 и 002 приняты; обе мутации независимо воспроизведены по плану, после восстановления полный `dotnet test` — 283/283. Итоговый DevOps impact check закрыт без задачи DevOps. QA назначает Оркестратор.
+
+## 2026-11-28 12:02 — handoff
+- from: Orchestrator
+- to: QA
+- stage: `qa`
+- artifacts: [qa.md](qa.md), [incident.md](incident.md), `eb78b38`
+- notes: Обе задачи приняты Техлидом, DevOps impact check закрыт. Независимый прогон и вердикт.
