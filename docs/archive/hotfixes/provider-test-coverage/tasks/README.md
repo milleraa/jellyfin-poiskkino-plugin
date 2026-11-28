@@ -1,6 +1,6 @@
 # Tasks
 
-Шаблон: [task-template](../../../task-template.md). Порядок и зависимости: [tech-plan.md](../tech-plan.md); текущие статусы: [status.md](../status.md).
+Шаблон: [task-template](../../../../backlog/task-template.md). Порядок и зависимости: [tech-plan.md](../tech-plan.md); текущие статусы: [status.md](../status.md).
 
 | ID | Задача | Исполнитель |
 |----|--------|-------------|

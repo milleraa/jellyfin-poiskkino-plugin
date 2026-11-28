@@ -2,14 +2,14 @@
 
 | Поле | Значение |
 |------|----------|
-| **Стадия** | `pr-mr-ready` |
-| **Owner** | `Stakeholder` (review) |
+| **Стадия** | `accepted` |
+| **Owner** | `Stakeholder` |
 | **Блокер** | Нет |
 | **Срочность** | Hotfix по запросу Стейкхолдера; P-приоритет не задан |
 | **Ветка** | `hotfix/provider-test-coverage` → `main`; проверенная база `4cbe4d4` (исходная база `b08b586`) |
 | **PR/MR** | [#10](https://github.com/milleraa/jellyfin-poiskkino-plugin/pull/10) |
 | **Commit со ссылкой на PR/MR** | Отдельный коммит `docs(hotfix): зафиксируй готовность PR #10 к ревью` |
-| **CI** | [CI / build-and-test](https://github.com/milleraa/jellyfin-poiskkino-plugin/actions/runs/46110676899): success для `e71e128` до push документации; актуальный статус — во [вкладке Checks](https://github.com/milleraa/jellyfin-poiskkino-plugin/pull/10/checks) |
+| **CI** | [CI / build-and-test](https://github.com/milleraa/jellyfin-poiskkino-plugin/actions/runs/46110776370/job/140873592434): success для `f64ce27` (HEAD перед архивацией); актуальный статус — во [вкладке Checks](https://github.com/milleraa/jellyfin-poiskkino-plugin/pull/10/checks) |
 
 ## Стадии (справочно)
 
@@ -164,4 +164,11 @@
 - to: Orchestrator / Stakeholder
 - stage: `pr-mr-ready`
 - artifacts: [PR #10](https://github.com/milleraa/jellyfin-poiskkino-plugin/pull/10), [finalization.md](finalization.md), [QA PASS](qa.md)
-- notes: DoD для review проверен. `main`, `origin/main` и merge-base совпали на `4cbe4d4`. Архивация и merge не выполнялись; следующий гейт — явное решение Стейхолдера.
+- notes: DoD для review проверен. `main`, `origin/main` и merge-base совпали на `4cbe4d4`. На момент delivery архивация и merge не выполнялись; следующим гейтом было явное решение Стейхолдера.
+
+## 2026-11-28 — acceptance/archive
+- from: Finalizer
+- to: Orchestrator / Stakeholder
+- stage: `accepted`
+- artifacts: [PR #10](https://github.com/milleraa/jellyfin-poiskkino-plugin/pull/10), [finalization.md](finalization.md), [completed-work](../../../history/completed-work.md#provider-test-coverage-2026-11-28)
+- notes: Стейкхолдер принял PR в чате сообщением «ок, архивируй». Hotfix перенесён в архив в той же ветке до merge; PR оставлен открытым.

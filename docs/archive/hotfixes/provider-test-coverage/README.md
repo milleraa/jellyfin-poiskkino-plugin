@@ -12,4 +12,4 @@
 | [qa.md](qa.md) | QA |
 | [finalization.md](finalization.md) | PR/MR delivery, acceptance/archive |
 
-Архив после принятия Стейхолдером или merge PR/MR: [archive/hotfixes](../../../archive/hotfixes/README.md). Если PR/MR не принят, работа остаётся в backlog и возвращается через `.agents/skills/sdlc/references/pr-mr-rework.md`.
+Hotfix принят Стейкхолдером и перенесён в [архив hotfix](../README.md) до merge [PR #10](https://github.com/milleraa/jellyfin-poiskkino-plugin/pull/10).
