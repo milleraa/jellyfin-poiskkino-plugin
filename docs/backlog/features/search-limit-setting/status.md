@@ -6,12 +6,12 @@
 
 | Поле | Значение |
 |------|----------|
-| **Стадия** | `qa` |
-| **Owner** | `Orchestrator` (запуск QA) |
+| **Стадия** | `finalization` |
+| **Owner** | `Orchestrator` (handoff к Финализатору) |
 | **Ветка** | `feature/search-limit-setting` |
 | **PR/MR** | _нет_ |
 | **Commit со ссылкой на PR/MR** | _нет_ |
-| **Блокеры** | _нет_ |
+| **Блокеры** | _нет_; ограничение evidence — ручной smoke на живом Jellyfin (AC-6 UI, AC-8, AC-7, R1) не выполнен: в среде QA нет сервера и demo-ключа; решение о принятии с отложенным smoke — за Оркестратором/Стейхолдером (детали в [qa.md](qa.md)) |
 | **План реализации** | **готов к исполнению** — [tech-plan.md](tech-plan.md): 001 → 002 → 003, роль `developer-csharp` |
 
 ### Стадии (справочно)
@@ -51,7 +51,7 @@
 
 | Дата | Результат | Ссылка на прогон |
 |------|-------------|------------------|
-| — | — | [test-runs](../../../qa/test-runs.md) |
+| 2026-11-28 | **pass** (автоматическая часть; ручной smoke — не выполнен, нет окружения) | [test-runs](../../../qa/test-runs.md) |
 
 ## PR/MR feedback / rework
 
@@ -185,4 +185,12 @@
 - stage: `qa` — финальная приёмка фичи пройдена, все три задачи `accepted`; Оркестратору — запустить QA
 - artifacts: [tasks/003-providers-threading-readme.md](tasks/003-providers-threading-readme.md) (решение Техлида), [tech-plan.md](tech-plan.md) (DoD), коммит `c894715` в ветке `feature/search-limit-setting` (без push)
 - notes: Приёмка 003 — **accept**, финальный гейт фичи пройден. Воспроизведено: полный `dotnet test` 327/327; `dotnet build -c Release --no-incremental` 0 ошибок / 61 предсуществующее CS1591 в `Models/` (идентично базе 002); `git diff --check` чисто. Ревью diff `c894715`: все три вызова `SearchAsync` в кодовой базе (Movie:83, Series:83, Image:99) покрыты именованным `searchLimit: SearchLimit`; fallback `GetMetadataInternal → GetSearchResultsInternal` (`:181` → `:83`) через ту же точку; стиль `ApiKey` (экземплярное свойство `?? 3`, валидация — в клиенте, границы слоёв соблюдены); README сверён с ADR-0004 и реализацией (дефолт 3, диапазон 1–10, вне диапазона — дефолт + Warning, ключ кэша `название:год:лимит`, применение без перезапуска) — искажений нет. `test-audit`: тест AC-7 поведенческий (URL захваченных запросов), без дублей (клиентские тесты жизненный цикл чтения конфигурации не ловят — отдельный риск уровня провайдера), швов не добавлял, изоляция через `finally`; мутационная проверка правдоподобна (убрать аргумент → кэш-хит с `limit=3` → `Assert.Equal(2, …)` падает). AC-9: подсчёт запросов не менялся. Границы: клиент/резолвер/конфигурация/configPage.html в 003 не тронуты; untracked `pi-session-*.html` — посторонний, в коммиты не входил. Целостность history в status.md проверена: записи Оркестратора (назначения 001/002/003) и Техлида (декомпозиция, приёмки 001/002) на месте, хронология линейна. **DevOps impact по итоговому diff `f845ad3^..HEAD`: «нет» по всем пунктам** (только код/тесты/README/docs; env/secrets/интеграции/CI/упаковка не затронуты, настройка — в существующем XML Jellyfin); DevOps-задача не нужна. Сведение AC: AC-1/AC-6(сервер) → 001 `d01ee2d`; AC-2(клиент)/AC-3/AC-4/AC-5 → 002 `a0febfe`; AC-2(провайдеры)/AC-7/AC-9/AC-10 → 003 `c894715`; AC-6(UI)/AC-8 — smoke по инструкции в 003. Стадия переведена в `qa`, owner — `Orchestrator`.
+
+### 2026-11-28 — QA: pass
+
+- from: `QA`
+- to: `Orchestrator`
+- stage: `finalization` — QA завершена, дефектов не найдено; Оркестратору — handoff к Финализатору
+- artifacts: [qa.md](qa.md) (чеклист с evidence и ограничениями), [test-runs](../../../qa/test-runs.md) (прогон 2026-11-28), инструкция ручного QA — [tasks/003](tasks/003-providers-threading-readme.md); прогон с HEAD `25d623a` ветки `feature/search-limit-setting` (код и тесты QA не меняла)
+- notes: Вердикт — **pass** по автоматической части. Воспроизведено: полный `dotnet test` — 327/327 (0 failed/skipped, ожидание 327/327 подтверждено); `dotnet build -c Release --no-incremental` — 0 ошибок, 61 предупреждение (все `CS1591`, все в `Models/` — идентично принятой базе 002/003, новых нет); целевой фильтр `PoiskKinoMovieProviderTests|CacheKey|SearchLimitResolver|PluginConfiguration` — 67/67: провайдерский тест AC-7 (смена 7→4 на том же экземпляре меняет URL обоих запросов), `SearchLimitResolverTests` 26 (валидация 1–10, fallback дефолт + одиночный Warning, дедупликация/сброс памятки), `PluginConfigurationTests` 6 (дефолт 3, legacy XML без `<SearchLimit>` → 3, round-trip 7). Клиентские `PoiskKinoApiClientSearchLimitTests` — зелёные в полном прогоне. **Ограничение evidence:** ручные проверки на живом Jellyfin не выполнены — в среде QA нет сервера (нет процесса, портов 8096/8920, docker-контейнера, HTTP-ответа на localhost:8096) и demo-ключа; незакрытые проверки: AC-6 (UI поля/сохранение/дефолт на чистой конфигурации), AC-8 (персистентность после перезапуска: UI + `<SearchLimit>7</SearchLimit>` в XML), AC-7 (live применение 8→2 без перезапуска в identify-диалоге), R1 (smoke с demo-ключом: дефолт 3 и максимум 10, без 403/429). Результаты не выдумывались; решение о принятии фичи с отложенным smoke (или проведение smoke администратором на целевом сервере) — за Оркестратором/Стейхолдером. Стадия переведена в `finalization`, owner — `Orchestrator`.
 
