@@ -12,9 +12,9 @@ namespace PoiskKinoMetadataPlugin;
 /// </summary>
 public class PoiskKinoApiClient
 {
-    private const string ApiBaseUrl = "https://api.poiskkino.dev";
     private const int CacheExpirationHours = 24;
     private const int MaxRequestsPerDay = 200;
+    private const int MaxLoggedRawBaseUrlLength = 200;
 
     private readonly HttpClient _httpClient;
     private readonly ILogger<PoiskKinoApiClient> _logger;
@@ -26,14 +26,38 @@ public class PoiskKinoApiClient
     /// </summary>
     /// <param name="httpClientFactory">Фабрика HTTP-клиентов.</param>
     /// <param name="logger">Экземпляр логгера.</param>
-    public PoiskKinoApiClient(IHttpClientFactory httpClientFactory, ILogger<PoiskKinoApiClient> logger)
+    /// <param name="apiBaseUrl">
+    /// Сырое значение базового URL из конфигурации плагина «как ввёл администратор»;
+    /// <c>null</c> или пустое значение — <see cref="ApiBaseUrlResolver.DefaultBaseUrl"/>.
+    /// Нормализация и валидация выполняются один раз, при создании клиента, в <see cref="ApiBaseUrlResolver"/>.
+    /// </param>
+    public PoiskKinoApiClient(
+        IHttpClientFactory httpClientFactory,
+        ILogger<PoiskKinoApiClient> logger,
+        string? apiBaseUrl = null)
     {
+        _logger = logger;
+
+        // Единственная точка резолва: исключений нет, невалидное значение даёт дефолт + причину (D-ARCH-1).
+        var resolvedBaseUrl = ApiBaseUrlResolver.Resolve(apiBaseUrl);
+
         _httpClient = httpClientFactory.CreateClient();
-        _httpClient.BaseAddress = new Uri(ApiBaseUrl);
+        _httpClient.BaseAddress = resolvedBaseUrl.BaseAddress;
         _httpClient.Timeout = TimeSpan.FromSeconds(120);
         _httpClient.DefaultRequestHeaders.Add("User-Agent", "Jellyfin-PoiskKino-Plugin/1.0");
-        
-        _logger = logger;
+
+        _logger.LogInformation("PoiskKino API base URL: {BaseUrl}", _httpClient.BaseAddress);
+
+        if (resolvedBaseUrl.UsedFallback)
+        {
+            _logger.LogWarning(
+                "Invalid API base URL '{RawApiBaseUrl}' (truncated to {MaxLength} chars), falling back to '{DefaultBaseUrl}': {Reason}",
+                TruncateForLog(RedactUserInfo(apiBaseUrl), MaxLoggedRawBaseUrlLength),
+                MaxLoggedRawBaseUrlLength,
+                ApiBaseUrlResolver.DefaultBaseUrl,
+                resolvedBaseUrl.FallbackReason);
+        }
+
         _cache = new ConcurrentDictionary<string, CacheEntry<object>>();
         _requestSemaphore = new SemaphoreSlim(1, 1);
     }
@@ -398,6 +422,57 @@ public class PoiskKinoApiClient
         {
             _requestSemaphore.Release();
         }
+    }
+
+    /// <summary>
+    /// Удаляет <c>userinfo</c> (логин и пароль) из сырого значения перед выводом в лог.
+    /// </summary>
+    /// <param name="rawValue">Сырое значение из конфигурации «как ввёл администратор».</param>
+    /// <returns>Значение без <c>userinfo</c> в authority (с сохранением схемы) либо без изменений.</returns>
+    /// <remarks>
+    /// Резолвер отклоняет адреса с <c>userinfo</c>, но в <c>Warning</c> попадает сырая строка,
+    /// поэтому пароль из <c>https://user:password@host</c> мог бы оказаться в логе (риск A6, ADR-0003).
+    /// Обрабатывается и значение без схемы (<c>user:password@host</c>).
+    /// <c>userinfo</c> заканчивается последним <c>@</c> внутри authority (пароль сам может содержать <c>@</c>),
+    /// <c>@</c> в пути, query или fragment не вырезается — это не credentials.
+    /// </remarks>
+    private static string RedactUserInfo(string? rawValue)
+    {
+        var value = rawValue ?? string.Empty;
+
+        var schemeSeparatorIndex = value.IndexOf("://", StringComparison.Ordinal);
+        var authorityStart = schemeSeparatorIndex < 0 ? 0 : schemeSeparatorIndex + 3;
+
+        // Authority кончается на первом '/', '?' или '#' (или на конце строки).
+        var authorityEndIndex = value.IndexOfAny(['/', '?', '#'], authorityStart);
+        var authorityEnd = authorityEndIndex < 0 ? value.Length : authorityEndIndex;
+        if (authorityEnd <= authorityStart)
+        {
+            // Пустой authority ("https://", "https:///x") — вырезать нечего, но и падать нельзя.
+            return value;
+        }
+
+        // Берём ПОСЛЕДНИЙ '@' в authority: пароль может содержать '@' (admin:p@ss@host).
+        var atIndex = value.LastIndexOf('@', authorityEnd - 1, authorityEnd - authorityStart);
+        if (atIndex < 0)
+        {
+            return value;
+        }
+
+        var schemePrefix = schemeSeparatorIndex < 0 ? string.Empty : value[..authorityStart];
+        return string.Concat(schemePrefix, value.AsSpan(atIndex + 1));
+    }
+
+    /// <summary>
+    /// Обрезает сырое значение из конфигурации для безопасного вывода в лог.
+    /// </summary>
+    /// <param name="rawValue">Сырое значение из конфигурации.</param>
+    /// <param name="maxLength">Максимальная длина результата в символах.</param>
+    /// <returns>Значение без изменений или его первые <paramref name="maxLength"/> символов.</returns>
+    private static string TruncateForLog(string? rawValue, int maxLength)
+    {
+        var value = rawValue ?? string.Empty;
+        return value.Length <= maxLength ? value : value[..maxLength];
     }
 
     /// <summary>

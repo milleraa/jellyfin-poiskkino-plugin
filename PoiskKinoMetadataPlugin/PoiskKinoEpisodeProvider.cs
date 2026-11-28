@@ -18,13 +18,17 @@ public class PoiskKinoEpisodeProvider(
     ILogger<PoiskKinoEpisodeProvider> logger) : IRemoteMetadataProvider<Episode, EpisodeInfo>, IHasOrder
 {
     private readonly Lazy<PoiskKinoApiClient> _apiClient = new Lazy<PoiskKinoApiClient>(() => 
-        new PoiskKinoApiClient(httpClientFactory, loggerFactory.CreateLogger<PoiskKinoApiClient>()));
+        new PoiskKinoApiClient(httpClientFactory, loggerFactory.CreateLogger<PoiskKinoApiClient>(), ApiBaseUrl));
     private readonly IHttpClientFactory _httpClientFactory = httpClientFactory;
     private readonly ILogger<PoiskKinoEpisodeProvider> _logger = logger;
     
     private PoiskKinoApiClient ApiClient => _apiClient.Value;
 
     private string ApiKey => Plugin.Instance?.Configuration?.ApiKey ?? string.Empty;
+
+    // Статическое свойство, а не экземплярное: инициализатор поля Lazy не может обращаться к экземпляру (CS0236),
+    // а источник значения — статический Plugin.Instance. Конфигурация читается при первом запросе, не при загрузке плагина.
+    private static string ApiBaseUrl => Plugin.Instance?.Configuration?.ApiBaseUrl ?? string.Empty;
 
     /// <inheritdoc />
     public string Name => "ПоискКино";
