@@ -7,8 +7,8 @@
 - **Назначено:** `developer-csharp`
 - **Стек:** C# / .NET, xUnit, Moq
 - **Ветка:** `feature/search-limit-setting`
-- **Статус:** `todo`
-- **Локальный коммит:** _заполняется исполнителем_ (без push)
+- **Статус:** `done` — выполнено `developer-csharp` 2026-11-28, ожидает приёмки Техлида
+- **Локальный коммит:** `feat(api): добавь параметр searchLimit, резолвер валидации и лимит в ключ кэша поиска` в ветке `feature/search-limit-setting` (без push)
 - **Код:** [PoiskKinoApiClient.cs](../../../../../PoiskKinoMetadataPlugin/PoiskKinoApiClient.cs), [ApiBaseUrlResolver.cs](../../../../../PoiskKinoMetadataPlugin/ApiBaseUrlResolver.cs) (образец), [PoiskKinoApiClientTests.cs](../../../../../PoiskKinoMetadataPlugin.UnitTests/ApiClient/PoiskKinoApiClientTests.cs), [ApiBaseUrlResolverTests.cs](../../../../../PoiskKinoMetadataPlugin.UnitTests/Helpers/ApiBaseUrlResolverTests.cs) (образец)
 - **Зависимости:** после [001](001-config-search-limit.md) (порядок плана); по коду не зависит — клиент конфигурацию не читает
 
@@ -50,7 +50,35 @@
 
 ## Результат и проверки
 
-_Заполняется исполнителем._
+Выполнено `developer-csharp` 2026-11-28. Изменены только `PoiskKinoApiClient.cs`, `SearchLimitResolver.cs` (новый), `Configuration.cs` (remarks) и тесты. Провайдеры (Movie/Series/Image), `configPage.html` и README не тронуты — зона задачи 003. Ссылок на `Plugin` в клиенте и резолвере нет (только namespace, User-Agent-строка и упоминания в doc-remarks).
+
+**Что сделано.**
+
+- AC-2: сигнатура `SearchAsync(string title, int? year, string apiKey, CancellationToken cancellationToken = default, int searchLimit = SearchLimitResolver.DefaultLimit)` — параметр строго после `CancellationToken`, существующие позиционные вызовы с `CancellationToken` (провайдеры `:79/:79/:95`, тесты `SearchAsync(…, CancellationToken.None)`) компилируются без правок; XML-doc дополнен (`<param name="searchLimit">` со ссылкой на резолвер). Дефолт — `SearchLimitResolver.DefaultLimit` (константа `3`), а не литерал: единственная точка хранения дефолта, по образцу `ApiBaseUrlResolver.DefaultBaseUrl`; для внешних вызовов значение неотличимо от `= 3`. URL — `…&limit={эффективное}` вместо хардкода.
+- AC-4: новый `SearchLimitResolver.cs` по образцу `ApiBaseUrlResolver` — `internal static class`, чистая функция без состояния и без исключений; константы `MinLimit = 1`, `MaxLimit = 10`, `DefaultLimit = 3`; результат — `internal readonly record struct ResolvedSearchLimit(int EffectiveLimit, bool UsedFallback, string? FallbackReason)`; 1–10 — как есть, вне диапазона — дефолт + причина (fallback, не clamping). Причина на английском и называет сырое значение (попадает в Warning).
+- AC-3: при дефолте запрос идентичен историческому — тест фиксирует точный query `?query=Test&limit=3`.
+- AC-5 (вариант А): `GenerateCacheKey(string title, int? year, int searchLimit)` строит `search:{normalizedTitle}[:{year}]:{limit}` из того же разрешённого значения, что и URL; лимит в ключе всегда, без условного опускания; XML-doc remarks фиксируют детерминированность пары «запрос ⇔ ключ».
+- AC-4 + A1: `Warning` «Invalid search limit {Raw} ({Reason}), falling back to default 3» пишется клиентом до построения URL/ключа (то есть и на кэш-хите — валидация по AC-4 единая и раньше ключа); дедупликация — приватное поле `_lastWarnedInvalidSearchLimit` (init `int.MinValue`) на экземпляре клиента: Warning только при смене невалидного значения, валидное значение сбрасывает памятку (метод `WarnInvalidSearchLimit` с remarks о потокобезопасности по tech-plan). API-ключ в сообщение не попадает (покрыто тестом).
+- Приёмка 001: в remarks `PluginConfiguration.SearchLimit` добавлена ссылка `<see cref="SearchLimitResolver"/>` — CS1574 нет (тип существует), замечаний сборки нет.
+
+**Тесты** (аудит по `test-audit` перед написанием; +40 кейсов, 286 → 326): `SearchLimitResolverTests` (26: константы, границы 1/10 и середина диапазона, вне диапазона 0/−1/−100/11/100/±int.MaxValue → дефолт+причина, отсутствие clamping к 1/10, причина называет сырое значение, инвариант «причина ⇔ fallback», без исключений на всех входах); `PoiskKinoApiClientSearchLimitTests` (11, по образцу `PoiskKinoApiClientBaseUrlTests`: дефолт `limit=3` без Warning, явный 1/7/10 → `limit=N`, невалидные 0/−1/11 → `limit=3` + ровно один Warning без исключений, состав Warning без API-ключа, дедупликация «тот же значение → Times.Once», «другое невалидное → новое», «валидный между невалидными → сброс памятки»); расширения в `PoiskKinoApiClientTests` (3: `SearchAsync_CachesResult_WithExplicitSearchLimit`, `SearchAsync_NotFound_CachesNegativeResult_WithExplicitSearchLimit`, `SearchAsync_DifferentSearchLimits_SeparateCacheEntries` — разделение кэша и применение настройки без нового клиента на одном экземпляре). Существующие `SearchAsync_CachesResult` / `SearchAsync_NotFound_CachesNegativeResult` сохранены без потери смысла; `SearchAsync_WithYear_IncludesYearInUrl` / `SearchAsync_Success_RequestsV15SearchPath` прошли без правок. Тест-only код в продукте не потребовался.
+
+**Точечная проверка чувствительности** (по одной правдоподобной ошибке, исходник восстанавливался точно):
+
+| Эксперимент | Результат |
+|-----------|-----------|
+| Убрать `:{limit}` из ключа кэша | Падает `SearchAsync_DifferentSearchLimits_SeparateCacheEntries` (2 запроса → 1) — тест ловит главную регрессию фичи |
+| Убрать дедупликацию в `WarnInvalidSearchLimit` | Падает `SearchAsync_RepeatedInvalidSearchLimit_WarnsOnce` (Times.Once → 2) |
+| Убрать сброс памятки в `SearchAsync` (не выполнялся, следует из механики) | Третье предупреждение в `SearchAsync_ValidSearchLimitBetweenInvalidOnes_ResetsWarningMemo` было бы подавлено → `Times.Exactly(2)` упал бы |
+
+**Прогоны.** Полный `dotnet test` — 326/326; точечный фильтр `PoiskKinoApiClientTests|SearchLimitResolverTests|PoiskKinoApiClientSearchLimitTests|PoiskKinoApiClientBaseUrlTests` — 63/63; `dotnet build` — 0 ошибок; `git diff --check` — чисто. Набор предупреждений сборки сравнён с базой f845ad3 (`--no-incremental`, diff пуст): все 61 — предсуществующие CS1591 в `Models/`, от изменённых файлов предупреждений нет.
+
+**Ограничения проверок и замечания для Техлида.**
+
+1. Крайний случай дедупликации по решению A1: самый первый поиск клиента с сырым значением ровно `int.MinValue` не даст Warning (памятка инициализирована `int.MinValue`, значение неотличимо от «предупреждений ещё не было»). Зафиксировано в tech-plan как принятый компромисс; на уровне резолвера `int.MinValue` покрыт и валиден, клиентские тесты используют 0/−1/11.
+2. Валидация выполняется до кэш-lookup — Warning возникает и когда запрос обслужен из кэша. Это следствие AC-4 («валидация до построения URL и ключа кэша»); если Техлид считает, что на кэш-хите предупреждать не нужно, точку резолва надо переносить осознанно.
+3. Интеграционный сценарий «сменил настройку в UI → следующий поиск применил» (AC-7 end-to-end) в этой задаче покрыт серверной частью на уровне клиента (один экземпляр, разные лимиты); живой цикл Jellyfin — ручная проверка QA в задаче 003.
+4. Кэш старого формата (`search:title[:year]`) не мигрирует — истекает естественно (TTL 24 ч / 1 ч, in-memory), по ADR-0004.
 
 ## Решение Техлида
 

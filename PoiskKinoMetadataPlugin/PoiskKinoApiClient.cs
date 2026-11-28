@@ -21,6 +21,10 @@ public class PoiskKinoApiClient
     private readonly ConcurrentDictionary<string, CacheEntry<object>> _cache;
     private readonly SemaphoreSlim _requestSemaphore;
 
+    // Памятка дедупликации Warning о невалидном лимите (решение A1, ADR-0004):
+    // «последнее предупреждённое невалидное значение»; int.MinValue означает «предупреждений ещё не было».
+    private int _lastWarnedInvalidSearchLimit = int.MinValue;
+
     /// <summary>
     /// Создаёт новый экземпляр класса <see cref="PoiskKinoApiClient"/>.
     /// </summary>
@@ -69,12 +73,19 @@ public class PoiskKinoApiClient
     /// <param name="year">Год выпуска (опционально).</param>
     /// <param name="apiKey">API-ключ для аутентификации.</param>
     /// <param name="cancellationToken">Токен отмены.</param>
+    /// <param name="searchLimit">
+    /// Сырое значение лимита результатов поиска из конфигурации. Валидируется в <see cref="SearchLimitResolver"/>:
+    /// значение 1–10 применяется как есть; значение вне диапазона — <see cref="SearchLimitResolver.DefaultLimit"/>
+    /// с <c>Warning</c>, дедуплицируемым по невалидному значению. Один и тот же эффективный лимит идёт
+    /// и в URL (<c>limit=N</c>), и в ключ кэша (<c>:N</c>).
+    /// </param>
     /// <returns>Ответ с результатами поиска или null, если не найдено или произошла ошибка.</returns>
     public async Task<PoiskKinoSearchResponse?> SearchAsync(
         string title,
         int? year,
         string apiKey,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default,
+        int searchLimit = SearchLimitResolver.DefaultLimit)
     {
         if (string.IsNullOrWhiteSpace(apiKey))
         {
@@ -82,7 +93,20 @@ public class PoiskKinoApiClient
             return null;
         }
 
-        var cacheKey = GenerateCacheKey(title, year);
+        // Единственная точка резолва лимита: исключений нет, невалидное значение даёт дефолт + причину (ADR-0004).
+        var resolvedLimit = SearchLimitResolver.Resolve(searchLimit);
+
+        if (resolvedLimit.UsedFallback)
+        {
+            WarnInvalidSearchLimit(searchLimit, resolvedLimit.FallbackReason);
+        }
+        else
+        {
+            // Валидное значение сбрасывает памятку: эпизод «исправил и снова сломал» даёт новое предупреждение (A1).
+            _lastWarnedInvalidSearchLimit = int.MinValue;
+        }
+
+        var cacheKey = GenerateCacheKey(title, year, resolvedLimit.EffectiveLimit);
         
         // Сначала проверяем кэш
         if (_cache.TryGetValue(cacheKey, out var cachedEntry))
@@ -102,7 +126,7 @@ public class PoiskKinoApiClient
         {
             await _requestSemaphore.WaitAsync(cancellationToken);
             
-            var url = $"/v1.5/movie/search?query={Uri.EscapeDataString(title)}&limit=3";
+            var url = $"/v1.5/movie/search?query={Uri.EscapeDataString(title)}&limit={resolvedLimit.EffectiveLimit}";
             if (year.HasValue)
             {
                 url += $"&year={year.Value}";
@@ -476,12 +500,44 @@ public class PoiskKinoApiClient
     }
 
     /// <summary>
-    /// Генерирует ключ кэша из названия и года.
+    /// Генерирует ключ кэша из названия, года и эффективного лимита поиска.
     /// </summary>
-    private static string GenerateCacheKey(string title, int? year)
+    /// <remarks>
+    /// Лимит присутствует в ключе всегда (без условного опускания при дефолте — ADR-0004, вариант А):
+    /// пара «запрос <c>limit=N</c> ⇔ ключ <c>:N</c>» детерминирована, записи с разными лимитами не смешиваются.
+    /// </remarks>
+    private static string GenerateCacheKey(string title, int? year, int searchLimit)
     {
         var normalizedTitle = title.Trim().ToLowerInvariant();
-        return year.HasValue ? $"search:{normalizedTitle}:{year}" : $"search:{normalizedTitle}";
+        return year.HasValue
+            ? $"search:{normalizedTitle}:{year}:{searchLimit}"
+            : $"search:{normalizedTitle}:{searchLimit}";
+    }
+
+    /// <summary>
+    /// Пишет <c>Warning</c> о невалидном лимите с дедупликацией по значению (решение A1, ADR-0004).
+    /// </summary>
+    /// <param name="rawSearchLimit">Сырое невалидное значение из конфигурации.</param>
+    /// <param name="reason">Причина отказа из <see cref="SearchLimitResolver"/>.</param>
+    /// <remarks>
+    /// Памятка «последнее предупреждённое невалидное значение» живёт на экземпляре клиента — резолвер остаётся
+    /// без состояния. Предупреждение пишется только при смене невалидного значения; валидное значение сбрасывает
+    /// памятку (<see cref="SearchAsync"/>). Чтение/запись <c>int</c> атомарны; гонка в худшем случае даёт дубль
+    /// в логе — допустимо. API-ключ в сообщение не попадает.
+    /// </remarks>
+    private void WarnInvalidSearchLimit(int rawSearchLimit, string? reason)
+    {
+        if (_lastWarnedInvalidSearchLimit == rawSearchLimit)
+        {
+            return;
+        }
+
+        _lastWarnedInvalidSearchLimit = rawSearchLimit;
+        _logger.LogWarning(
+            "Invalid search limit {RawSearchLimit} ({Reason}), falling back to default {DefaultSearchLimit}",
+            rawSearchLimit,
+            reason,
+            SearchLimitResolver.DefaultLimit);
     }
 
     /// <summary>

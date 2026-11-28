@@ -199,6 +199,49 @@ public class PoiskKinoApiClientTests
             ItExpr.IsAny<CancellationToken>());
     }
 
+    // Задача 002, AC-8: вариант с явным одинаковым searchLimit в обоих вызовах — тот же ключ, один сетевой запрос.
+    [Fact]
+    public async Task SearchAsync_CachesResult_WithExplicitSearchLimit()
+    {
+        var handlerMock = CreateHandlerMock(
+            HttpStatusCode.OK,
+            new StringContent(TestJsonData.SearchResponseJson, new MediaTypeHeaderValue("application/json")));
+        var client = CreateClient(handlerMock);
+
+        var result1 = await client.SearchAsync("CacheTest", null, TestApiKey, CancellationToken.None, searchLimit: 5);
+        var result2 = await client.SearchAsync("CacheTest", null, TestApiKey, CancellationToken.None, searchLimit: 5);
+
+        Assert.NotNull(result1);
+        Assert.NotNull(result2);
+        handlerMock.Protected().Verify(
+            "SendAsync",
+            Times.Once(),
+            ItExpr.IsAny<HttpRequestMessage>(),
+            ItExpr.IsAny<CancellationToken>());
+    }
+
+    // Задача 002, AC-5/AC-7: тот же title/год с другим лимитом — второй сетевой запрос (записи кэша
+    // не смешиваются); возврат к первому лимиту — снова кэш-хит. Один и тот же экземпляр клиента:
+    // новая настройка применяется без перезапуска.
+    [Fact]
+    public async Task SearchAsync_DifferentSearchLimits_SeparateCacheEntries()
+    {
+        var capturedRequests = new List<HttpRequestMessage>();
+        var handlerMock = CreateCapturingHandlerMock(
+            HttpStatusCode.OK,
+            new StringContent(TestJsonData.SearchResponseJson, new MediaTypeHeaderValue("application/json")),
+            capturedRequests);
+        var client = CreateClient(handlerMock);
+
+        await client.SearchAsync("CacheTest", null, TestApiKey, CancellationToken.None, searchLimit: 7);
+        await client.SearchAsync("CacheTest", null, TestApiKey, CancellationToken.None, searchLimit: 3);
+        await client.SearchAsync("CacheTest", null, TestApiKey, CancellationToken.None, searchLimit: 7);
+
+        Assert.Equal(2, capturedRequests.Count);
+        Assert.Equal("?query=CacheTest&limit=7", capturedRequests[0].RequestUri!.Query);
+        Assert.Equal("?query=CacheTest&limit=3", capturedRequests[1].RequestUri!.Query);
+    }
+
     [Fact]
     public async Task SearchAsync_Unauthorized_ReturnsNull()
     {
@@ -246,6 +289,25 @@ public class PoiskKinoApiClientTests
 
         var result1 = await client.SearchAsync("NotFound", null, TestApiKey, CancellationToken.None);
         var result2 = await client.SearchAsync("NotFound", null, TestApiKey, CancellationToken.None);
+
+        Assert.Null(result1);
+        Assert.Null(result2);
+        handlerMock.Protected().Verify(
+            "SendAsync",
+            Times.Once(),
+            ItExpr.IsAny<HttpRequestMessage>(),
+            ItExpr.IsAny<CancellationToken>());
+    }
+
+    // Задача 002, AC-8: негативный кэш с явным одинаковым searchLimit — тот же ключ, один сетевой запрос.
+    [Fact]
+    public async Task SearchAsync_NotFound_CachesNegativeResult_WithExplicitSearchLimit()
+    {
+        var handlerMock = CreateHandlerMock(HttpStatusCode.NotFound);
+        var client = CreateClient(handlerMock);
+
+        var result1 = await client.SearchAsync("NotFound", null, TestApiKey, CancellationToken.None, searchLimit: 4);
+        var result2 = await client.SearchAsync("NotFound", null, TestApiKey, CancellationToken.None, searchLimit: 4);
 
         Assert.Null(result1);
         Assert.Null(result2);
