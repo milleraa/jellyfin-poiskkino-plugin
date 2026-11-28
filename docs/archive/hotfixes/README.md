@@ -8,4 +8,4 @@
 
 | Название | Дата архивации | PR/MR |
 |----------|----------------|-------|
-| — | — | — |
+| [`provider-test-coverage`](provider-test-coverage/) | 2026-11-28 | [#10](https://github.com/milleraa/jellyfin-poiskkino-plugin/pull/10) |

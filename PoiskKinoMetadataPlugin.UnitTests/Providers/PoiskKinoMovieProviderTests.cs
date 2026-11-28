@@ -1,5 +1,7 @@
 using System.Net;
 using System.Net.Http.Headers;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Jellyfin.Data.Enums;
 using MediaBrowser.Controller.Entities.Movies;
 using MediaBrowser.Controller.Providers;
@@ -258,35 +260,38 @@ public class PoiskKinoMovieProviderTests : PluginTestBase
     }
 
     [Theory]
-    [InlineData("режиссер", PersonKind.Director)]
-    [InlineData("Director", PersonKind.Director)]
-    [InlineData("director", PersonKind.Director)]
-    [InlineData("актер", PersonKind.Actor)]
-    [InlineData("актриса", PersonKind.Actor)]
-    [InlineData("Actor", PersonKind.Actor)]
-    [InlineData("actress", PersonKind.Actor)]
-    [InlineData("продюсер", PersonKind.Producer)]
-    [InlineData("Producer", PersonKind.Producer)]
-    [InlineData("сценарист", PersonKind.Writer)]
-    [InlineData("Writer", PersonKind.Writer)]
-    [InlineData("Screenplay writer", PersonKind.Writer)]
-    [InlineData("композитор", PersonKind.Composer)]
-    [InlineData("Composer", PersonKind.Composer)]
-    [InlineData("unknown role", PersonKind.Actor)]
-    [InlineData("", PersonKind.Actor)]
-    [InlineData(null, PersonKind.Actor)]
-    public void GetPersonKind_VariousProfessions_MapsCorrectly(string? profession, PersonKind expected)
+    [InlineData("режиссер", null, PersonKind.Director)]
+    [InlineData("Director", null, PersonKind.Director)]
+    [InlineData("director", null, PersonKind.Director)]
+    [InlineData("актер", null, PersonKind.Actor)]
+    [InlineData("актриса", null, PersonKind.Actor)]
+    [InlineData("Actor", null, PersonKind.Actor)]
+    [InlineData("actress", null, PersonKind.Actor)]
+    [InlineData("продюсер", null, PersonKind.Producer)]
+    [InlineData("Producer", null, PersonKind.Producer)]
+    [InlineData("сценарист", null, PersonKind.Writer)]
+    [InlineData("Writer", null, PersonKind.Writer)]
+    [InlineData("Screenplay writer", null, PersonKind.Writer)]
+    [InlineData("композитор", null, PersonKind.Composer)]
+    [InlineData("Composer", null, PersonKind.Composer)]
+    [InlineData("unknown role", null, PersonKind.Actor)]
+    [InlineData("", null, PersonKind.Actor)]
+    [InlineData(null, null, PersonKind.Actor)]
+    [InlineData(null, "Director", PersonKind.Director)]
+    public async Task GetMetadata_MapsPersonRole(string? profession, string? enProfession, PersonKind expected)
     {
+        var json = JsonSerializer.Serialize(
+            new { id = 123, persons = new[] { new { name = "Test Person", profession, enProfession } } },
+            new JsonSerializerOptions { DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull });
+        SetupMovieByIdResponse(HttpStatusCode.OK, json);
         var provider = CreateProvider();
-        var info = new MovieInfo { Name = "Test" };
+        var info = new MovieInfo();
+        info.SetProviderId(ProviderNames.PoiskKino, "123");
 
-        // Access private method via reflection to test GetPersonKind
-        var method = typeof(PoiskKinoMovieProvider).GetMethod(
-            "GetPersonKind", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
+        var result = await provider.GetMetadata(info, CancellationToken.None);
 
-        var result = method!.Invoke(null, [profession]);
-
-        Assert.Equal(expected, result);
+        var person = Assert.Single(result.People);
+        Assert.Equal(expected, person.Type);
     }
 
     [Fact]

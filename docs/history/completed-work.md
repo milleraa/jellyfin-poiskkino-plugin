@@ -7,6 +7,7 @@
 | 2026-08-23 | `api-v1-5-upgrade` | feature | [#2](https://github.com/milleraa/jellyfin-poiskkino-plugin/pull/2) (open, не merged; принято Стейхолдером) | [archive/features/api-v1-5-upgrade](../archive/features/api-v1-5-upgrade/) |
 | 2026-08-24 | `logo-images` | feature | [#3](https://github.com/milleraa/jellyfin-poiskkino-plugin/pull/3) (open, не merged; принято Стейхолдером до merge `/accept-feature`) | [archive/features/logo-images](../archive/features/logo-images/) |
 | 2026-11-28 | `eu-api-endpoint` | feature | [#9](https://github.com/milleraa/jellyfin-poiskkino-plugin/pull/9) (open, не merged; принято Стейхолдером в чате при открытом PR) | [archive/features/eu-api-endpoint](../archive/features/eu-api-endpoint/) |
+| 2026-11-28 | `provider-test-coverage` | hotfix | [#10](https://github.com/milleraa/jellyfin-poiskkino-plugin/pull/10) (принят Стейкхолдером до merge) | [archive/hotfixes/provider-test-coverage](../archive/hotfixes/provider-test-coverage/) |
 
 ## Резюме
 
@@ -34,3 +35,9 @@
 - QA: **pass** — AC-1…AC-12 (с AC-7′), 281/281 ×4 прогона, build 0 err (baseline `CS1591` = 122); ограничения: нет реального API-ключа → e2e-поиск на EU-зеркале не прогонялся (R2/A7), ручной UI-сценарий и запись `plugins/configurations/*.xml` — за администратором (tasks/003), live-переключение без рестарта не проверялось (AC-7′).
 - Residual risk (принят Техлидом и QA): ключ, вставленный в поле базового URL; `userinfo` редактируется (`https://KEY@host` → `https://host`), но query/fragment и «голое значение» попадут в лог как часть адреса. Требуется ошибка администратора; `ApiKey` из конфигурации не логируется (AC-9). Follow-up вне scope: вырезать query/fragment в `Warning` и уточнить подсказку в UI.
 - Принято Стейхолдером явно в чате (2026-11-28) при открытом, не merged PR #9 — политика DoD допускает accept без merge; archive finalization выполнена Финализатором в ветке `feature/eu-api-endpoint` **до** merge (код + архивация войдут в `main` одним мержем), CI PR #9 зелёный.
+
+### `provider-test-coverage` (2026-11-28)
+
+- Усилены тесты поиска сериалов по диапазонам годов и определения ролей персон в фильмах и сериалах через публичные методы провайдеров. Продуктовый код не менялся.
+- [QA PASS](../archive/hotfixes/provider-test-coverage/qa.md): 283/283 тестов, Release-сборка без ошибок; обе контрольные поломки обнаружены. Живой Jellyfin и реальный API не проверялись.
+- Стейкхолдер принял PR #10 в чате. Архивация выполнена в `hotfix/provider-test-coverage` до merge.
