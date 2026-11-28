@@ -24,7 +24,7 @@
 
 | ID | Файл | Роль / стек | Статус |
 |----|------|-------------|--------|
-| 001 | [001-config-search-limit](tasks/001-config-search-limit.md) | `developer-csharp` / C#, HTML настроек | `todo` |
+| 001 | [001-config-search-limit](tasks/001-config-search-limit.md) | `developer-csharp` / C#, HTML настроек | `ready-for-review` — выполнено, ожидается приёмка Техлидом |
 | 002 | [002-client-search-limit-cache](tasks/002-client-search-limit-cache.md) | `developer-csharp` / C#, xUnit, Moq | `todo` |
 | 003 | [003-providers-threading-readme](tasks/003-providers-threading-readme.md) | `developer-csharp` / C#, xUnit, Moq | `todo` |
 

@@ -34,6 +34,16 @@
                             <strong>Изменение применяется после перезапуска Jellyfin.</strong>
                         </div>
                     </div>
+                    <div class="inputContainer">
+                        <label class="inputLabel inputLabelUnfocused" for="searchLimit">Количество результатов поиска</label>
+                        <input id="searchLimit" name="searchLimit" type="number" min="1" max="10" is="emby-input" />
+                        <div class="fieldDescription">
+                            Сколько кандидатов запрашивать у ПоискКино при каждом поиске: от 1 до 10, по умолчанию 3.
+                            Большее значение повышает шансы найти нужный фильм или сериал, но быстрее расходует дневной
+                            лимит запросов. Значение вне диапазона 1–10 будет заменено на 3 с предупреждением в логе.
+                            Применяется к новым поискам без перезапуска Jellyfin.
+                        </div>
+                    </div>
                     <div class="checkboxContainer checkboxContainer-withDescription">
                         <label>
                             <input id="ignoreTmdbImages" name="ignoreTmdbImages" type="checkbox" is="emby-checkbox" />
@@ -76,6 +86,10 @@
                             document.getElementById('ignoreTmdbImages').checked = true;
                         }
 
+                        // При отсутствии сохранённого значения (undefined/0) показываем дефолт (AC-6).
+                        document.getElementById('searchLimit').value =
+                            (config && config.SearchLimit) ? config.SearchLimit : 3;
+
                         Dashboard.hideLoadingMsg();
                     });
                 },
@@ -88,6 +102,8 @@
                         // Сырое значение без trim/схемы/слэшей: нормализация — только на сервере (D-ARCH-4, AC-3).
                         config.ApiBaseUrl = document.getElementById('apiBaseUrl').value;
                         config.IgnoreTmdbImages = document.getElementById('ignoreTmdbImages').checked;
+                        // Число, а не строка из input: лимит — int в XML-схеме конфигурации (AC-6).
+                        config.SearchLimit = Number(document.getElementById('searchLimit').value);
 
                         ApiClient.updatePluginConfiguration(PoiskKinoConfigurationPage.pluginUniqueId, config).then(function (result) {
                             Dashboard.processPluginConfigurationUpdateResult(result);

@@ -7,8 +7,8 @@
 - **Назначено:** `developer-csharp`
 - **Стек:** C# / .NET (Jellyfin plugin SDK), HTML страницы настроек Dashboard, xUnit
 - **Ветка:** `feature/search-limit-setting`
-- **Статус:** `todo`
-- **Локальный коммит:** _заполняется исполнителем_ (без push)
+- **Статус:** `ready-for-review` — ожидается приёмка Техлидом
+- **Локальный коммит:** `feat(config): добавь лимит результатов поиска в конфигурацию и страницу настроек` в ветке `feature/search-limit-setting` (без push)
 - **Код:** [Configuration.cs](../../../../../PoiskKinoMetadataPlugin/Configuration.cs), [configPage.html](../../../../../PoiskKinoMetadataPlugin/Configuration/configPage.html), [ConfigurationTests.cs](../../../../../PoiskKinoMetadataPlugin.UnitTests/ConfigurationTests.cs)
 
 ## Описание
@@ -40,7 +40,26 @@
 
 ## Результат и проверки
 
-_Заполняется исполнителем._
+Выполнено `developer-csharp` 2026-11-28. Изменены только `Configuration.cs`, `Configuration/configPage.html`, `ConfigurationTests.cs` (клиент, провайдеры, кэш и ключ кэша не тронуты — задачи 002/003).
+
+**Что сделано.**
+
+- AC-1: в `PluginConfiguration` добавлено `public int SearchLimit { get; set; } = 3` с XML-doc и remarks в стиле `ApiBaseUrl` (диапазон 1–10, дефолт 3 сохраняет историческое поведение, вне диапазона — замена на 3 с предупреждением в логе без исправления конфигурации, D-ARCH-4, ADR-0004; имя свойства — часть XML-схемы). Свойство добавлено последним членом класса, чтобы порядок XML-элементов в существующих файлах конфигурации не менялся. Ссылки на `SearchLimitResolver` в remarks нет: тип появится в задаче 002, и `<see cref>` дал бы предупреждение CS1574.
+- AC-6: в `configPage.html` добавлен блок `inputContainer` с `<input id="searchLimit" name="searchLimit" type="number" min="1" max="10" is="emby-input">`, подписью и русской подсказкой (назначение, диапазон 1–10, дефолт 3, расход дневного лимита, замена вне диапазона на 3 с предупреждением в логе, применение без перезапуска). `loadConfiguration` показывает сохранённое значение, при отсутствии (undefined/0) — 3; `saveConfiguration` включает `config.SearchLimit` в `updatePluginConfiguration`, приводя значение поля к числу (`Number(...)`), чтобы в JSON уходил int, а не строка из input. Клиентская валидация/JS сверх этого не добавлялись.
+
+**Тесты** (`PluginConfigurationTests`, по образцу существующих XML-тестов; аудит по `test-audit` перед написанием): `SearchLimit_Default_IsThree`, `Deserialize_LegacyXmlWithoutSearchLimit_KeepsDefaultAndOtherValues` (XML без `<SearchLimit>` → 3, прочие поля не сброшены), `SerializeAndDeserialize_WithCustomSearchLimit_PreservesValue` (значение 7 проходит цикл сохранения/загрузки). Тест-only код в продукте не потребовался.
+
+Точечная проверка чувствительности: из `Configuration.cs` временно удалён инициализатор `= 3`; точный фильтр `FullyQualifiedName~PluginConfigurationTests`.
+
+| Состояние | Результат |
+|-----------|-----------|
+| С инициализатором | 6/6 (3 существующих + 3 новых) |
+| Без инициализатора | 4 прошло, 2 упали: `SearchLimit_Default_IsThree`, `Deserialize_LegacyXmlWithoutSearchLimit_KeepsDefaultAndOtherValues` — ровно те, что проверяют дефолт |
+| После восстановления инициализатора | 6/6 |
+
+**Прогоны.** Полный `dotnet test` — 286/286; `dotnet build` — 0 ошибок; `git diff --check` — без замечаний. В сборке видны предсуществующие предупреждения CS1591 в `Models/` (файлы не менялись, вне зоны задачи); предупреждений от изменённых файлов нет.
+
+**Ограничения проверок.** XML-тесты проверяют сериализацию `XmlSerializer`, а не живой цикл конфигурации Jellyfin; UI-подсказка и применение значения без перезапуска — ручная проверка QA в живом Jellyfin (инструкция — в задаче 003). Серверная валидация вне диапазона — задача 002 (в UI её нет по D-ARCH-4). Отклонений от задачи нет.
 
 ## Решение Техлида
 
