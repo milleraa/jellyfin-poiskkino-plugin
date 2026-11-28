@@ -3,7 +3,7 @@
 | Поле | Значение |
 |------|----------|
 | **Стадия** | `development` |
-| **Owner** | `Orchestrator` |
+| **Owner** | `developer-csharp` |
 | **Блокер** | Нет: Оркестратор вызывает исполнителей напрямую по регламенту `4cbe4d4` |
 | **Срочность** | Hotfix по запросу Стейкхолдера; P-приоритет не задан |
 | **Ветка** | `hotfix/provider-test-coverage` от `main` (`b08b586`) |
@@ -19,7 +19,7 @@
 | ID | Файл | Роль / стек | Статус |
 |----|------|-------------|--------|
 | 001 | [Поиск сериалов по году](tasks/001-series-search-year.md) | `developer-csharp` / C# · .NET | `accepted` — Техлид принял `d79f879` |
-| 002 | [Роли персон](tasks/002-metadata-person-roles.md) | `developer-csharp` / C# · .NET | `draft` — зависимость снята, готова к назначению Оркестратором |
+| 002 | [Роли персон](tasks/002-metadata-person-roles.md) | `developer-csharp` / C# · .NET | `in-progress` |
 
 ## DevOps impact check
 
@@ -108,3 +108,10 @@
 - stage: `development`
 - artifacts: [приёмка 001](tasks/001-series-search-year.md#решение-техлида), [002](tasks/002-metadata-person-roles.md), [план](tech-plan.md)
 - notes: 001 принята по `test-audit`. Можно назначать 002 роли `developer-csharp` в `hotfix/provider-test-coverage`. QA не запускать до приёмки 002 и закрытия итогового DevOps impact check.
+
+## 2026-11-28 11:56 — handoff
+- from: Orchestrator
+- to: developer-csharp
+- stage: `development`
+- artifacts: [002](tasks/002-metadata-person-roles.md), `cddd858`
+- notes: Задача 001 принята; выполнить только 002.
