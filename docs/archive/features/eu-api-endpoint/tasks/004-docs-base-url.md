@@ -3,7 +3,7 @@
 ## Метаданные
 
 - **ID:** 004
-- **Feature / Hotfix:** [docs/backlog/features/eu-api-endpoint/](../)
+- **Feature / Hotfix:** [docs/archive/features/eu-api-endpoint/](../)
 - **Назначено:** `developer-csharp`
 - **Стек / infra-область:** документация репозитория (Markdown); код и CI не меняются
 - **Статус:** `done` (см. [Результат выполнения](#результат-выполнения))

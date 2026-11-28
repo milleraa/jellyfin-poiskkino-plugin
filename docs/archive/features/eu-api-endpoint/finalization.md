@@ -40,7 +40,7 @@
 - [x] Push выполнен, PR #9 открыт, ссылка записана в `status.md` и в этом файле, отдельный commit со ссылкой сделан, повторный push выполнен.
 - [x] Рабочая и remote ветки сохранены (до merge/close PR; `--force` не применяется, ветки не удаляются).
 - [x] Документация и ADR обновлены при изменении поведения: `README.md`, `docs/architecture/overview.md`, ADR-0003 + индекс ADR.
-- [x] Папка фичи остаётся в `docs/backlog/features/eu-api-endpoint/` до принятия Стейхолдером и **не** переносится в `docs/archive/` на стадии `pr-mr-ready`.
+- [x] Папка фичи оставалась в `docs/backlog/features/eu-api-endpoint/` на стадии `pr-mr-ready` и перенесена в `docs/archive/features/eu-api-endpoint/` только после acceptance Стейхолдера (до merge PR #9).
 - [x] Секретов в диффе нет: проверено по именам файлов (`.env`, `*.key`, `*.pem`, `*.pfx`, `credentials*`, `*token*` — нет) и по содержимому диффа (единственное совпадение с шаблоном «секрет» — тестовый литерал `private const string TestApiKey = "test-api-key"` в unit-тестах).
 
 ## Финальные проверки (выполнены Финализатором, 2026-11-28)
@@ -116,6 +116,12 @@ Rollout / rollback: деплой — обычное ручное копиров�
 
 ## Acceptance/archive
 
-- **Accepted:** _нет_ — стадия `pr-mr-ready`, решение за Стейхолдером (`/accept-feature`). Merge PR Финализатором **не** выполняется.
-- После явного acceptance и **до merge**: папка переносится в `docs/archive/features/eu-api-endpoint/`, запись добавляется в [completed-work](../../../history/completed-work.md), в архивном `status.md` выставляется `accepted`; commit + push в эту же ветку, затем merge одним мержем.
-- Если PR не принят: работа возвращается через `.opencode/skills/pr-mr-rework/SKILL.md`, без переноса в архив.
+- **Accepted:** **да** — Стейхолдер подтвердил приёмку явно в чате 2026-11-28 при **открытом, не merged** PR #9 (штатный флоу DoD «Accepted / Done»: accept → archive finalization **до** merge). Merge PR Финализатором **не** выполнялся — остаётся за Стейхолдером.
+- **Archive finalization выполнена** в той же ветке `feature/eu-api-endpoint` (новая ветка не создавалась), коммит `docs(eu-api-endpoint): принять фичу и перенести в archive до merge (#9)` + push в `origin/feature/eu-api-endpoint`:
+  - `git mv docs/backlog/features/eu-api-endpoint → docs/archive/features/eu-api-endpoint` целиком (13 файлов + `tasks/` с 5 задачами, потерь нет; в `docs/backlog/features/` остался только `feature-template`);
+  - в архивном [status.md](status.md) — стадия `accepted`, owner `Stakeholder`, заполнены разделы QA и PR/MR, добавлена финальная запись Changelog;
+  - запись в [completed-work](../../../history/completed-work.md) (таблица + резюме) и в индекс [docs/archive/features/README.md](../README.md);
+  - ссылка в [test-runs](../../../qa/test-runs.md) переведена на `../archive/features/eu-api-endpoint/qa.md`; в архивном [README.md](README.md) починены 5 ссылок на `api-docs/` и `PoiskKinoMetadataPlugin/` (были с ошибкой глубины `../../../` вместо `../../../../` — дефект достался из backlog);
+  - относительные ссылки архивной папки проверены резолвером — битых нет.
+- После merge PR #9 все изменения (код + архивация) попадут в `main` одним мержем, без коммитов-мусора поверх `main`. Ветка `feature/eu-api-endpoint` и `origin/feature/eu-api-endpoint` сохранены до merge/close PR.
+- Если бы PR был отклонён: работа возвращалась бы через `.opencode/skills/pr-mr-rework/SKILL.md`, без переноса в архив (не потребовалось).

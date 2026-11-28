@@ -6,12 +6,12 @@
 
 | Поле | Значение |
 |------|----------|
-| **Стадия** | `pr-mr-ready` |
-| **Owner** | `Orchestrator` / `Stakeholder review` |
-| **Ветка** | `feature/eu-api-endpoint` (запушена в `origin`, remote branch сохранён до merge/close) |
-| **PR/MR** | [PR #9](https://github.com/milleraa/jellyfin-poiskkino-plugin/pull/9) — `feat(config): настраиваемый базовый URL API (зеркало eu-api)`, base `main` ← head `feature/eu-api-endpoint`; закрывает issue [#8](https://github.com/milleraa/jellyfin-poiskkino-plugin/issues/8) (`Closes #8`) |
-| **Commit со ссылкой на PR/MR** | `docs(eu-api-endpoint): открыть PR #9, -> pr-mr-ready` (см. git log ветки) |
-| **QA** | **pass** (2026-11-28, `9577df6`) — см. [qa.md](qa.md), [test-runs](../../../qa/test-runs.md) |
+| **Стадия** | `accepted` (2026-11-28, явный accept Стейхолдера в чате при открытом PR #9) |
+| **Owner** | `Stakeholder` |
+| **Ветка** | `feature/eu-api-endpoint` (запушена в `origin`; remote branch сохранён до merge/close PR, archive-коммиты — в этой же ветке) |
+| **PR/MR** | [PR #9](https://github.com/milleraa/jellyfin-poiskkino-plugin/pull/9) — `feat(config): настраиваемый базовый URL API (зеркало eu-api)`, base `main` ← head `feature/eu-api-endpoint`; `Closes #8`; **merged — нет** (открыт, `MERGEABLE`; merge — решение Стейхолдера) |
+| **Commit со ссылкой на PR/MR** | `docs(eu-api-endpoint): открыть PR #9, -> pr-mr-ready`, `docs(eu-api-endpoint): зафиксировать зелёный CI для PR #9`; archive finalization — `docs(eu-api-endpoint): принять фичу и перенести в archive до merge (#9)` (см. git log ветки) |
+| **QA** | **pass** (2026-11-28) — прогон на rev `9577df6`, отчёт закоммичен `3ef319c`; см. [qa.md](qa.md), [test-runs](../../../qa/test-runs.md) |
 | **Блокеры** | _нет_ |
 
 ### Классификация (intake)
@@ -69,7 +69,9 @@
 
 | Дата | Результат | Ссылка на прогон |
 |------|-------------|------------------|
-| 2026-11-28 | **pass** — 281/281 ×4 прогона, build 0 ошибок (baseline `CS1591` = 122); AC-1…AC-12 (с AC-7′) pass, дефектов нет | [test-runs](../../../qa/test-runs.md), [qa.md](qa.md) |
+| 2026-11-28 | **pass** — 281/281 ×4 прогона, build 0 ошибок (baseline `CS1591` = 122); AC-1…AC-12 (с AC-7′) pass, дефектов нет. Прогон на rev `9577df6` (перед QA-коммитом), отчёт закоммичен `3ef319c`. Ограничения прогона: UI и запись `plugins/configurations/*.xml` в живом Jellyfin — ручной сценарий администратора ([tasks/003](tasks/003-config-page-field.md)); e2e-поиск на EU-хосте без реального API-ключа (R2/A7); live-переключение без рестарта не проверялось (действует AC-7′); residual risk «ключ, вставленный в поле базового URL» принят Техлидом и подтверждён прогоном | [test-runs](../../../qa/test-runs.md), [qa.md](qa.md) |
+
+Вердикт QA не изменился на финализации и acceptance: финальные проверки Финализатора на rev `3ef319c` — build 0 ошибок (только baseline `CS1591` = 122), тесты 281/281; CI PR #9 (`build-and-test`) — зелёный на всех push.
 
 ## PR/MR feedback / rework
 
@@ -94,6 +96,18 @@
 Один unique reject получает `not-triggered` и не блокирует rework. `candidate` возможен только при двух или более unique comparable evidence-linked cases; изменения процесса выполняются только отдельным reviewed PR/MR. Правила: [process learning](../../../process/learning/README.md).
 
 ## Changelog (handoff)
+
+### 2026-11-28 — acceptance/archive finalization: `accepted`
+
+- from: Finalizer
+- to: Stakeholder / Orchestrator
+- stage: `accepted`
+- artifacts: [PR #9](https://github.com/milleraa/jellyfin-poiskkino-plugin/pull/9), эта папка перенесена в `docs/archive/features/eu-api-endpoint/`, запись в [completed-work](../../../history/completed-work.md), обновлён индекс [docs/archive/features/README.md](../README.md), коммит `docs(eu-api-endpoint): принять фичу и перенести в archive до merge (#9)` в ветке `feature/eu-api-endpoint`
+- notes:
+  - **Решение Стейхолдера:** приёмка подтверждена явно в чате (2026-11-28) при **открытом, не merged** PR #9 — штатный флоу DoD «Accepted / Done» (accept → archive finalization **до** merge).
+  - **Что сделано (archive finalization в существующей ветке, без новой ветки):** `git mv docs/backlog/features/eu-api-endpoint → docs/archive/features/eu-api-endpoint` целиком (13 файлов + `tasks/` c 5 задачами, потерь нет); в архивном `status.md` стадия `accepted`, owner `Stakeholder`; строка в [completed-work](../../../history/completed-work.md) и резюме; поправлена ссылка в [test-runs](../../../qa/test-runs.md) (`../backlog/...` → `../archive/...`); обновлён индекс архивных фич; в архивном [README.md](README.md) починены 5 относительных ссылок на `api-docs/` и `PoiskKinoMetadataPlugin/` (были с ошибкой глубины: `../../../` вместо `../../../../`, дефект существовал ещё в backlog).
+  - **Проверки:** относительные ссылки архивной папки прогнаны резолвером — битых не осталось; в `docs/`/`README.md` не осталось ссылок на `backlog/features/eu-api-endpoint`; код, тесты и CI не менялись (только `docs/`), поэтому PR #9 остался `MERGEABLE`.
+  - **Merge не выполнялся:** PR #9 остаётся открытым, решение о merge — за Стейхолдером; после merge все изменения (код + архивация) попадут в `main` одним мержем. Ветка `feature/eu-api-endpoint` и `origin/feature/eu-api-endpoint` сохранены.
 
 ### 2026-11-28 — handoff Finalizer → Orchestrator (PR открыт, `pr-mr-ready`)
 

@@ -3,7 +3,7 @@
 ## Метаданные
 
 - **ID:** 002
-- **Feature / Hotfix:** [docs/backlog/features/eu-api-endpoint/](../)
+- **Feature / Hotfix:** [docs/archive/features/eu-api-endpoint/](../)
 - **Назначено:** `developer-csharp`
 - **Стек / infra-область:** C# / .NET 10, Jellyfin 12.0.0 (`Jellyfin.Controller`/`Jellyfin.Model`), xUnit + Moq (`Moq.Protected`); HTTP-транспорт плагина
 - **Статус:** `done` (см. [Результат выполнения](#результат-выполнения))

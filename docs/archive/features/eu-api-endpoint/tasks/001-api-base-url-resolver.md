@@ -3,7 +3,7 @@
 ## Метаданные
 
 - **ID:** 001
-- **Feature / Hotfix:** [docs/backlog/features/eu-api-endpoint/](../)
+- **Feature / Hotfix:** [docs/archive/features/eu-api-endpoint/](../)
 - **Назначено:** `developer-csharp`
 - **Стек / infra-область:** C# / .NET 10, xUnit unit-тесты; чистая функция без Jellyfin, HTTP и логгера
 - **Статус:** `done` (см. [Результат выполнения](#результат-выполнения))

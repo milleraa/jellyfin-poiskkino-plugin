@@ -3,7 +3,7 @@
 ## Метаданные
 
 - **ID:** 003
-- **Feature / Hotfix:** [docs/backlog/features/eu-api-endpoint/](../)
+- **Feature / Hotfix:** [docs/archive/features/eu-api-endpoint/](../)
 - **Назначено:** `developer-csharp`
 - **Стек / infra-область:** HTML + JS страницы конфигурации плагина Jellyfin (embedded resource `Configuration/configPage.html`); C# не меняется
 - **Статус:** `done` (см. [Результат выполнения](#результат-выполнения))

@@ -3,7 +3,7 @@
 ## Метаданные
 
 - **ID:** 005
-- **Feature / Hotfix:** [docs/backlog/features/eu-api-endpoint/](../)
+- **Feature / Hotfix:** [docs/archive/features/eu-api-endpoint/](../)
 - **Назначено:** `developer-csharp`
 - **Стек / infra-область:** C# / .NET 10, xUnit + Moq; только `PoiskKinoApiClient` (приватный метод логирования) и тесты
 - **Статус:** `done` (см. [Результат выполнения](#результат-выполнения))
