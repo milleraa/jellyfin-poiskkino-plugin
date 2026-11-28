@@ -7,7 +7,7 @@
 | Поле | Значение |
 |------|----------|
 | **Стадия** | `development` |
-| **Owner** | `Developer-CSharp` (задача 001) |
+| **Owner** | `Developer-CSharp` (задача 002 — к назначению Оркестратором) |
 | **Ветка** | `feature/search-limit-setting` |
 | **PR/MR** | _нет_ |
 | **Commit со ссылкой на PR/MR** | _нет_ |
@@ -24,7 +24,7 @@
 
 | ID | Файл | Роль / стек | Статус |
 |----|------|-------------|--------|
-| 001 | [001-config-search-limit](tasks/001-config-search-limit.md) | `developer-csharp` / C#, HTML настроек | `ready-for-review` — выполнено, ожидается приёмка Техлидом |
+| 001 | [001-config-search-limit](tasks/001-config-search-limit.md) | `developer-csharp` / C#, HTML настроек | `accepted` — приёмка Техлидом пройдена 2026-11-28 (`d01ee2d`) |
 | 002 | [002-client-search-limit-cache](tasks/002-client-search-limit-cache.md) | `developer-csharp` / C#, xUnit, Moq | `todo` |
 | 003 | [003-providers-threading-readme](tasks/003-providers-threading-readme.md) | `developer-csharp` / C#, xUnit, Moq | `todo` |
 
@@ -137,3 +137,11 @@
 - stage: `development`
 - artifacts: [tasks/001-config-search-limit.md](tasks/001-config-search-limit.md), [tech-plan.md](tech-plan.md), [analysis.md](analysis.md) (AC-1, AC-6), [architecture.md](architecture.md)
 - notes: Назначена задача 001 (свойство `SearchLimit`, поле на configPage.html, тесты дефолта). Задачи 002 и 003 не запускать — строго последовательно после приёмки. Ожидаемый результат: код+тесты 001, отчёт, локальный commit без push.
+
+### 2026-11-28 — handoff
+
+- from: `Tech Lead`
+- to: `Orchestrator`
+- stage: `development` — задача 001 принята (`accepted`), следующий шаг — назначение 002
+- artifacts: [tasks/001-config-search-limit.md](tasks/001-config-search-limit.md) (решение Техлида), коммит `d01ee2d` в ветке `feature/search-limit-setting` (без push)
+- notes: Приёмка 001 — **accept**. Воспроизведено: `dotnet build` 0 ошибок (предупреждения только предсуществующие CS1591 в `Models/`), `dotnet test` 286/286, точечный фильтр конфиг-тестов 6/6, `git diff --check` чисто. AC-1/AC-6 (серверная часть) закрыты; границы соблюдены — клиент/провайдеры/кэш не тронуты. Замечания разработчика приняты: `Number()` — тип-коерция (не валидация, D-ARCH-4); чекбоксы в файле задачи несущественны; cref на `SearchLimitResolver` отложен на 002 (добавлен пункт в «Технические заметки» задачи 002); серверная валидация — 002, ручной QA UI/персистентности — 003. DevOps impact по итоговому diff: нет, DevOps-задача не нужна. Оркестратору: назначить задачу 002 на `developer-csharp` (строго после 001, в этой же ветке); QA пока не запускать — финальный tech-lead-review с `test-audit` после 003.

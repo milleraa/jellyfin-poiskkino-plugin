@@ -7,7 +7,7 @@
 - **Назначено:** `developer-csharp`
 - **Стек:** C# / .NET (Jellyfin plugin SDK), HTML страницы настроек Dashboard, xUnit
 - **Ветка:** `feature/search-limit-setting`
-- **Статус:** `ready-for-review` — ожидается приёмка Техлидом
+- **Статус:** `accepted` — приёмка Техлидом пройдена 2026-11-28
 - **Локальный коммит:** `feat(config): добавь лимит результатов поиска в конфигурацию и страницу настроек` в ветке `feature/search-limit-setting` (без push)
 - **Код:** [Configuration.cs](../../../../../PoiskKinoMetadataPlugin/Configuration.cs), [configPage.html](../../../../../PoiskKinoMetadataPlugin/Configuration/configPage.html), [ConfigurationTests.cs](../../../../../PoiskKinoMetadataPlugin.UnitTests/ConfigurationTests.cs)
 
@@ -63,4 +63,21 @@
 
 ## Решение Техлида
 
-_Заполняется при приёмке._
+**Accept** (2026-11-28). Задача 001 закрыта; Оркестратору можно назначать задачу 002.
+
+Проверено по diff `d01ee2d`:
+
+- **AC-1** — `public int SearchLimit { get; set; } = 3` с XML-doc/remarks в стиле `ApiBaseUrl`; свойство добавлено последним членом класса — порядок XML-элементов существующих конфигов не меняется, отсутствующий элемент даёт дефолт 3 (подтверждено тестом legacy-XML). Ссылки в remarks ведут только на существующие члены — предупреждений CS1574 нет.
+- **AC-6** — `configPage.html` консистентен с существующими полями: `inputContainer`/`inputLabelUnfocused` с `for="searchLimit"`, `id`=`name`, `is="emby-input"`, `min=1 max=10`; русская подсказка покрывает назначение, диапазон, дефолт, расход дневного лимита, fallback 3 + предупреждение в логе, применение без перезапуска. `loadConfiguration` — паттерн `apiBaseUrl` (undefined/0 → 3); `saveConfiguration` включает `config.SearchLimit` в `updatePluginConfiguration`.
+- **Границы** — тронуты только `Configuration.cs`, `configPage.html`, `ConfigurationTests.cs`; клиент, провайдеры, кэш и ключ кэша не изменены (зона 002/003).
+- **Прогоны (воспроизведено Техлидом)** — `dotnet build`: 0 ошибок; предупреждения только предсуществующие CS1591 в `Models/` (вне изменённых файлов — 0); `dotnet test` — 286/286; точечный фильтр `PluginConfigurationTests` — 6/6; `git diff --check` — чисто.
+- **test-audit** — новые тесты проверяют поведение (дефолт, совместимость старого XML, round-trip), по образцу существующих, дублей нет; чувствительность к регрессии дефолта подтверждена мутационной проверкой разработчика (удаление инициализатора `= 3` роняет ровно два дефолт-теста).
+
+Решения по замечаниям разработчика:
+
+1. `Number(...)` в `saveConfiguration` — принято как тип-коерция (int в JSON), не валидация: соответствует D-ARCH-4 (UI не доверяем, серверная валидация — 002). Пустой/нечисловой ввод даёт `0` — резолвер 002 вернёт дефолт с `Warning`.
+2. Отсутствие чекбоксов в файле задачи — несущественно: AC-покрытие полно в «Результате и проверках» с evidence.
+3. cref на `SearchLimitResolver` в remarks — корректно отложен на 002 (сейчас тип не существует, `<see cref>` дал бы CS1574). В задачу 002 добавлен пункт: после создания резолвера дополнить remarks ссылку.
+4. Серверная валидация диапазона — 002; ручной QA UI/персистентности — 003: соответствует DoD tech-plan (AC-6 в 001 — unit + код-ревью).
+
+DevOps impact по итоговому diff: изменений нет (поле хранится в существующем XML-конфиге; секреты/env/CI/упаковка не затронуты) — DevOps-задача не требуется.

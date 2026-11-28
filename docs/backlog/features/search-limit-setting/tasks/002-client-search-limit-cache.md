@@ -31,6 +31,9 @@
 
 ## Технические заметки
 
+- Из приёмки 001 (2026-11-28): в remarks `PluginConfiguration.SearchLimit` (`Configuration.cs`) добавить ссылку на `<see cref="SearchLimitResolver"/>` (место фразы про валидацию вне диапазона) — в 001 она отложена, чтобы не давать CS1574 до появления типа.</think><tool_call>edit<arg_key>newString</arg_key><arg_value>## Технические заметки
+
+- Из приёмки 001 (2026-11-28): в remarks `PluginConfiguration.SearchLimit` (`Configuration.cs`) добавить ссылку на резолвер (`<see cref="SearchLimitResolver"/>`) — в 001 она отложена, чтобы не давать CS1574 до появления типа. Мелкая правка documentation-комментария в объёме 002.
 - Лог-сообщение fallback по образцу клиента: без `{apiKey}`, например `Invalid search limit {rawValue} ({reason}), falling back to default {defaultLimit}`; `TruncateForLog` не требуется (int).
 - Существующие тесты кэша проходят за счёт дефолта `searchLimit = 3`: дважды один лимит → тот же ключ. Их смысл по AC-5 не меняется — расширяются, не заменяются.
 - Нечисловой XML сюда не входит: в резолвер приходит уже `int`; поведение Jellyfin при повреждённом конфиге не меняется (AC-4, R5 — код-ревью точка).
