@@ -6,8 +6,8 @@
 
 | Поле | Значение |
 |------|----------|
-| **Стадия** | `architecture` |
-| **Owner** | `Architect` |
+| **Стадия** | `tech-decomposition` |
+| **Owner** | `Orchestrator` |
 | **Ветка** | `feature/search-limit-setting` |
 | **PR/MR** | _нет_ |
 | **Commit со ссылкой на PR/MR** | _нет_ |
@@ -108,3 +108,11 @@
 - stage: `architecture`
 - artifacts: [analysis.md](analysis.md), [brief.md](brief.md), `PoiskKinoApiClient.cs` (`SearchAsync`, `GenerateCacheKey`), `Configuration.cs`, `PoiskKinoMovieProvider.cs`
 - notes: Решения Стейхолдера по Q1/Q2 зафиксированы выше как обязательные ограничения. Ожидаемый результат: `architecture.md` (дизайн проброса настройки, раскладка ключа кэша с лимитом, точка чтения конфигурации), ADR при необходимости. Может вернуть к Аналитику при расхождениях.
+
+### 2026-11-28 — handoff
+
+- from: `Architect`
+- to: `Orchestrator`
+- stage: `tech-decomposition`
+- artifacts: [architecture.md](architecture.md), [ADR-0004](../../../architecture/decisions/ADR-0004-configurable-search-limit.md)
+- notes: Дизайн готов, расхождений с анализом нет — к Аналитику не возвращался. Выбран проброс параметром `int searchLimit = 3` в `SearchAsync` (паттерн `ApiKey` — применение без перезапуска; клиент не получает ссылок на `Plugin`); валидация 1–10 — единая точка в клиенте с fallback на дефолт 3 + `Warning`; ключ кэша `search:{title}[:{year}]:{limit}` из эффективного значения (вариант А, Q2). Для декомпозиции Техлиду: механизм дедупликации `Warning` при невалидном значении (architecture.md, риск A1); существующие тесты клиента совместимы за счёт необязательного параметра. DevOps impact: нет. Блокеров нет.
