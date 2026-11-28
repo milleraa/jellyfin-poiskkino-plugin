@@ -30,6 +30,10 @@ public class PoiskKinoImageProvider(
 
     private string ApiKey => Plugin.Instance?.Configuration?.ApiKey ?? string.Empty;
 
+    // Экземплярное свойство, как ApiKey: лимит читается из конфигурации при каждом вызове поиска,
+    // поэтому смена настройки применяется без перезапуска Jellyfin (в отличие от статического ApiBaseUrl).
+    private int SearchLimit => Plugin.Instance?.Configuration?.SearchLimit ?? 3;
+
     // Статическое свойство, а не экземплярное: инициализатор поля Lazy не может обращаться к экземпляру (CS0236),
     // а источник значения — статический Plugin.Instance. Конфигурация читается при первом запросе, не при загрузке плагина.
     private static string ApiBaseUrl => Plugin.Instance?.Configuration?.ApiBaseUrl ?? string.Empty;
@@ -96,7 +100,8 @@ public class PoiskKinoImageProvider(
                     title,
                     item.ProductionYear,
                     ApiKey,
-                    cancellationToken);
+                    cancellationToken,
+                    searchLimit: SearchLimit);
 
                 if (searchResponse?.Results == null || searchResponse.Results.Count == 0)
                 {

@@ -26,7 +26,7 @@
 |----|------|-------------|--------|
 | 001 | [001-config-search-limit](tasks/001-config-search-limit.md) | `developer-csharp` / C#, HTML настроек | `accepted` — приёмка Техлидом пройдена 2026-11-28 (`d01ee2d`) |
 | 002 | [002-client-search-limit-cache](tasks/002-client-search-limit-cache.md) | `developer-csharp` / C#, xUnit, Moq | `accepted` — приёмка Техлидом пройдена 2026-11-28 (`a0febfe`) |
-| 003 | [003-providers-threading-readme](tasks/003-providers-threading-readme.md) | `developer-csharp` / C#, xUnit, Moq | `todo` |
+| 003 | [003-providers-threading-readme](tasks/003-providers-threading-readme.md) | `developer-csharp` / C#, xUnit, Moq | `done` — выполнено `developer-csharp` 2026-11-28, ожидает приёмки Техлида |
 
 Порядок: строго 001 → 002 → 003 в ветке `feature/search-limit-setting` (детали и зависимости — [tech-plan.md](tech-plan.md)).
 
@@ -169,3 +169,12 @@
 - stage: `development`
 - artifacts: [tasks/003-providers-threading-readme.md](tasks/003-providers-threading-readme.md), [tech-plan.md](tech-plan.md) (DoD), [analysis.md](analysis.md) (AC-2 потребители, AC-7, AC-9, AC-10)
 - notes: Назначена задача 003 (последняя в плане): проброс `SearchLimit` в Movie/Series/Image провайдеры (паттерн `ApiKey`, именованный аргумент `searchLimit:`), README, финальный гейт `dotnet build -c Release` + полный `dotnet test`, инструкция ручного QA для задачи 004 (QA-стадия). После приёмки 003 — финальный tech-lead-review с `test-audit`, затем QA.
+
+### 2026-11-28 — handoff
+
+- from: `Developer-CSharp`
+- to: `Orchestrator`
+- stage: `development` — задача 003 выполнена (`done`), готова к приёмке Техлида
+- artifacts: [tasks/003-providers-threading-readme.md](tasks/003-providers-threading-readme.md) (раздел «Результат и проверки»), коммит `feat(providers)` в ветке `feature/search-limit-setting` (без push)
+- notes: Проброс `SearchLimit` в три провайдера — экземплярное свойство по образцу `ApiKey` (`?? 3`) + именованный аргумент `searchLimit: SearchLimit` в единственных вызовах `SearchAsync` (Movie:83, Series:83, Image:99); fallback-путь `GetMetadataInternal → GetSearchResultsInternal` идёт через ту же точку (правки не требовал). Тест AC-7 (`GetSearchResults_SearchLimitFromConfiguration_ChangesRequestLimitWithoutRestart`) — смена конфигурации 7 → 4 меняет URL двух запросов на одном экземпляре провайдера; мутационная проверка: убрать аргумент → падает (1 запрос вместо 2, кэш с `limit=3`). README: «Возможности», шаг «Настройки», подраздел «Количество результатов поиска», примечание к API-примеру, «Кэширование» (`название:год:лимит`); компромисс int.MinValue в README не документировался (по задаче). AC-9: подсчёт запросов не менялся (`MaxRequestsPerDay = 200` вне diff). Прогоны: `dotnet test` 327/327 (+1), `dotnet build -c Release --no-incremental` 0 ошибок / 61 предсуществующее CS1591 (идентично базе 002), `git diff --check` чисто. Инструкция ручного QA (AC-6/AC-7/AC-8 smoke + demo-ключ, R1) — в файле задачи 003. Ограничение для QA: видимое число подсказок может быть меньше лимита из-за локальной фильтрации (F9). Границы соблюдены: клиент, резолвер, конфигурация, configPage.html не тронуты. DevOps impact по итоговому diff: нет. Следующий шаг: финальный tech-lead-review с `test-audit`, затем QA.
+
