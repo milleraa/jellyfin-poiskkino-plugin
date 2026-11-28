@@ -8,7 +8,7 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Authors>Your Name</Authors>
     <Description>Jellyfin metadata plugin for PoiskKino API (Russian metadata provider)</Description>
-    <Version>2026.11.28</Version>
+    <Version>2026.11.28.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
