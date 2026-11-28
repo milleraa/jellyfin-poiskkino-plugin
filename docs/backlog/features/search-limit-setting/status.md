@@ -7,7 +7,7 @@
 | Поле | Значение |
 |------|----------|
 | **Стадия** | `development` |
-| **Owner** | `Developer-CSharp` (задача 002) |
+| **Owner** | `Developer-CSharp` (задача 003 — к назначению Оркестратором) |
 | **Ветка** | `feature/search-limit-setting` |
 | **PR/MR** | _нет_ |
 | **Commit со ссылкой на PR/MR** | _нет_ |
@@ -25,7 +25,7 @@
 | ID | Файл | Роль / стек | Статус |
 |----|------|-------------|--------|
 | 001 | [001-config-search-limit](tasks/001-config-search-limit.md) | `developer-csharp` / C#, HTML настроек | `accepted` — приёмка Техлидом пройдена 2026-11-28 (`d01ee2d`) |
-| 002 | [002-client-search-limit-cache](tasks/002-client-search-limit-cache.md) | `developer-csharp` / C#, xUnit, Moq | `todo` |
+| 002 | [002-client-search-limit-cache](tasks/002-client-search-limit-cache.md) | `developer-csharp` / C#, xUnit, Moq | `accepted` — приёмка Техлидом пройдена 2026-11-28 (`a0febfe`) |
 | 003 | [003-providers-threading-readme](tasks/003-providers-threading-readme.md) | `developer-csharp` / C#, xUnit, Moq | `todo` |
 
 Порядок: строго 001 → 002 → 003 в ветке `feature/search-limit-setting` (детали и зависимости — [tech-plan.md](tech-plan.md)).
@@ -153,3 +153,11 @@
 - stage: `development`
 - artifacts: [tasks/002-client-search-limit-cache.md](tasks/002-client-search-limit-cache.md), [tech-plan.md](tech-plan.md), ADR-0004 (docs/architecture/decisions/), [analysis.md](analysis.md) (AC-2…AC-5, AC-7), решение A1 в tech-plan
 - notes: Назначена задача 002 (параметр `searchLimit` после `CancellationToken`, резолвер валидации, ключ кэша с лимитом, дедупликация Warning, кэш-тесты, cref из заметок 002). Задачу 003 не начинать. Ожидаемый результат: код+тесты 002, отчёт, локальный commit без push.
+
+### 2026-11-28 — handoff
+
+- from: `Tech Lead`
+- to: `Orchestrator`
+- stage: `development` — задача 002 принята (`accepted`), следующий шаг — назначение 003
+- artifacts: [tasks/002-client-search-limit-cache.md](tasks/002-client-search-limit-cache.md) (решение Техлида), [tech-plan.md](tech-plan.md) (компромисс int.MinValue в A1), коммит `a0febfe` в ветке `feature/search-limit-setting` (без push)
+- notes: Приёмка 002 — **accept**. Воспроизведено: `dotnet build` (--no-incremental) — предупреждения 61/61 идентичны базе f845ad3 (все предсуществующие CS1591 в `Models/`), полный `dotnet test` 326/326 (+40), `git diff --check` чисто; ссылок на `Plugin` в клиенте/резолвере нет. Границы соблюдены: провайдеры, `configPage.html`, README не тронуты (зона 003). `test-audit` пройден: тесты поведенческие, без дублей, мутационные проверки правдоподобны (убрать `:{limit}` из ключа / убрать дедупликацию → падают заявленные тесты). Отклонения приняты: (1) дефолт `SearchLimitResolver.DefaultLimit` (const 3) вместо литерала — одна точка истины, прецедент `ApiBaseUrlResolver.DefaultBaseUrl`; (2) валидация до кэш-lookup (Warning и на кэш-хите) — структурно обязательна для варианта А, спам исключён дедупликацией. Крайний случай int.MinValue (первый поиск без Warning) принят как компромисс и зафиксирован в tech-plan (A1). DevOps impact по итоговому diff: нет, DevOps-задача не нужна. Оркестратору: назначить задачу 003 на `developer-csharp` (провайдеры Movie/Series/Image + README + финальный гейт, эта же ветка); QA не запускать — финальный tech-lead-review с `test-audit` после 003.
