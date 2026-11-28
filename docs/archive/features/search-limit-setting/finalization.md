@@ -2,9 +2,9 @@
 
 ## PR/MR
 
-- **Ссылка:** _TBD — заполняется при открытии PR_
-- **Ветка:** `feature/search-limit-setting` → `main` (первый push в `origin`; ветку и remote branch не удалять до merge/close PR)
-- **Commit со ссылкой на PR/MR:** _TBD — заполняется после создания PR_
+- **Ссылка:** [jellyfin-poiskkino-plugin#11](https://github.com/milleraa/jellyfin-poiskkino-plugin/pull/11) — `feat(config): настройка количества результатов поиска PoiskKino (1–10, дефолт 3)` (base `main` ← head `feature/search-limit-setting`)
+- **Ветка:** `feature/search-limit-setting` → `main` (push в `origin`; ветку и remote branch не удалять до merge/close PR)
+- **Commit со ссылкой на PR/MR:** `docs(chore): фиксируй PR #11 в архивных документах search-limit-setting` (обновлены [status.md](status.md), этот файл, индекс архива и completed-work), повторный push в ту же ветку
 
 ## Порядок финализации (отклонение по решению Стейхолдера)
 

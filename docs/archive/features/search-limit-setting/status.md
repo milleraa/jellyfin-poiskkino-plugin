@@ -9,8 +9,8 @@
 | **Стадия** | `accepted` (2026-11-28 — явный accept Стейхолдера **до открытия PR/MR**: «можно сразу архивировать и готовить архивированный mr. Версию повысь на один билд.»; архивация выполнена в ветке до merge по прецеденту `provider-test-coverage`, PR/MR готовится Финализатором этим же изменением) |
 | **Owner** | `Stakeholder` |
 | **Ветка** | `feature/search-limit-setting` → `main` |
-| **PR/MR** | _TBD — заполняется при открытии PR_ |
-| **Commit со ссылкой на PR/MR** | _TBD — заполняется после создания PR_ |
+| **PR/MR** | [PR #11](https://github.com/milleraa/jellyfin-poiskkino-plugin/pull/11) — `feat(config): настройка количества результатов поиска PoiskKino (1–10, дефолт 3)`, base `main` ← head `feature/search-limit-setting`; **merged — нет** (merge — решение Стейхолдера) |
+| **Commit со ссылкой на PR/MR** | `docs(chore): фиксируй PR #11 в архивных документах search-limit-setting` (status.md, finalization.md, индекс архива, completed-work), повторный push в ту же ветку |
 | **Блокеры** | _нет_; открытые ручные ограничения после смоука — AC-7 live и R1 (нет demo-ключа); AC-6 UI и AC-8 закрыты смоуком Оркестратора, приняты QA (детали в [qa.md](qa.md)); ограничения приняты Стейхолдером в решении об архивации |
 | **План реализации** | **готов к исполнению** — [tech-plan.md](tech-plan.md): 001 → 002 → 003, роль `developer-csharp` |
 

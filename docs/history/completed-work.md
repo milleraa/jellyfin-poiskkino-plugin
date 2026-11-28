@@ -8,7 +8,7 @@
 | 2026-08-24 | `logo-images` | feature | [#3](https://github.com/milleraa/jellyfin-poiskkino-plugin/pull/3) (open, не merged; принято Стейхолдером до merge `/accept-feature`) | [archive/features/logo-images](../archive/features/logo-images/) |
 | 2026-11-28 | `eu-api-endpoint` | feature | [#9](https://github.com/milleraa/jellyfin-poiskkino-plugin/pull/9) (open, не merged; принято Стейхолдером в чате при открытом PR) | [archive/features/eu-api-endpoint](../archive/features/eu-api-endpoint/) |
 | 2026-11-28 | `provider-test-coverage` | hotfix | [#10](https://github.com/milleraa/jellyfin-poiskkino-plugin/pull/10) (принят Стейкхолдером до merge) | [archive/hotfixes/provider-test-coverage](../archive/hotfixes/provider-test-coverage/) |
-| 2026-11-28 | `search-limit-setting` | feature | _TBD — PR открывается Финализатором_ (принят Стейхолдером до создания PR) | [archive/features/search-limit-setting](../archive/features/search-limit-setting/) |
+| 2026-11-28 | `search-limit-setting` | feature | [#11](https://github.com/milleraa/jellyfin-poiskkino-plugin/pull/11) (открыт, не merged; принят Стейхолдером до создания PR) | [archive/features/search-limit-setting](../archive/features/search-limit-setting/) |
 
 ## Резюме
 
