@@ -7,8 +7,8 @@
 - **Назначено:** `developer-csharp`
 - **Стек:** C# / .NET (Jellyfin plugin SDK), xUnit, Moq
 - **Ветка:** `feature/search-limit-setting`
-- **Статус:** `done` — выполнено `developer-csharp` 2026-11-28, ожидает приёмки Техлида
-- **Локальный коммит:** `feat(providers): пробрось SearchLimit из конфигурации в провайдеры и опиши настройку в README` в ветке `feature/search-limit-setting` (без push)
+- **Статус:** `accepted` — финальная приёмка Техлидом пройдена 2026-11-28 (коммит `c894715`); фича передана в QA
+- **Локальный коммит:** `c894715` — `feat(providers): пробрось SearchLimit из конфигурации в провайдеры и опиши настройку в README` в ветке `feature/search-limit-setting` (без push)
 - **Код:** [PoiskKinoMovieProvider.cs](../../../../../PoiskKinoMetadataPlugin/PoiskKinoMovieProvider.cs), [PoiskKinoSeriesProvider.cs](../../../../../PoiskKinoMetadataPlugin/PoiskKinoSeriesProvider.cs), [PoiskKinoImageProvider.cs](../../../../../PoiskKinoMetadataPlugin/PoiskKinoImageProvider.cs), [README.md](../../../../../README.md), [PluginTestFixture.cs](../../../../../PoiskKinoMetadataPlugin.UnitTests/PluginTestFixture.cs), провайдер-тесты ([фильмы](../../../../../PoiskKinoMetadataPlugin.UnitTests/Providers/PoiskKinoMovieProviderTests.cs))
 - **Зависимости:** строго после [001](001-config-search-limit.md) (читает `Configuration.SearchLimit`) и [002](002-client-search-limit-cache.md) (передаёт параметр в `SearchAsync`)
 
@@ -71,4 +71,13 @@
 
 ## Решение Техлида
 
-_Заполняется при приёмке (финальный гейт фичи перед tech-lead-review и QA)._
+**accept** — финальная приёмка 2026-11-28, коммит `c894715`. Воспроизведено Техлидом: полный `dotnet test` — 327/327; `dotnet build -c Release --no-incremental` — 0 ошибок, 61 предсуществующее CS1591 в `Models/` (идентично принятой базе 002); `git diff --check` чисто.
+
+- **Проброс (AC-2):** все три вызова `SearchAsync` в кодовой базе (Movie:83, Series:83, Image:99) покрыты именованным аргументом `searchLimit: SearchLimit`; вторых вызовов нет. Fallback-путь `GetMetadataInternal → GetSearchResultsInternal` (`:181` → `:83`) подтверждён в Movie и Series — идёт через ту же единственную точку.
+- **Стиль `ApiKey`:** экземплярное свойство-выражение `?? 3` размещено рядом с `ApiKey`, комментарий корректно противопоставляет его статическому `ApiBaseUrl` (в т.ч. причину CS0236); валидация диапазона — не в провайдере, а в клиенте (002) — границы слоёв соблюдены.
+- **test-audit теста AC-7:** поведенческий (наблюдаемый результат — URL захваченных `HttpRequestMessage`, без проверок структуры исходников и закрытых членов); дубля нет — клиентские тесты передают лимит параметром напрямую и жизненный цикл чтения конфигурации не ловят, отдельный риск уровня провайдера (фиксация значения при создании провайдера/клиента) обосновывает отдельную проверку; новые швы/экспорты не потребовались — обычный вход `GetSearchResults`, существующий Moq-контур; изоляция через `finally` (пересоздание плагина) не протекает в коллекцию. Мутационная проверка правдоподобна: удаление аргумента даёт дефолт `limit=3` в обоих запросах → второй поиск обслужен кэшем (ключ с лимитом, AC-5) → `Assert.Equal(2, …)` падает по заявленной причине.
+- **README (AC-10):** сверён с ADR-0004 и реализацией — дефолт 3, диапазон 1–10, вне диапазона — дефолт + `Warning` в лог (не clamping), ключ кэша `название:год:лимит`, применение без перезапуска в контрасте с базовым URL; искажений фактов нет; компромисс `int.MinValue` (A1) не документирован — по объёму задачи.
+- **AC-9 (код-ревью):** подсчёт запросов не менялся — `MaxRequestsPerDay = 200` вне diff; рост `limit` увеличивает объём одной страницы выдачи, а не число запросов.
+- **Границы:** клиент, резолвер, конфигурация, `configPage.html` в коммите отсутствуют (зоны принятых 001/002); untracked `pi-session-*.html` — посторонний файл, в коммиты не входил.
+- **DevOps impact (итоговый diff `f845ad3^..HEAD`):** «нет» по всем пунктам — только C#-код/тесты, README и docs; новые env/secrets/интеграции/шаги CI/упаковка отсутствуют, настройка хранится в существующем XML Jellyfin. DevOps-задача не нужна.
+- **DoD фичи:** AC-1…AC-10 закрыты (001 `d01ee2d` + 002 `a0febfe` + 003 `c894715`, сведено в отчёте финального ревью и tech-plan.md); каждая задача — отдельный локальный commit без push. Фича передана Оркестратором в QA; ручные проверки — по инструкции выше.

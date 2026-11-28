@@ -6,8 +6,8 @@
 
 | Поле | Значение |
 |------|----------|
-| **Стадия** | `development` |
-| **Owner** | `Developer-CSharp` (задача 003) |
+| **Стадия** | `qa` |
+| **Owner** | `Orchestrator` (запуск QA) |
 | **Ветка** | `feature/search-limit-setting` |
 | **PR/MR** | _нет_ |
 | **Commit со ссылкой на PR/MR** | _нет_ |
@@ -26,7 +26,7 @@
 |----|------|-------------|--------|
 | 001 | [001-config-search-limit](tasks/001-config-search-limit.md) | `developer-csharp` / C#, HTML настроек | `accepted` — приёмка Техлидом пройдена 2026-11-28 (`d01ee2d`) |
 | 002 | [002-client-search-limit-cache](tasks/002-client-search-limit-cache.md) | `developer-csharp` / C#, xUnit, Moq | `accepted` — приёмка Техлидом пройдена 2026-11-28 (`a0febfe`) |
-| 003 | [003-providers-threading-readme](tasks/003-providers-threading-readme.md) | `developer-csharp` / C#, xUnit, Moq | `done` — выполнено `developer-csharp` 2026-11-28, ожидает приёмки Техлида |
+| 003 | [003-providers-threading-readme](tasks/003-providers-threading-readme.md) | `developer-csharp` / C#, xUnit, Moq | `accepted` — финальная приёмка Техлидом пройдена 2026-11-28 (`c894715`); фича в QA |
 
 Порядок: строго 001 → 002 → 003 в ветке `feature/search-limit-setting` (детали и зависимости — [tech-plan.md](tech-plan.md)).
 
@@ -37,7 +37,7 @@
 | Новые env vars / secrets | **нет** |
 | Новые интеграции / порты / очереди / storage / jobs | **нет** |
 | CI / упаковка релиза / установка / диагностика | **нет** |
-| DevOps-задача | **не нужна** — подтверждено Техлидом 2026-11-28 (tech-plan.md, DevOps impact check; повторная сверка с итоговым diff перед QA) |
+| DevOps-задача | **не нужна** — подтверждено Техлидом 2026-11-28 (tech-plan.md, DevOps impact check; финальная сверка по итоговому diff `f845ad3^..HEAD` — «нет» по всем пунктам при accept 003) |
 
 ## Недостаточность разрешений
 
@@ -177,4 +177,12 @@
 - stage: `development` — задача 003 выполнена (`done`), готова к приёмке Техлида
 - artifacts: [tasks/003-providers-threading-readme.md](tasks/003-providers-threading-readme.md) (раздел «Результат и проверки»), коммит `feat(providers)` в ветке `feature/search-limit-setting` (без push)
 - notes: Проброс `SearchLimit` в три провайдера — экземплярное свойство по образцу `ApiKey` (`?? 3`) + именованный аргумент `searchLimit: SearchLimit` в единственных вызовах `SearchAsync` (Movie:83, Series:83, Image:99); fallback-путь `GetMetadataInternal → GetSearchResultsInternal` идёт через ту же точку (правки не требовал). Тест AC-7 (`GetSearchResults_SearchLimitFromConfiguration_ChangesRequestLimitWithoutRestart`) — смена конфигурации 7 → 4 меняет URL двух запросов на одном экземпляре провайдера; мутационная проверка: убрать аргумент → падает (1 запрос вместо 2, кэш с `limit=3`). README: «Возможности», шаг «Настройки», подраздел «Количество результатов поиска», примечание к API-примеру, «Кэширование» (`название:год:лимит`); компромисс int.MinValue в README не документировался (по задаче). AC-9: подсчёт запросов не менялся (`MaxRequestsPerDay = 200` вне diff). Прогоны: `dotnet test` 327/327 (+1), `dotnet build -c Release --no-incremental` 0 ошибок / 61 предсуществующее CS1591 (идентично базе 002), `git diff --check` чисто. Инструкция ручного QA (AC-6/AC-7/AC-8 smoke + demo-ключ, R1) — в файле задачи 003. Ограничение для QA: видимое число подсказок может быть меньше лимита из-за локальной фильтрации (F9). Границы соблюдены: клиент, резолвер, конфигурация, configPage.html не тронуты. DevOps impact по итоговому diff: нет. Следующий шаг: финальный tech-lead-review с `test-audit`, затем QA.
+
+### 2026-11-28 — финальное tech-lead-review: accept
+
+- from: `Tech Lead`
+- to: `Orchestrator`
+- stage: `qa` — финальная приёмка фичи пройдена, все три задачи `accepted`; Оркестратору — запустить QA
+- artifacts: [tasks/003-providers-threading-readme.md](tasks/003-providers-threading-readme.md) (решение Техлида), [tech-plan.md](tech-plan.md) (DoD), коммит `c894715` в ветке `feature/search-limit-setting` (без push)
+- notes: Приёмка 003 — **accept**, финальный гейт фичи пройден. Воспроизведено: полный `dotnet test` 327/327; `dotnet build -c Release --no-incremental` 0 ошибок / 61 предсуществующее CS1591 в `Models/` (идентично базе 002); `git diff --check` чисто. Ревью diff `c894715`: все три вызова `SearchAsync` в кодовой базе (Movie:83, Series:83, Image:99) покрыты именованным `searchLimit: SearchLimit`; fallback `GetMetadataInternal → GetSearchResultsInternal` (`:181` → `:83`) через ту же точку; стиль `ApiKey` (экземплярное свойство `?? 3`, валидация — в клиенте, границы слоёв соблюдены); README сверён с ADR-0004 и реализацией (дефолт 3, диапазон 1–10, вне диапазона — дефолт + Warning, ключ кэша `название:год:лимит`, применение без перезапуска) — искажений нет. `test-audit`: тест AC-7 поведенческий (URL захваченных запросов), без дублей (клиентские тесты жизненный цикл чтения конфигурации не ловят — отдельный риск уровня провайдера), швов не добавлял, изоляция через `finally`; мутационная проверка правдоподобна (убрать аргумент → кэш-хит с `limit=3` → `Assert.Equal(2, …)` падает). AC-9: подсчёт запросов не менялся. Границы: клиент/резолвер/конфигурация/configPage.html в 003 не тронуты; untracked `pi-session-*.html` — посторонний, в коммиты не входил. Целостность history в status.md проверена: записи Оркестратора (назначения 001/002/003) и Техлида (декомпозиция, приёмки 001/002) на месте, хронология линейна. **DevOps impact по итоговому diff `f845ad3^..HEAD`: «нет» по всем пунктам** (только код/тесты/README/docs; env/secrets/интеграции/CI/упаковка не затронуты, настройка — в существующем XML Jellyfin); DevOps-задача не нужна. Сведение AC: AC-1/AC-6(сервер) → 001 `d01ee2d`; AC-2(клиент)/AC-3/AC-4/AC-5 → 002 `a0febfe`; AC-2(провайдеры)/AC-7/AC-9/AC-10 → 003 `c894715`; AC-6(UI)/AC-8 — smoke по инструкции в 003. Стадия переведена в `qa`, owner — `Orchestrator`.
 
