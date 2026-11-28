@@ -7,12 +7,11 @@
 | Уровень | Статус | Примечание |
 |---------|--------|------------|
 | **Unit** | реализован | `PoiskKinoMetadataPlugin.UnitTests` (xUnit 2.9.3 + Moq 4.20.72); гоняются в CI (`dotnet test`) |
-| **Integration** | вручную | проверка через Jellyfin + реальный/демо API-ключ |
-| **E2E (Playwright)** | не планируется | нет отдельного UI продукта — см. [`playwright.md`](playwright.md) |
+| **Integration / UI** | вручную | [smoke-чеклист Jellyfin](jellyfin-smoke.md) с действующим или демо API-ключом; автоматизированных E2E в репозитории нет |
 
 ## Обязательно перед PR/MR
 
-1. Green CI: `dotnet build -c Release` + `dotnet test` (`.github/workflows/ci.yaml`)
+1. Green CI для изменений, запускающих сборку: `dotnet build -c Release` + `dotnet test` (`.github/workflows/ci.yaml`)
 2. Локально: `dotnet test` без падений
 3. Ручная проверка в Jellyfin при изменении поведения провайдеров: идентификация фильма/сериала, постеры, настройка API-ключа
 4. При изменении API-клиента — учёт лимита 200 req/day и поведения кэша (см. README)

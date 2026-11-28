@@ -1,6 +1,6 @@
 # Status — `logo-images`
 
-Единая точка правды по стадии для Оркестратора. Обновляйте при каждом handoff (см. `.opencode/skills/role-handoff/SKILL.md`).
+Единая точка правды по стадии для Оркестратора. Обновляйте при каждом handoff (см. `.agents/skills/sdlc/references/role-handoff.md`).
 
 ## Текущее состояние
 
@@ -91,7 +91,7 @@
 - Push ветки `feature/logo-images` в origin (`45bf9d2..aef3607`); PR [jellyfin-poiskkino-plugin#3](https://github.com/milleraa/jellyfin-poiskkino-plugin/pull/3) обновлён [комментарием о rework](https://github.com/milleraa/jellyfin-poiskkino-plugin/pull/3#issuecomment-5398172719): причина rework, фикс 003 (`f3beb9a`), результаты валидации.
 - **CI PR #3: pass** — первый прогон после push ([run 32750717011](https://github.com/milleraa/jellyfin-poiskkino-plugin/actions/runs/32750717011), build-and-test, ~35s). Flaky-фикс подтверждён на CI.
 - Worktree сохранён (нужен для archive при accept); remote branch не тронута; merge PR #3 не выполняется.
-- ⚠️ Стейхолдеру: **не принимать PR в системе управления кодом сразу** — сначала сообщить решение агенту (`/accept-feature` или `/reject-feature`). При accept Финализатор выполнит archive finalization в этой ветке (перенос папки в `docs/archive/features/logo-images/`, запись в `docs/history/completed-work.md`, стадия `accepted`) и финальный push — только затем merge одним мержем. При reject — возврат через `.opencode/skills/pr-mr-rework/SKILL.md`.
+- ⚠️ Стейхолдеру: **не принимать PR в системе управления кодом сразу** — сначала сообщить решение агенту (`/accept-feature` или `/reject-feature`). При accept Финализатор выполнит archive finalization в этой ветке (перенос папки в `docs/archive/features/logo-images/`, запись в `docs/history/completed-work.md`, стадия `accepted`) и финальный push — только затем merge одним мержем. При reject — возврат через `.agents/skills/sdlc/references/pr-mr-rework.md`.
 - Handoff → Оркестратор/Стейхолдер: стадия `pr-mr-ready`, gate pr-mr-ready.
 
 ### 2026-08-24 — rework-валидация QA pass, → finalization
@@ -115,10 +115,10 @@
 ### 2026-08-24 — pr-mr-ready → rework (решение Стейхолдера)
 
 - Стейхолдер выбрал: **фикс flaky-теста до accept** (вариант 1); PR #3 остаётся открытым, merge по-прежнему не выполнять.
-- Применён `.opencode/skills/pr-mr-rework`: feedback зафиксирован (чат + CI PR #3), стадия → `rework`, worktree сохранён (восстановление не требовалось), новая ветка не создавалась.
+- Применён `.agents/skills/sdlc/references/pr-mr-rework.md`: feedback зафиксирован (чат + CI PR #3), стадия → `rework`, worktree сохранён (восстановление не требовалось), новая ветка не создавалась.
 - Классификация: нужен кодовый фикс тестовой инфраструктуры → **Техлид**. Создана задача [tasks/003](tasks/003-fix-imageurlhelper-test-isolation.md) (pending).
 - Learning triage: `not-triggered` (один unique evidence-linked reject), запись в `docs/process/learning/reject-log.md`.
-- Handoff → Техлид (`.opencode/agents/tech-lead.md`): задача 003; после фикса — внутренний цикл приёмки, затем QA → Финализатор (повторная доставка PR #3).
+- Handoff → Техлид (`.agents/skills/sdlc/role/tech-lead.md`): задача 003; после фикса — внутренний цикл приёмки, затем QA → Финализатор (повторная доставка PR #3).
 
 ### 2026-08-24 — ⚠️ BLOCKER: flaky CI воспроизводится (2/3 прогонов), PR #3 не готов к merge
 
@@ -187,13 +187,13 @@
 - Стейхолдер: продолжаем к Архитектору.
 - Решение по OQ-1: **в scope** — логотип добавляется и в fallback-ветке «только данные из поиска» (рекомендация Аналитика принята).
 - OQ-2 (защитный вызов `ShouldFilterUrl`) — на решение Архитектора.
-- Handoff → Архитектор (`.opencode/agents/architect.md`), вход: `analysis.md`, `brief.md`.
+- Handoff → Архитектор (`.agents/skills/sdlc/role/architect.md`), вход: `analysis.md`, `brief.md`.
 
 ### 2026-08-24 — intake → analysis
 
 - Стейхолдер взял фичу в работу; классификация: новая фича → Аналитик.
 - Созданы ветка `feature/logo-images` и единственный worktree `/home/alex/src/my/jellyfin-metadata-plugin-wt-logo-images`.
-- Handoff → Аналитик (`.opencode/agents/analyst.md`), вход: `brief.md`.
+- Handoff → Аналитик (`.agents/skills/sdlc/role/analyst.md`), вход: `brief.md`.
 
 ### 2026-08-24 — создан бриф
 

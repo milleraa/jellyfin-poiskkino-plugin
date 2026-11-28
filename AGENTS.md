@@ -1,11 +1,11 @@
-# Инструкции для агента (проект) — OpenCode
+# Инструкции для агента (проект)
 
 ## Режимы работы
 
 | Режим | Как начать | Где правила |
 |-------|------------|-------------|
-| **Команда агентов (по умолчанию)** | Агент `orchestrator` (`default_agent`) | [`.opencode/agents/orchestrator.md`](.opencode/agents/orchestrator.md), [`docs/process/agile-workflow.md`](docs/process/agile-workflow.md) |
-| **Свободная работа с кодом** | Встроенный агент `build` | Этот файл + [`docs/README.md`](docs/README.md); `status.md` и цепочка ролей не обязательны |
+| **SDLC** | Вызвать навык `sdlc` в основном агенте (в OpenCode v2 — агент `orchestrator` по умолчанию) | [Навык `sdlc`](.agents/skills/sdlc/SKILL.md) |
+| **Свободная работа с кодом** | Обычный агент без `sdlc` (в OpenCode — `build`) | Этот файл + [`docs/README.md`](docs/README.md); `status.md` и цепочка ролей не обязательны |
 
 ## Карта документации
 
@@ -19,12 +19,12 @@
 | Архитектура | `docs/architecture/` | Обзор, ADR |
 | Инженерия | `docs/engineering/` | Стандарты, [`stacks/`](docs/engineering/stacks/), тесты, DevOps |
 | Окружения | `docs/environments/` | CI/CD, деплой (секреты не в git) |
-| QA | `docs/qa/` | Playwright, прогоны |
+| QA | `docs/qa/` | стратегия, ручные проверки и прогоны |
 | История | `docs/archive/`, `docs/history/` | Завершённые работы |
 
-## Для агента `build` и работы вне процесса
+## Для работы вне процесса
 
 - Опирайтесь на факты в `docs/` и код в репозитории; не выдумывайте версии, URL и политики.
 - Не меняйте `status.md` и процессные артефакты без явной просьбы Стейхолдера.
 - Секреты не коммитьте — см. политику в `docs/environments/` (если задана).
-- Документация библиотек на GitHub: `use deepwiki` + `owner/repo` (таблицы в `docs/engineering/stacks/`).
+- Если доступен DeepWiki, документация библиотек на GitHub: `use deepwiki` + `owner/repo` (таблицы в `docs/engineering/stacks/`).

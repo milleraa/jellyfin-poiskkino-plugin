@@ -2,7 +2,7 @@
 
 **Статус:** активен в v1.
 
-*Источники: [`PoiskKinoMetadataPlugin.csproj`](../../../PoiskKinoMetadataPlugin.csproj), [`README.md`](../../../README.md).*
+*Источники: [`PoiskKinoMetadataPlugin.csproj`](../../../PoiskKinoMetadataPlugin/PoiskKinoMetadataPlugin.csproj), [`README.md`](../../../README.md).*
 
 ## Runtime и tooling
 
@@ -51,4 +51,4 @@ dotnet build -c Release
 
 ## Связанные правила
 
-- Роль разработчика C#: [`.opencode/agents/developer-csharp.md`](../../../.opencode/agents/developer-csharp.md)
+- Роль разработчика C#: [`.agents/skills/sdlc/role/developer-csharp.md`](../../../.agents/skills/sdlc/role/developer-csharp.md)

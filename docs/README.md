@@ -11,21 +11,19 @@
 | [backlog](backlog/) | Эпики, фичи, hotfix, шаблоны |
 | [architecture](architecture/) | Обзор, принципы, ADR, диаграммы |
 | [engineering](engineering/) | Код, ветки, доставка, тесты, стек |
-| [environments](environments/) | GitLab/Gitea, CI/CD, деплой, секреты (политика) |
+| [environments](environments/) | GitHub, CI/CD, установка, политика секретов |
 | [tasks](tasks/) | Индексы активных/заблокированных/закрытых задач |
-| [qa](qa/) | Стратегия тестирования, Playwright, прогоны |
+| [qa](qa/) | Стратегия тестирования, ручные проверки и прогоны |
 | [history](history/) | Лог решений, завершённые работы (ссылки) |
 | [archive](archive/) | Завершённые фичи и hotfix (перенос из backlog) |
 
-## Связь с OpenCode
+## Запуск SDLC
 
-- Глобальный конфиг: [`opencode.json`](../opencode.json) (instructions, default_agent; роли — не здесь)
-- Ролевые агенты OpenCode: [`.opencode/agents/*.md`](../.opencode/agents/) (промпт, mode, permission)
-- Навыки: [`.opencode/skills/`](../.opencode/skills/)
-- Команды TUI: [`.opencode/commands/`](../.opencode/commands/) (`/accept-feature`, `/reject-feature`, `/init-empty-repo`, `/init-existing-repo`)
-- Глобальные instructions (коротко, для всех агентов): [`AGENTS.md`](../AGENTS.md); agile-процесс — в [`.opencode/agents/orchestrator.md`](../.opencode/agents/orchestrator.md)
-- MCP (DeepWiki и др.): конфигурация в [`opencode.json`](../opencode.json) (секция `mcp`)
-- Внешняя документация по стекам: [engineering/stacks/](engineering/stacks/), [testing.md](engineering/testing.md), [devops.md](engineering/devops.md)
+- Единый навык [`sdlc`](../.agents/skills/sdlc/SKILL.md) содержит регламент, процедуры и [промпты ролей](../.agents/skills/sdlc/role/).
+- В OpenCode **v2** агент `orchestrator` запускается по умолчанию. Агенты и MCP описаны в [`opencode.json`](../opencode.json); `system` подставляет промпты из навыка. Проект не задаёт дополнительных разрешений: действуют стандартные правила OpenCode и настройки среды.
+- В Pi запустите `/skill:sdlc`, в Codex — `$sdlc`. Передайте задачу или путь к существующему `status.md`. Если делегирование недоступно, Оркестратор подготовит ручную передачу роли.
+- [Команды OpenCode](../.opencode/commands/) — необязательные сокращения для приёмки, возврата на доработку и bootstrap. В других средах можно сообщить те же решения обычным текстом.
+- Общие инструкции — в [`AGENTS.md`](../AGENTS.md); внешняя документация по стекам — в [engineering/stacks/](engineering/stacks/).
 
 ## Кто поддерживает разделы
 

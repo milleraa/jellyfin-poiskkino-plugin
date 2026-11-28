@@ -1,8 +1,3 @@
----
-name: pr-mr-rework
-description: Возвращает непринятый PR/MR в работу: собирает feedback, переключается на существующую ветку и маршрутизирует доработку нужной роли. Используй когда Стейхолдер сообщил, что PR/MR не принят.
----
-
 # PR/MR rework
 
 ## Когда использовать
@@ -13,7 +8,7 @@ description: Возвращает непринятый PR/MR в работу: с
 
 - Ссылка на PR/MR.
 - Причины отказа из чата Стейхолдера.
-- Комментарии PR/MR и CI/checks, если доступ к GitLab/Gitea/GitHub доступен.
+- Комментарии GitHub PR и результаты GitHub Actions, если доступны.
 - Папка feature/hotfix в `docs/backlog/...` и её `status.md`.
 
 ## Действия Оркестратора
@@ -46,7 +41,7 @@ description: Возвращает непринятый PR/MR в работу: с
 6. `candidate` допустим только при минимум двух unique comparable evidence-linked cases из разных feature/hotfix либо независимых delivery attempts с идентичным class key и без suppression. Тогда создай case-level `process-review.md` по template.
 7. Candidate — только proposal: никакие commands, skills, agents, rules или workflow docs не меняй автоматически. Без regression evidence verdict proposal — `inconclusive` и `do not change process`. При `quality improvement demonstrated` создаётся отдельная process-change feature branch и human-reviewed PR/MR.
 
-Полные правила и журнал: [process learning](../../../docs/process/learning/README.md).
+Полные правила и журнал: [process learning](../../../../docs/process/learning/README.md).
 
 ## После доработки
 

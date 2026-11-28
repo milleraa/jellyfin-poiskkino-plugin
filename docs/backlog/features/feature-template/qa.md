@@ -13,7 +13,7 @@
 
 ## Автотесты
 
-- Playwright: см. [playwright](../../../qa/playwright.md)
+- Ручные проверки: см. [smoke-чеклист Jellyfin](../../../qa/jellyfin-smoke.md)
 
 ## Вердикт
 

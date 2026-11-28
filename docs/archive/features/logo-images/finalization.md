@@ -9,7 +9,7 @@
 
 ## Delivery checklist
 
-См. `.opencode/skills/finalization-check/SKILL.md` и [DoD](../../../process/definition-of-done.md) («Ready for stakeholder review»):
+См. `.agents/skills/sdlc/references/finalization-check.md` и [DoD](../../../process/definition-of-done.md) («Ready for stakeholder review»):
 
 - [x] Задачи `tasks/001`, `tasks/002` закрыты (done, см. [status.md](status.md)).
 - [x] Один worktree, последовательное выполнение.

@@ -1,7 +1,3 @@
-# Playwright
+# Историческая ссылка: Playwright
 
-**Статус:** E2E не планируется в v1.
-
-*Источник: продукт — Jellyfin plugin без собственного веб-приложения; UI настроек — embedded HTML внутри Jellyfin Dashboard (`Configuration/configPage.html`).*
-
-Ручная проверка настроек и метаданных выполняется в UI Jellyfin, не через Playwright в этом репозитории.
+Автоматизированных E2E в репозитории нет. Актуальные инструкции — в [ручном smoke-чеклисте Jellyfin](jellyfin-smoke.md). Эта страница сохраняет ссылки из архивных QA-отчётов.

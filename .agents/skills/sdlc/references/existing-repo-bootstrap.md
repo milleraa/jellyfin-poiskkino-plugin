@@ -1,13 +1,8 @@
----
-name: existing-repo-bootstrap
-description: Инициализирует уже существующий репозиторий с кодом: изучает код, конфиги и текущие docs, автоматически заполняет документацию по evidence и задаёт вопросы только по недостающим фактам. Используй при подключении шаблона к непустому репозиторию или миграции существующего проекта под agile agent team.
----
-
 # Existing repo bootstrap
 
 ## Когда применять
 
-Используй для репозитория, где уже есть код, конфиги, CI, тесты или существующая документация. Если репозиторий пустой или только что скопирован из шаблона без кода, используй `@.opencode/skills/project-bootstrap/SKILL.md`.
+Используй для репозитория, где уже есть код, конфиги, CI, тесты или существующая документация. Если репозиторий пустой или только что скопирован из шаблона без кода, используй `.agents/skills/sdlc/references/project-bootstrap.md`.
 
 ## Главный принцип
 
@@ -16,31 +11,29 @@ description: Инициализирует уже существующий реп
 ## Evidence-first workflow
 
 1. Составь карту репозитория:
-   - языки и стеки по файлам (`*.csproj`, `go.mod`, `package.json`, `tsconfig.json`, `vite.config.*`, `next.config.*`, `Dockerfile`, миграции SQL и т.д.);
-   - приложения / сервисы / пакеты в монорепо;
-   - build/test/lint команды из package manager files, solution files, Makefile, task runners, scripts;
-   - CI/CD (`.gitlab-ci.yml`, `.github/workflows/`, `.gitea/workflows/`, deploy scripts);
-   - Docker/compose/Helm/Kubernetes/infra;
-   - тесты, Playwright/e2e, интеграционные тесты;
-   - migrations, schema, seed data, external integrations, env vars.
+   - solution и проекты (`*.slnx`, `*.csproj`): SDK, target framework, NuGet и команды сборки/тестов;
+   - GitHub Actions (`.github/workflows/`), упаковка релиза и инструкции установки;
+   - тестовые проекты, сценарии ручной проверки, внешние интеграции и настройки.
 2. Изучи существующие docs (`README*`, `docs/**`, ADR, OpenAPI, runbooks), не перетирай полезный контент.
-3. Заполни docs-манифест из `@.opencode/skills/project-bootstrap/SKILL.md` тем, что подтверждено evidence.
+3. Заполни docs-манифест из `.agents/skills/sdlc/references/project-bootstrap.md` тем, что подтверждено evidence.
 4. Для каждого автозаполненного раздела добавляй краткую ссылку на источник: файл, config, script, CI job или README.
 5. Составь список gaps: что нельзя вывести из репозитория (владельцы, доступы, protected branches, secret storage, SLA, продуктовые приоритеты, кто принимает PR/MR).
 6. Только после автозаполнения задай Стейхолдеру вопросы по gaps, сгруппировав их пакетами.
 7. После ответов доведи манифест до DoBootstrap: факт, evidence или явное `N/A`; без «немых» TODO / `_TBD_`.
+
+Если менялись файлы, сделай локальный commit без push.
 
 ## Что заполнить автоматически
 
 Заполняй те же файлы, что и `project-bootstrap`, но порядок источников другой:
 
 - `docs/product/vision.md`, `stakeholders.md`, `requirements.md`: из README, package metadata, API docs, docs, названий сервисов; вопросы только по бизнес-целям и owner.
-- `docs/environments/*`: из remotes, CI configs, deploy scripts, env examples, compose/Helm/K8s; вопросы только по доступам, protected branches, secret storage и реальным URL, если их нет в репо.
+- `docs/environments/*`: из Git remotes, GitHub Actions и инструкций установки; вопросы только по доступам, protected branches, secret storage и реальным URL, если их нет в репо.
 - `docs/engineering/stack-notes.md` и `docs/engineering/stacks/*.md`: из файлов проекта, lockfiles, tool configs, test scripts.
-- `docs/engineering/devops.md`: из Docker/compose/CI/deploy/infra; если артефактов нет, фиксируй `N/A` с evidence `не найдено`.
-- `docs/architecture/overview.md`: из структуры сервисов, модулей, API, DB/migrations и интеграций.
+- `docs/engineering/devops.md`: из CI, релизного workflow и инструкций установки; если артефактов нет, фиксируй `N/A` с evidence `не найдено`.
+- `docs/architecture/overview.md`: из структуры плагина, API и интеграций.
 - `docs/backlog/epics.md`: не выдумывай roadmap; если есть issue docs / roadmap / TODO docs — перенеси как черновик, иначе отметь `Epics не восстановлены из кода`.
-- `docs/qa/test-strategy.md`, `playwright.md`, `test-runs.md`: из test folders, scripts, CI jobs.
+- `docs/qa/test-strategy.md`, `jellyfin-smoke.md`, `test-runs.md`: из test folders, scripts, CI jobs.
 
 ## Формат вопросов по gaps
 
@@ -59,7 +52,7 @@ description: Инициализирует уже существующий реп
 
 ## Запреты
 
-- Не коммить секреты и не копируй значения из `.env`, kubeconfig, private keys, connection strings с паролями.
+- Не коммить секреты и не копируй значения из `.env`, private keys, connection strings с паролями.
 - Не удаляй существующие docs; если шаблон конфликтует с реальными docs, сохрани факты и добавь ссылки.
 - Не начинай рефакторинг кода во время bootstrap; допустимы только docs и, по явному согласию, безвредные metadata-файлы.
 - Не создавай новую feature/hotfix до завершения инвентаризации, если Стейхолдер явно не попросил начать работу.

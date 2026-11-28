@@ -1,22 +1,20 @@
-# Branching (GitFlow)
+# Ветвление
 
 ## Ветки по умолчанию
 
 | Ветка | Назначение |
 |-------|------------|
 | `main` | Продакшен-ready код |
-| `develop` | Интеграция фич |
 | `feature/*` | Новая функциональность |
-| `fix/*` | Исправления в develop |
-| `release/*` | Подготовка релиза |
+| `fix/*` | Обычные исправления |
 | `hotfix/*` | Срочный фикс от `main` |
 
-Имена `main`/`develop` могут отличаться — зафиксируйте в [git-remotes](../environments/git-remotes.md).
+Все рабочие ветки открывают PR в `main`. Релиз публикуется по тегу `v*`, отдельная релизная ветка не нужна. См. [Git remote](../environments/git-remotes.md) и [CI/CD](../environments/ci-cd.md).
 
 ## Правила
 
 - В защищённые ветки только через **PR/MR**.
-- На одну feature/hotfix создаётся ровно одна рабочая ветка.
+- На одну фичу или исправление создаётся ровно одна рабочая ветка.
 - **Оркестратор** создаёт ветку после intake/classification и фиксирует её в `status.md`.
 - Задачи выполняются строго последовательно в этой ветке; task-branches не используются.
 - Каждая роль после своего шага делает локальный commit без push, если меняла файлы.
@@ -25,4 +23,4 @@
 - После создания PR/MR Финализатор записывает ссылку в `status.md` / `finalization.md`, делает отдельный commit с этой ссылкой и выполняет повторный push.
 - Рабочая ветка и remote branch остаются до merge/close PR/MR.
 
-Подробнее: GitFlow-правила встроены в `.opencode/agents/orchestrator.md` и `.opencode/agents/finalizer.md`.
+Ролевые инструкции — в `.agents/skills/sdlc/role/orchestrator.md` и `.agents/skills/sdlc/role/finalizer.md`.

@@ -8,10 +8,10 @@
 
 ## Delivery checklist
 
-См. `.opencode/skills/finalization-check/SKILL.md` и [DoD](../../../process/definition-of-done.md).
+См. `.agents/skills/sdlc/references/finalization-check.md` и [DoD](../../../process/definition-of-done.md).
 
 ## Acceptance/archive
 
 - **Accepted / merged:** _TBD_
 - После merge / приёмки Стейхолдером: папка переносится в `docs/archive/features/<feature-name>/`.
-- Если PR/MR не принят: работа возвращается через `.opencode/skills/pr-mr-rework/SKILL.md`, без переноса в архив.
+- Если PR/MR не принят: работа возвращается через `.agents/skills/sdlc/references/pr-mr-rework.md`, без переноса в архив.

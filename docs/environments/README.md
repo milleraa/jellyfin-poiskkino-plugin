@@ -1,6 +1,6 @@
 # Environments
 
-Сведения о **GitLab/Gitea**, remotes, CI/CD, деплое. **Не храните секреты и значения токенов** — только имена переменных и ссылки на секрет-хранилища. DevOps поддерживает техническую часть CI/CD, deployment targets и troubleshooting.
+Сведения о **GitHub**, remotes, CI/CD, деплое. **Не храните секреты и значения токенов** — только имена переменных и ссылки на секрет-хранилища. DevOps поддерживает техническую часть CI/CD, deployment targets и troubleshooting.
 
 ## Документы
 

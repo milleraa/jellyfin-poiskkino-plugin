@@ -1,11 +1,11 @@
 # QA
 
-Стратегия тестирования, Playwright, журнал прогонов.
+Стратегия тестирования, ручные проверки в Jellyfin и журнал прогонов.
 
 ## Документы
 
 - [Test strategy](test-strategy.md)
-- [Playwright](playwright.md)
+- [Ручной smoke-чеклист Jellyfin](jellyfin-smoke.md)
 - [Test runs](test-runs.md)
 
 ## Соседнее

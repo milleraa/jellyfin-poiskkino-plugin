@@ -1,6 +1,6 @@
 # Status — `api-v1-5-upgrade`
 
-Единая точка правды по стадии для Оркестратора. Обновляйте при каждом handoff (см. `.opencode/skills/role-handoff/SKILL.md`).
+Единая точка правды по стадии для Оркестратора. Обновляйте при каждом handoff (см. `.agents/skills/sdlc/references/role-handoff.md`).
 
 ## Текущее состояние
 
@@ -139,7 +139,7 @@
   1. Переименование моделей `*V1_4` → **да**.
   2. Параметр `year` в search → **передан Архитектору на проверку по спеке v1.5**: Стейхолдер сообщает, что параметра больше нет; уточнить — это фильтр поиска или поле ответа. Контекст: в Jellyfin при «Распознать» пользователь указывает год, и он должен продолжать участвовать в поиске метаданных.
   3. Удаление мёртвого `PoiskKinoSeasonResponse.cs` → **да**.
-- Handoff → **Архитектор** (`.opencode/agents/architect.md`).
+- Handoff → **Архитектор** (`.agents/skills/sdlc/role/architect.md`).
 
 ### 2026-08-23 — Аналитик: анализ завершён (`analysis.md`)
 
@@ -154,4 +154,4 @@
 
 - Создана папка фичи из шаблона.
 - Оркестратор: intake, классификация (техническая фича), ветка `feature/api-v1-5-upgrade`, worktree `/home/alex/src/my/jellyfin-metadata-plugin-api-v15`.
-- Handoff → **Аналитик** (`.opencode/agents/analyst.md`): подготовить `analysis.md` по миграции v1.4 → v1.5.
+- Handoff → **Аналитик** (`.agents/skills/sdlc/role/analyst.md`): подготовить `analysis.md` по миграции v1.4 → v1.5.

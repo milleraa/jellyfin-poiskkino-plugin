@@ -1,8 +1,3 @@
----
-name: finalization-check
-description: Проверяет delivery finalization и acceptance/archive finalization: PR/MR ready, rework loop, перенос в archive после принятия. Используй когда QA передал работу Финализатору или PR/MR принят.
----
-
 # Finalization check
 
 ## Delivery checklist
@@ -29,7 +24,7 @@ description: Проверяет delivery finalization и acceptance/archive fina
 4. Добавь строку в `docs/history/completed-work.md`: название, дата, ссылка на PR/MR, путь в архиве.
 5. Сделай commit и push в ту же feature/hotfix ветку. Merge PR/MR — только после этого шага: тогда все изменения попадут в main одним мержем.
 6. Если PR/MR уже merged к моменту acceptance — archive-коммиты выполняются в main, инцидент фиксируется в архивном `status.md`.
-7. Если PR/MR не принят, не архивируй; верни Оркестратору для `.opencode/skills/pr-mr-rework/SKILL.md`.
+7. Если PR/MR не принят, не архивируй; верни Оркестратору для `.agents/skills/sdlc/references/pr-mr-rework.md`.
 
 ## После
 

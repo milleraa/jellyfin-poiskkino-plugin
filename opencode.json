@@ -1,27 +1,61 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "default_agent": "orchestrator",
-  "subagent_depth": 3,
   "instructions": [
     "AGENTS.md"
   ],
-  "permission": {
-    "edit": "allow",
-    "bash": "ask",
-    "webfetch": "allow",
-    "skill": {
-      "*": "allow"
-    }
-  },
-  "agent": {
-    "build": { "disable": false },
-    "plan": { "disable": true }
-  },
   "mcp": {
     "deepwiki": {
       "type": "remote",
-      "url": "https://mcp.deepwiki.com/mcp",
-      "enabled": true
+      "url": "https://mcp.deepwiki.com/mcp"
+    }
+  },
+  "experimental": {
+    "subagent_depth": 3
+  },
+  "agents": {
+    "plan": {
+      "disabled": true
+    },
+    "analyst": {
+      "description": "Аналитик: требования и acceptance criteria для новых фич.",
+      "mode": "subagent",
+      "system": "{file:.agents/skills/sdlc/role/analyst.md}"
+    },
+    "architect": {
+      "description": "Архитектор: дизайн системы, границы, ADR до декомпозиции.",
+      "mode": "subagent",
+      "system": "{file:.agents/skills/sdlc/role/architect.md}"
+    },
+    "developer-csharp": {
+      "description": "Разработчик C#.",
+      "mode": "subagent",
+      "system": "{file:.agents/skills/sdlc/role/developer-csharp.md}"
+    },
+    "devops": {
+      "description": "DevOps: GitHub Actions, упаковка релиза и диагностика установки Jellyfin.",
+      "mode": "subagent",
+      "system": "{file:.agents/skills/sdlc/role/devops.md}"
+    },
+    "finalizer": {
+      "description": "Финализатор: PR/MR delivery и archive после acceptance. Единственная роль с git push.",
+      "mode": "subagent",
+      "system": "{file:.agents/skills/sdlc/role/finalizer.md}"
+    },
+    "orchestrator": {
+      "description": "Оркестратор / Scrum Master: agile-процесс, status.md, делегирование ролей, bootstrap, эскалации.",
+      "mode": "primary",
+      "system": "{file:.agents/skills/sdlc/role/orchestrator.md}"
+    },
+    "qa": {
+      "description": "QA: тест-дизайн, прогоны, evidence после приёмки Техлидом.",
+      "mode": "subagent",
+      "system": "{file:.agents/skills/sdlc/role/qa.md}"
+    },
+    "tech-lead": {
+      "description": "Техлид: декомпозиция задач, назначение разработчиков/DevOps, приёмка до QA.",
+      "mode": "subagent",
+      "system": "{file:.agents/skills/sdlc/role/tech-lead.md}"
     }
   }
 }

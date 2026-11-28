@@ -1,13 +1,8 @@
----
-name: pr-mr-delivery
-description: Готовит описание и чеклист для PR/MR: summary, test plan, ссылки на фичу/ADR/DevOps notes, риски, статус CI. Используй перед открытием PR/MR или когда Финализатор/Техлид оформляет поставку Стейхолдеру.
----
-
 # PR/MR delivery
 
 ## Шаблон описания PR/MR
 
-Скопируй в GitLab/Gitea:
+Заполни описание GitHub PR с целевой веткой `main`:
 
 ```markdown
 ## Summary
@@ -38,7 +33,7 @@ description: Готовит описание и чеклист для PR/MR: sum
 3. Проверь локально или через CI минимум из test plan.
 4. Проверь clean tree перед push; если есть финальные изменения — сделай локальный commit.
 5. Выполни push feature/hotfix ветки и создай/оформи PR/MR.
-6. Если менялись Docker/CI/CD/deploy/infra — добавь ссылки на `docs/engineering/devops.md` и `docs/environments/ci-cd.md`.
+6. Если менялись CI, упаковка релиза или установка плагина — добавь ссылки на `docs/engineering/devops.md` и `docs/environments/ci-cd.md`.
 7. Заполни `finalization.md` и `status.md` ссылкой на PR/MR.
 8. Сделай отдельный commit со ссылкой на PR/MR и выполни повторный push.
 9. После успешного повторного push не удаляй рабочую или remote ветку до merge/close PR/MR.

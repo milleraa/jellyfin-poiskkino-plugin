@@ -9,7 +9,7 @@
 - [ ] Все ролевые шаги с изменениями зафиксированы локальными commit без push.
 - [ ] **Техлид** принял реализацию до передачи в QA.
 - [ ] **Техлид** выполнил DevOps impact check после разработки.
-- [ ] Если появились новые env vars, secrets, integrations, ports, migrations или изменялись Docker/CI/CD/deploy/infra файлы, **DevOps** проверил impact и обновил `docs/engineering/devops.md` / `docs/environments/*`.
+- [ ] Если появились новые env vars, secrets, integrations, ports, migrations или изменялись CI, упаковка релиза или установка, **DevOps** проверил impact и обновил `docs/engineering/devops.md` / `docs/environments/*`.
 - [ ] **QA** дала вердикт (pass / список дефектов закрыт).
 - [ ] Тесты и проверки зафиксированы в `qa.md` и [test-runs](../qa/test-runs.md).
 - [ ] **Финализатор** выполнил push, открыл **PR/MR**, записал ссылку в `status.md` / `finalization.md`, сделал отдельный commit с этой ссылкой и выполнил повторный push.
@@ -21,8 +21,8 @@
 
 Работа считается завершённой для команды агентов, если:
 
-- [ ] Стейхолдер сообщил решение агенту (`/accept-feature`) до merge PR/MR.
-- [ ] Если PR/MR не принят, Оркестратор вернул работу в `rework` через `.opencode/skills/pr-mr-rework/SKILL.md`.
+- [ ] Стейхолдер явно сообщил агенту о приёмке до merge PR/MR.
+- [ ] Если PR/MR не принят, Оркестратор вернул работу в `rework` через `.agents/skills/sdlc/references/pr-mr-rework.md`.
 - [ ] Финализатор перенёс принятую папку в [archive](../archive/README.md) и добавил запись в [completed-work](../history/completed-work.md); архивация выполнена в feature/hotfix ветке и запушена до merge.
 
 Приёмка **слиянием** PR/MR остаётся за Стейхолдером или его политикой и выполняется **после** архивации — все изменения попадают в main одним мержем.

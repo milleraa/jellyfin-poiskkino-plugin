@@ -27,7 +27,7 @@
 
 ## Delivery checklist
 
-См. `.opencode/skills/finalization-check/SKILL.md` и [DoD](../../../process/definition-of-done.md) («Ready for stakeholder review»):
+См. `.agents/skills/sdlc/references/finalization-check.md` и [DoD](../../../process/definition-of-done.md) («Ready for stakeholder review»):
 
 - [x] Все задачи `tasks/001`–`tasks/005` закрыты (`done`), отменённых и открытых нет — см. [status.md](status.md), [tasks/README.md](tasks/README.md).
 - [x] Работа велась в одной ветке `feature/eu-api-endpoint`, задачи выполнялись строго последовательно (001 → 002 → 003 → 004 → rework 005).
@@ -124,4 +124,4 @@ Rollout / rollback: деплой — обычное ручное копиров�
   - ссылка в [test-runs](../../../qa/test-runs.md) переведена на `../archive/features/eu-api-endpoint/qa.md`; в архивном [README.md](README.md) починены 5 ссылок на `api-docs/` и `PoiskKinoMetadataPlugin/` (были с ошибкой глубины `../../../` вместо `../../../../` — дефект достался из backlog);
   - относительные ссылки архивной папки проверены резолвером — битых нет.
 - После merge PR #9 все изменения (код + архивация) попадут в `main` одним мержем, без коммитов-мусора поверх `main`. Ветка `feature/eu-api-endpoint` и `origin/feature/eu-api-endpoint` сохранены до merge/close PR.
-- Если бы PR был отклонён: работа возвращалась бы через `.opencode/skills/pr-mr-rework/SKILL.md`, без переноса в архив (не потребовалось).
+- Если бы PR был отклонён: работа возвращалась бы через `.agents/skills/sdlc/references/pr-mr-rework.md`, без переноса в архив (не потребовалось).

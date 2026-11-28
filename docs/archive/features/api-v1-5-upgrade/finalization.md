@@ -9,7 +9,7 @@
 
 ## Delivery checklist
 
-См. `.opencode/skills/finalization-check/SKILL.md` и [DoD](../../../process/definition-of-done.md).
+См. `.agents/skills/sdlc/references/finalization-check.md` и [DoD](../../../process/definition-of-done.md).
 
 - [x] Задачи `tasks/001–003` закрыты (**done**).
 - [x] `qa.md` и `docs/qa/test-runs.md` отражают последний прогон (160 passed / 0 failed, 2026-08-23).

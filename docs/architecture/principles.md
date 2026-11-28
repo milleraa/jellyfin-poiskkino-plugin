@@ -7,4 +7,4 @@
 - **ADR** для значимых решений.
 - **Явное** лучше неявного.
 
-Правила Архитектора встроены в `.opencode/agents/architect.md`.
+Правила Архитектора встроены в `.agents/skills/sdlc/role/architect.md`.

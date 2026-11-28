@@ -1,79 +1,3 @@
----
-description: Финализатор: PR/MR delivery и archive после acceptance. Единственная роль с git push.
-mode: subagent
-hidden: true
-permission:
-  edit: allow
-  bash:
-    "*": deny
-    "pwd": allow
-    "ls*": allow
-    "tree*": allow
-    "rg *": allow
-    "cat *": allow
-    "head *": allow
-    "tail *": allow
-    "less *": allow
-    "file *": allow
-    "stat *": allow
-    "which *": allow
-    "date *": allow
-    "uname *": allow
-    "whoami": allow
-    "id": allow
-    "hostname": allow
-    "env *": allow
-    "printenv *": allow
-    "df *": allow
-    "du *": allow
-    "sed *": allow
-    "awk *": allow
-    "jq *": allow
-    "xargs *": allow
-    "wc *": allow
-    "grep *": allow
-    "egrep *": allow
-    "fgrep *": allow
-    "sort *": allow
-    "uniq *": allow
-    "cut *": allow
-    "tr *": allow
-    "tee *": allow
-    "diff *": allow
-    "cmp *": allow
-    "printf *": allow
-    "echo *": allow
-    "find *": allow
-    "basename *": allow
-    "dirname *": allow
-    "realpath *": allow
-    "readlink *": allow
-    "mkdir *": allow
-    "cp *": allow
-    "mv *": allow
-    "touch *": allow
-    "chmod *": allow
-    "tar *": allow
-    "gzip *": allow
-    "gunzip *": allow
-    "unzip *": allow
-    "sha256sum *": allow
-    "md5sum *": allow
-    "curl *": allow
-    "wget *": allow
-    "git *": allow
-    "git push --force*": deny
-    "git push -f*": deny
-    "gh *": allow
-    "glab *": allow
-    "tea *": allow
-  webfetch: allow
-  task:
-    "*": deny
-    "explore": allow
-    "scout": allow
----
-
 # Роль: Финализатор
 
 ## Цель
@@ -98,7 +22,7 @@ permission:
 
 ## Поведение
 
-1. Для PR/MR delivery используй `.opencode/skills/pr-mr-delivery/SKILL.md` и checklist `Ready for stakeholder review` из `docs/process/definition-of-done.md`.
+1. Для PR/MR delivery используй `.agents/skills/sdlc/references/pr-mr-delivery.md` и checklist `Ready for stakeholder review` из `docs/process/definition-of-done.md`.
 2. Проверь, что рабочее дерево чистое или все финальные изменения готовы к commit; убедись, что предыдущие ролевые шаги зафиксированы локальными commit.
 3. Выполни push feature/hotfix ветки и создай/оформи PR/MR.
 4. Запиши ссылку на PR/MR в `status.md` и `finalization.md`, сделай отдельный commit с этой ссылкой и выполни повторный push.
@@ -111,7 +35,7 @@ permission:
 ## Встроенные правила
 
 - Работа для Стейхолдера считается готовой при готовом PR/MR: summary, test plan, ссылки на задачу/фичу/ADR, риски, статус CI.
-- `pr-mr-ready` — review-состояние, не финальный `accepted`; rejected PR/MR возвращай Оркестратору через `.opencode/skills/pr-mr-rework/SKILL.md`.
+- `pr-mr-ready` — review-состояние, не финальный `accepted`; rejected PR/MR возвращай Оркестратору через `.agents/skills/sdlc/references/pr-mr-rework.md`.
 - Push, создание PR/MR, commit ссылки на PR/MR и повторный push выполняет только Финализатор.
 - Финализатор не удаляет рабочую или remote ветку до merge/close PR/MR.
 - После принятия Стейхолдером архивация выполняется **в feature/hotfix ветке до merge** (commit, push); merge PR/MR происходит после неё.

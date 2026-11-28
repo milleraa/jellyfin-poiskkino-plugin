@@ -1,8 +1,3 @@
----
-name: role-handoff
-description: Стандартизирует передачу работы между ролями: обновление status.md, ссылки на артефакты, следующий owner. Используй при переходах Analyst→Architect→TechLead→Developer/DevOps→QA→Finalizer и при PR/MR rework.
----
-
 # Role handoff
 
 ## Шаблон записи в status.md
@@ -28,10 +23,10 @@ description: Стандартизирует передачу работы меж
 
 ## Для Оркестратора
 
-- **Hub-модель:** handoff к роли = `task(<role>)` → отчёт → обновление `status.md` → следующий `task`. Исключение: Техлид сам вызывает `developer-*` / `devops` по `tasks/NNN-*.md` и возвращается Оркестратору один раз после accept и DevOps impact check.
+- **Hub-модель:** handoff к роли → отчёт → обновление `status.md` → следующая подзадача. Исключение: Техлид сам вызывает `developer-*` / `devops` по `tasks/NNN-*.md` и возвращается Оркестратору один раз после accept и DevOps impact check.
 - Передай в подзадачу только нужный контекст: feature/hotfix папку, `status.md`, релевантные артефакты, задачу и ожидаемый результат.
 - После ответа подзадачи проверь артефакты, commit status и следующий рекомендуемый шаг; затем обнови `status.md`.
-- Не вызывай `developer-*` напрямую — только через Техлида. `devops` в happy path фичи — через Техлида; прямой `task(devops)` — bootstrap, troubleshooting инфраструктуры, CI/runners, секреты, окружения.
+- Не вызывай `developer-*` напрямую — только через Техлида. `devops` в happy path фичи — через Техлида; прямое делегирование DevOps — bootstrap, troubleshooting инфраструктуры, CI/runners, секреты, окружения.
 - Не запускай следующую роль, пока текущая подзадача не вернула результат или блокер.
 - После Аналитика по новой фиче не запускай Архитектора автоматически: переведи работу в `analysis-review`, покажи summary Стейхолдеру и спроси `continue` или `defer`.
 - Если Стейхолдер выбирает `defer`, выставь `backlog-paused`, owner `Stakeholder` или `Orchestrator`, и оставь фичу в `docs/backlog/features/<name>/`.

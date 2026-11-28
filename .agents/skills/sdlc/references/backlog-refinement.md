@@ -1,8 +1,3 @@
----
-name: backlog-refinement
-description: Проводит refinement эпика или крупной темы: уточняет scope, риски, зависимости, готовит материал для фич в backlog. Используй когда Стейхолдер принёс большую тему, нужно разбить на фичи или обновить epics.md и stories.
----
-
 # Backlog refinement
 
 ## Входы
