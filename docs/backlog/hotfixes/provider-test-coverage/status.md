@@ -2,8 +2,8 @@
 
 | Поле | Значение |
 |------|----------|
-| **Стадия** | `tech-lead-review` |
-| **Owner** | `Tech Lead` |
+| **Стадия** | `development` |
+| **Owner** | `Orchestrator` |
 | **Блокер** | Нет: Оркестратор вызывает исполнителей напрямую по регламенту `4cbe4d4` |
 | **Срочность** | Hotfix по запросу Стейкхолдера; P-приоритет не задан |
 | **Ветка** | `hotfix/provider-test-coverage` от `main` (`b08b586`) |
@@ -18,8 +18,8 @@
 
 | ID | Файл | Роль / стек | Статус |
 |----|------|-------------|--------|
-| 001 | [Поиск сериалов по году](tasks/001-series-search-year.md) | `developer-csharp` / C# · .NET | `ready-for-review` — ожидает приёмки Техлидом |
-| 002 | [Роли персон](tasks/002-metadata-person-roles.md) | `developer-csharp` / C# · .NET | `draft` — после приёмки 001 |
+| 001 | [Поиск сериалов по году](tasks/001-series-search-year.md) | `developer-csharp` / C# · .NET | `accepted` — Техлид принял `d79f879` |
+| 002 | [Роли персон](tasks/002-metadata-person-roles.md) | `developer-csharp` / C# · .NET | `draft` — зависимость снята, готова к назначению Оркестратором |
 
 ## DevOps impact check
 
@@ -28,7 +28,7 @@
 | Новые env vars / secrets | По плану нет: локальные подмены, ключ реального сервиса не нужен |
 | Новые интеграции / порты / очереди / storage / jobs | По плану нет: без сетевых вызовов и новой инфраструктуры |
 | CI / упаковка релиза / установка / диагностика | По плану нет: существующий тестовый проект уже запускается в CI; настройки запуска, сборки релиза, установки и диагностики не меняются |
-| DevOps-задача | По плану не нужна. Итоговая проверка по diff отложена до получения реализации; гейт не закрыт |
+| DevOps-задача | Для `d79f879` не нужна: Техлид подтвердил, что изменены только тесты и документы, HTTP локально подменён. Общий гейт не закрыт: повторить проверку по итоговому diff после 002 |
 
 ## Недостаточность разрешений
 
@@ -101,3 +101,10 @@
 - stage: `tech-lead-review`
 - artifacts: [001](tasks/001-series-search-year.md), `d79f879`
 - notes: Ревью 001 до запуска 002.
+
+## 2026-11-28 — handoff
+- from: Tech Lead
+- to: Orchestrator
+- stage: `development`
+- artifacts: [приёмка 001](tasks/001-series-search-year.md#решение-техлида), [002](tasks/002-metadata-person-roles.md), [план](tech-plan.md)
+- notes: 001 принята по `test-audit`. Можно назначать 002 роли `developer-csharp` в `hotfix/provider-test-coverage`. QA не запускать до приёмки 002 и закрытия итогового DevOps impact check.
