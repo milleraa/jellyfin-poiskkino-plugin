@@ -2,13 +2,14 @@
 
 | Поле | Значение |
 |------|----------|
-| **Стадия** | `finalization` |
-| **Owner** | `Finalizer` |
+| **Стадия** | `pr-mr-ready` |
+| **Owner** | `Stakeholder` (review) |
 | **Блокер** | Нет |
 | **Срочность** | Hotfix по запросу Стейкхолдера; P-приоритет не задан |
-| **Ветка** | `hotfix/provider-test-coverage` от `main` (`b08b586`) |
-| **PR/MR** | Не открыт |
-| **Commit со ссылкой на PR/MR** | — |
+| **Ветка** | `hotfix/provider-test-coverage` → `main`; проверенная база `4cbe4d4` (исходная база `b08b586`) |
+| **PR/MR** | [#10](https://github.com/milleraa/jellyfin-poiskkino-plugin/pull/10) |
+| **Commit со ссылкой на PR/MR** | Отдельный коммит `docs(hotfix): зафиксируй готовность PR #10 к ревью` |
+| **CI** | [CI / build-and-test](https://github.com/milleraa/jellyfin-poiskkino-plugin/actions/runs/46110676899): success для `e71e128` до push документации; актуальный статус — во [вкладке Checks](https://github.com/milleraa/jellyfin-poiskkino-plugin/pull/10/checks) |
 
 ## Стадии (справочно)
 
@@ -157,3 +158,10 @@
 - stage: `finalization`
 - artifacts: [qa.md](qa.md), `042410c`
 - notes: QA PASS. Открыть PR в main без архивации и merge.
+
+## 2026-11-28 — delivery
+- from: Finalizer
+- to: Orchestrator / Stakeholder
+- stage: `pr-mr-ready`
+- artifacts: [PR #10](https://github.com/milleraa/jellyfin-poiskkino-plugin/pull/10), [finalization.md](finalization.md), [QA PASS](qa.md)
+- notes: DoD для review проверен. `main`, `origin/main` и merge-base совпали на `4cbe4d4`. Архивация и merge не выполнялись; следующий гейт — явное решение Стейхолдера.
