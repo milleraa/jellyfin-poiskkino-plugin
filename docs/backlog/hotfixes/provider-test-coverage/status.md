@@ -3,7 +3,7 @@
 | Поле | Значение |
 |------|----------|
 | **Стадия** | `finalization` |
-| **Owner** | `Orchestrator` |
+| **Owner** | `Finalizer` |
 | **Блокер** | Нет |
 | **Срочность** | Hotfix по запросу Стейкхолдера; P-приоритет не задан |
 | **Ветка** | `hotfix/provider-test-coverage` от `main` (`b08b586`) |
@@ -150,3 +150,10 @@
 - stage: `finalization`
 - artifacts: [вердикт и доказательства](qa.md), [журнал прогонов](../../../qa/test-runs.md)
 - notes: PASS по всем критериям `incident.md`; полный `dotnet test` — 283/283, обе контрольные поломки независимо воспроизведены. Дефектов и блокеров нет. Живой smoke не проводился и не требуется для изменения только тестов. Готово к передаче Финализатору Оркестратором.
+
+## 2026-11-28 12:06 — handoff
+- from: Orchestrator
+- to: Finalizer
+- stage: `finalization`
+- artifacts: [qa.md](qa.md), `042410c`
+- notes: QA PASS. Открыть PR в main без архивации и merge.
