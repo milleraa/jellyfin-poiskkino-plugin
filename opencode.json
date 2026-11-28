@@ -10,9 +10,6 @@
       "url": "https://mcp.deepwiki.com/mcp"
     }
   },
-  "experimental": {
-    "subagent_depth": 3
-  },
   "agents": {
     "plan": {
       "disabled": true
@@ -53,7 +50,7 @@
       "system": "{file:.agents/skills/sdlc/role/qa.md}"
     },
     "tech-lead": {
-      "description": "Техлид: декомпозиция задач, назначение разработчиков/DevOps, приёмка до QA.",
+      "description": "Техлид: декомпозиция, рекомендации по исполнителям, приёмка до QA.",
       "mode": "subagent",
       "system": "{file:.agents/skills/sdlc/role/tech-lead.md}"
     }
