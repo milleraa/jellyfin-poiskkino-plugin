@@ -7,7 +7,7 @@
 | Поле | Значение |
 |------|----------|
 | **Стадия** | `development` |
-| **Owner** | `Developer-CSharp` (задача 002 — к назначению Оркестратором) |
+| **Owner** | `Developer-CSharp` (задача 002) |
 | **Ветка** | `feature/search-limit-setting` |
 | **PR/MR** | _нет_ |
 | **Commit со ссылкой на PR/MR** | _нет_ |
@@ -145,3 +145,11 @@
 - stage: `development` — задача 001 принята (`accepted`), следующий шаг — назначение 002
 - artifacts: [tasks/001-config-search-limit.md](tasks/001-config-search-limit.md) (решение Техлида), коммит `d01ee2d` в ветке `feature/search-limit-setting` (без push)
 - notes: Приёмка 001 — **accept**. Воспроизведено: `dotnet build` 0 ошибок (предупреждения только предсуществующие CS1591 в `Models/`), `dotnet test` 286/286, точечный фильтр конфиг-тестов 6/6, `git diff --check` чисто. AC-1/AC-6 (серверная часть) закрыты; границы соблюдены — клиент/провайдеры/кэш не тронуты. Замечания разработчика приняты: `Number()` — тип-коерция (не валидация, D-ARCH-4); чекбоксы в файле задачи несущественны; cref на `SearchLimitResolver` отложен на 002 (добавлен пункт в «Технические заметки» задачи 002); серверная валидация — 002, ручной QA UI/персистентности — 003. DevOps impact по итоговому diff: нет, DevOps-задача не нужна. Оркестратору: назначить задачу 002 на `developer-csharp` (строго после 001, в этой же ветке); QA пока не запускать — финальный tech-lead-review с `test-audit` после 003.
+
+### 2026-11-28 — handoff
+
+- from: `Orchestrator`
+- to: `Developer-CSharp`
+- stage: `development`
+- artifacts: [tasks/002-client-search-limit-cache.md](tasks/002-client-search-limit-cache.md), [tech-plan.md](tech-plan.md), ADR-0004 (docs/architecture/decisions/), [analysis.md](analysis.md) (AC-2…AC-5, AC-7), решение A1 в tech-plan
+- notes: Назначена задача 002 (параметр `searchLimit` после `CancellationToken`, резолвер валидации, ключ кэша с лимитом, дедупликация Warning, кэш-тесты, cref из заметок 002). Задачу 003 не начинать. Ожидаемый результат: код+тесты 002, отчёт, локальный commit без push.
