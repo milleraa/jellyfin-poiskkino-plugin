@@ -1,6 +1,6 @@
 # Tasks
 
-Файлы `NNN-slug.md` создаёт Техлид. Шаблон: [task-template](../../../task-template.md).
+Файлы `NNN-slug.md` создаёт Техлид. Шаблон: [task-template](../../../../backlog/task-template.md).
 
 | ID | Файл | Статус |
 |----|--------|--------|

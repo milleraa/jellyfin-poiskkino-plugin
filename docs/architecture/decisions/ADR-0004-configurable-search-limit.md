@@ -2,7 +2,7 @@
 
 ## Статус
 
-Accepted (в рамках фичи `search-limit-setting`; решения Стейхолдера по Q1/Q2 зафиксированы 2026-11-28 в [status.md](../../../backlog/features/search-limit-setting/status.md))
+Accepted (в рамках фичи `search-limit-setting`; решения Стейхолдера по Q1/Q2 зафиксированы 2026-11-28 в [status.md](../../archive/features/search-limit-setting/status.md))
 
 ## Контекст
 

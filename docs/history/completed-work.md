@@ -8,6 +8,7 @@
 | 2026-08-24 | `logo-images` | feature | [#3](https://github.com/milleraa/jellyfin-poiskkino-plugin/pull/3) (open, не merged; принято Стейхолдером до merge `/accept-feature`) | [archive/features/logo-images](../archive/features/logo-images/) |
 | 2026-11-28 | `eu-api-endpoint` | feature | [#9](https://github.com/milleraa/jellyfin-poiskkino-plugin/pull/9) (open, не merged; принято Стейхолдером в чате при открытом PR) | [archive/features/eu-api-endpoint](../archive/features/eu-api-endpoint/) |
 | 2026-11-28 | `provider-test-coverage` | hotfix | [#10](https://github.com/milleraa/jellyfin-poiskkino-plugin/pull/10) (принят Стейкхолдером до merge) | [archive/hotfixes/provider-test-coverage](../archive/hotfixes/provider-test-coverage/) |
+| 2026-11-28 | `search-limit-setting` | feature | _TBD — PR открывается Финализатором_ (принят Стейхолдером до создания PR) | [archive/features/search-limit-setting](../archive/features/search-limit-setting/) |
 
 ## Резюме
 
@@ -41,3 +42,10 @@
 - Усилены тесты поиска сериалов по диапазонам годов и определения ролей персон в фильмах и сериалах через публичные методы провайдеров. Продуктовый код не менялся.
 - [QA PASS](../archive/hotfixes/provider-test-coverage/qa.md): 283/283 тестов, Release-сборка без ошибок; обе контрольные поломки обнаружены. Живой Jellyfin и реальный API не проверялись.
 - Стейкхолдер принял PR #10 в чате. Архивация выполнена в `hotfix/provider-test-coverage` до merge.
+
+### `search-limit-setting` (2026-11-28)
+
+- Настройка количества результатов поиска PoiskKino: `PluginConfiguration.SearchLimit` (дефолт 3, диапазон 1–10), поле в `Configuration/configPage.html`, `SearchLimitResolver` — единая точка валидации в клиенте (вне диапазона → дефолт + один дедуплицированный `Warning`), лимит включён в ключ кэша поиска (`название:год:лимит`, вариант А), проброс в Movie/Series/Image провайдеры по паттерну `ApiKey` — применение без перезапуска. README + [ADR-0004](../architecture/decisions/ADR-0004-configurable-search-limit.md).
+- Задачи: [001](../archive/features/search-limit-setting/tasks/001-config-search-limit.md) конфигурация+UI (`d01ee2d`), [002](../archive/features/search-limit-setting/tasks/002-client-search-limit-cache.md) клиент/резолвер/ключ кэша (`a0febfe`), [003](../archive/features/search-limit-setting/tasks/003-providers-threading-readme.md) провайдеры+README (`c894715`).
+- QA: **pass** — автоматика 327/327 (Release: 0 ошибок, baseline 61 CS1591), смоук Оркестратора на docker Jellyfin 12.4.0.0 принят QA: AC-6 UI и AC-8 закрыты; открытые ограничения — AC-7 live и R1 (нет demo-ключа; серверная часть AC-7 покрыта юнит-тестом), приняты Стейхолдером.
+- Принято Стейхолдером явно в чате (2026-11-28) **до создания PR** — «можно сразу архивировать и готовить архивированный mr. Версию повысь на один билд.»; архивация выполнена Финализатором в ветке `feature/search-limit-setting` до merge, PR/MR открыт этим же изменением, merge — за Стейхолдером.

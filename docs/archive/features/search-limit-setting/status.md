@@ -6,12 +6,12 @@
 
 | Поле | Значение |
 |------|----------|
-| **Стадия** | `finalization` |
-| **Owner** | `Orchestrator` (handoff к Финализатору) |
-| **Ветка** | `feature/search-limit-setting` |
-| **PR/MR** | _нет_ |
-| **Commit со ссылкой на PR/MR** | _нет_ |
-| **Блокеры** | _нет_; открытые ручные ограничения после смоука — AC-7 live и R1 (нет demo-ключа); AC-6 UI и AC-8 закрыты смоуком Оркестратора, приняты QA (детали в [qa.md](qa.md)) |
+| **Стадия** | `accepted` (2026-11-28 — явный accept Стейхолдера **до открытия PR/MR**: «можно сразу архивировать и готовить архивированный mr. Версию повысь на один билд.»; архивация выполнена в ветке до merge по прецеденту `provider-test-coverage`, PR/MR готовится Финализатором этим же изменением) |
+| **Owner** | `Stakeholder` |
+| **Ветка** | `feature/search-limit-setting` → `main` |
+| **PR/MR** | _TBD — заполняется при открытии PR_ |
+| **Commit со ссылкой на PR/MR** | _TBD — заполняется после создания PR_ |
+| **Блокеры** | _нет_; открытые ручные ограничения после смоука — AC-7 live и R1 (нет demo-ключа); AC-6 UI и AC-8 закрыты смоуком Оркестратора, приняты QA (детали в [qa.md](qa.md)); ограничения приняты Стейхолдером в решении об архивации |
 | **План реализации** | **готов к исполнению** — [tech-plan.md](tech-plan.md): 001 → 002 → 003, роль `developer-csharp` |
 
 ### Стадии (справочно)
@@ -203,3 +203,11 @@
 - artifacts: [qa.md](qa.md) (строки AC-6/AC-8 в таблице, раздел «Ручной smoke», «Ограничения evidence»), [test-runs](../../../qa/test-runs.md) (строка смоука); смоук выполнен Оркестратором по инструкции [tasks/003](tasks/003-providers-threading-readme.md)
 - notes: Среда смоука: docker `jellyfin/jellyfin:latest` = Jellyfin Server 12.4.0.0, плагин Release/net10.0 по коду `c894715` — после него до HEAD `bdc91ea` менялись только docs (`git diff --stat c894715..HEAD`), поэтому смоук валиден для текущего кода; версия плагина 2026.11.28 совпадает с csproj и логом загрузки. Интерпретация QA: **AC-6 UI закрыт** (spinbutton, valuemin=1/valuemax=10, дефолт 3 на чистой конфигурации, подсказка полная, 5 → Сохранить → перезагрузка → 5, консоль 0 ошибок); **AC-8 закрыт полностью** (`<SearchLimit>5</SearchLimit>` в XML, перезагрузка → 5, перезапуск контейнера → UI 5/XML 5, ApiBaseUrl/IgnoreTmdbImages не изменились; нюансы зафиксированы в qa.md: значение 5 вместо примера 7 — механизм тот же; ApiKey пуст изначально — компенсация юнит-тестом round-trip). **Открыты:** AC-7 live (identify-диалог без перезапуска) и R1 (403/429 с demo-ключом) — ключа нет; серверная часть AC-7 покрыта юнит-тестом. Плагин загрузился без ошибок. Контейнер/конфиг зачищены Стейхолдером, скриншот эфемерный и в git не персистирован; QA скриншот визуально не пересматривала (модель без image-входа) — интерпретация по DOM-фактам chrome-devtools. Стадия остаётся `finalization`, owner — `Orchestrator`.
 
+
+### 2026-11-28 — acceptance/archive: решение Стейхолдера
+
+- from: `Finalizer`
+- to: `Orchestrator` / `Stakeholder`
+- stage: `accepted` — приёмка до открытия PR/MR, архивация в ветке до merge (штатный флоу DoD «accept → archive до merge»; прецедент — [provider-test-coverage](../../hotfixes/provider-test-coverage/status.md))
+- artifacts: [qa.md](qa.md), [finalization.md](finalization.md), [completed-work](../../../history/completed-work.md), версия `2026.11.28.1` в [csproj](../../../../PoiskKinoMetadataPlugin/PoiskKinoMetadataPlugin.csproj)
+- notes: Решение Стейхолдера (2026-11-28, дословно): «можно сразу архивировать и готовить архивированный mr. Версию повысь на один билд.» Приёмка дана **до создания PR/MR** — стадия фактически `accepted`, поэтому архивация выполнена в этой же ветке `feature/search-limit-setting` (новая ветка не создавалась), PR/MR в `main` готовится этим же изменением; merge Финализатором не выполняется — за Стейхолдером. Выполнено: версия повышена `2026.11.28` → `2026.11.28.1` (датная схема, +1 билд: `2026.11.28` занята релизом `8aeebd7`); папка фичи перенесена `docs/backlog/features/search-limit-setting/` → `docs/archive/features/search-limit-setting/` (`git mv`, 13 файлов, в backlog остался только `feature-template`); починены ссылки, ломавшиеся переносом: `tasks/README.md` и `tasks/task-template.md` → `../../../../backlog/task-template.md` (по прецеденту), `docs/qa/test-runs.md` (2 ссылки на qa.md фичи), [ADR-0004](../../../architecture/decisions/ADR-0004-configurable-search-limit.md) (ссылка на status.md фичи); обновлён индекс [docs/archive/features/README.md](../../README.md); запись в [completed-work](../../../history/completed-work.md). Открытые ручные ограничения (AC-7 live, R1 — нет demo-ключа) приняты Стейхолдером в решении об архивации; серверная часть AC-7 покрыта юнит-тестом.
