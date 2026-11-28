@@ -85,32 +85,52 @@ public class PoiskKinoSeriesProviderTests : PluginTestBase
         Assert.Equal("404900", results[0].GetProviderId(ProviderNames.PoiskKino));
     }
 
-    [Fact]
-    public async Task GetSearchResults_YearWithinReleaseYears_ReturnsResult()
+    private const string SeriesSearchResponseWithDistinctReleaseYearsJson = """
     {
-        PluginTestFixture.SetUpPlugin(TestApiKey);
-        SetupSearchResponse(TestJsonData.SeriesSearchResponseJson);
+        "docs": [
+            {
+                "id": 101,
+                "name": "Test Series",
+                "isSeries": true,
+                "year": 2001,
+                "releaseYears": [{ "start": 2001, "end": 2004 }]
+            },
+            {
+                "id": 202,
+                "name": "Test Series",
+                "isSeries": true,
+                "year": 2011,
+                "releaseYears": [{ "start": 2011, "end": 2019 }]
+            }
+        ]
+    }
+    """;
+
+    [Fact]
+    public async Task GetSearchResults_YearWithinReleaseYears_ReturnsOnlyMatchingSeries()
+    {
+        SetupSearchResponse(SeriesSearchResponseWithDistinctReleaseYearsJson);
         var provider = CreateProvider();
-        var info = new SeriesInfo { Name = "Игра престолов", Year = 2015 };
+        var info = new SeriesInfo { Name = "Test Series", Year = 2015 };
 
-        var results = (await provider.GetSearchResults(info, CancellationToken.None)).ToList();
+        var results = await provider.GetSearchResults(info, CancellationToken.None);
 
-        Assert.Single(results);
-        Assert.Equal("404900", results[0].GetProviderId(ProviderNames.PoiskKino));
+        var match = Assert.Single(results);
+        Assert.Equal("202", match.GetProviderId(ProviderNames.PoiskKino));
     }
 
     [Fact]
     public async Task GetSearchResults_YearOutsideReleaseYears_FallsBackToUnfiltered()
     {
-        PluginTestFixture.SetUpPlugin(TestApiKey);
-        SetupSearchResponse(TestJsonData.SeriesSearchResponseJson);
+        SetupSearchResponse(SeriesSearchResponseWithDistinctReleaseYearsJson);
         var provider = CreateProvider();
-        var info = new SeriesInfo { Name = "Игра престолов", Year = 2020 };
+        var info = new SeriesInfo { Name = "Test Series", Year = 2020 };
 
-        var results = (await provider.GetSearchResults(info, CancellationToken.None)).ToList();
+        var results = await provider.GetSearchResults(info, CancellationToken.None);
 
-        Assert.Single(results);
-        Assert.Equal("404900", results[0].GetProviderId(ProviderNames.PoiskKino));
+        Assert.Equal(
+            ["101", "202"],
+            results.Select(result => result.GetProviderId(ProviderNames.PoiskKino)).Order());
     }
 
     [Fact]

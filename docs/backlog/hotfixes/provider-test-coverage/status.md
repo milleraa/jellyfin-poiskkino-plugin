@@ -18,7 +18,7 @@
 
 | ID | Файл | Роль / стек | Статус |
 |----|------|-------------|--------|
-| 001 | [Поиск сериалов по году](tasks/001-series-search-year.md) | `developer-csharp` / C# · .NET | `in-progress` |
+| 001 | [Поиск сериалов по году](tasks/001-series-search-year.md) | `developer-csharp` / C# · .NET | `ready-for-review` — ожидает приёмки Техлидом |
 | 002 | [Роли персон](tasks/002-metadata-person-roles.md) | `developer-csharp` / C# · .NET | `draft` — после приёмки 001 |
 
 ## DevOps impact check
@@ -87,3 +87,10 @@
 - stage: `development`
 - artifacts: [план](tech-plan.md), [001](tasks/001-series-search-year.md)
 - notes: Блокер снят по обновлённому SDLC. Задача 002 — после ревью 001.
+
+## 2026-11-28 11:52 — handoff
+- from: developer-csharp
+- to: Orchestrator (для передачи Tech Lead)
+- stage: `development` — 001 готова к ревью
+- artifacts: [001: результат и проверки](tasks/001-series-search-year.md#результат-и-проверки); локальный коммит `test(providers): усиль покрытие поиска сериалов по году` в `hotfix/provider-test-coverage`, без push
+- notes: Изменены только тесты поиска сериалов и документы задачи. В изолированной копии без вызова фильтра один тест падает на лишней записи; после восстановления 28/28 точечных тестов и 281/281 в полном прогоне. В рабочей ветке 281/281, `git diff --check` без замечаний. Живой API и Jellyfin не проверялись; DevOps-гейт и приёмка остаются за Техлидом. 002 не начата.
